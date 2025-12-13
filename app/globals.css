@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Aira Events Brand Colors */
+    --background: 40 33% 98%;
+    --foreground: 220 20% 15%;
+
+    --card: 40 30% 97%;
+    --card-foreground: 220 20% 15%;
+
+    --popover: 40 30% 97%;
+    --popover-foreground: 220 20% 15%;
+
+    /* Primary: Royal Blue */
+    --primary: 220 70% 35%;
+    --primary-foreground: 40 30% 98%;
+
+    /* Secondary: Magenta Pink */
+    --secondary: 320 70% 55%;
+    --secondary-foreground: 40 30% 98%;
+
+    /* Muted: Soft Cream */
+    --muted: 40 20% 92%;
+    --muted-foreground: 220 15% 45%;
+
+    /* Accent: Gold */
+    --accent: 42 65% 55%;
+    --accent-foreground: 220 20% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 30% 98%;
+
+    --border: 40 25% 88%;
+    --input: 40 25% 88%;
+    --ring: 220 70% 35%;
+
+    --radius: 0.75rem;
+
+    /* Custom Brand Colors */
+    --aira-blue: 220 70% 35%;
+    --aira-pink: 320 70% 55%;
+    --aira-gold: 42 65% 55%;
+    --aira-cream: 40 33% 96%;
+    --aira-ivory: 40 40% 98%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(220 70% 35% / 0.95), hsl(320 70% 45% / 0.85));
+    --gradient-gold: linear-gradient(135deg, hsl(42 65% 55%), hsl(42 75% 65%));
+    --gradient-soft: linear-gradient(180deg, hsl(40 33% 98%), hsl(40 30% 95%));
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(220 70% 35% / 0.12);
+    --shadow-glow: 0 0 30px hsl(42 65% 55% / 0.3);
+    --shadow-card: 0 8px 30px -8px hsl(220 20% 15% / 0.1);
+
+    /* Sidebar */
+    --sidebar-background: 40 30% 97%;
+    --sidebar-foreground: 220 20% 25%;
+    --sidebar-primary: 220 70% 35%;
+    --sidebar-primary-foreground: 40 30% 98%;
+    --sidebar-accent: 40 25% 92%;
+    --sidebar-accent-foreground: 220 20% 25%;
+    --sidebar-border: 40 25% 88%;
+    --sidebar-ring: 220 70% 35%;
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 40 30% 95%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 40 30% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 40 30% 95%;
+
+    --primary: 220 70% 55%;
+    --primary-foreground: 220 25% 8%;
+
+    --secondary: 320 65% 60%;
+    --secondary-foreground: 220 25% 8%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 40 20% 65%;
+
+    --accent: 42 70% 60%;
+    --accent-foreground: 220 25% 8%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 40 30% 95%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 220 70% 55%;
+
+    --aira-blue: 220 70% 55%;
+    --aira-pink: 320 65% 60%;
+    --aira-gold: 42 70% 60%;
+    --aira-cream: 220 20% 15%;
+    --aira-ivory: 220 25% 10%;
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 40 30% 90%;
+    --sidebar-primary: 220 70% 55%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 220 20% 18%;
+    --sidebar-accent-foreground: 40 30% 90%;
+    --sidebar-border: 220 20% 20%;
+    --sidebar-ring: 220 70% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--aira-blue)), hsl(var(--aira-pink)));
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--aira-gold)), hsl(42 75% 65%));
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s linear infinite;
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--aira-gold));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--aira-blue));
+}

@@ -1,0 +1,155 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  Heart,
+  Palette,
+  Sparkles,
+  Clock,
+  Users,
+  Award,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const features = [
+  {
+    icon: Heart,
+    title: "Passionate Team",
+    description:
+      "We pour our hearts into every event, treating your celebration as our own.",
+  },
+  {
+    icon: Palette,
+    title: "Creative Designs",
+    description:
+      "Unique themes and personalized decor that reflect your style and vision.",
+  },
+  {
+    icon: Sparkles,
+    title: "Attention to Detail",
+    description:
+      "No detail is too small. We ensure every element is perfect.",
+  },
+  {
+    icon: Clock,
+    title: "On-Time Delivery",
+    description:
+      "Punctuality is our promise. Your event runs smoothly, always.",
+  },
+  {
+    icon: Users,
+    title: "Expert Vendors",
+    description:
+      "Trusted network of premium vendors for catering, photography, and more.",
+  },
+  {
+    icon: Award,
+    title: "Award Winning",
+    description:
+      "Recognized for excellence in event planning and management.",
+  },
+];
+
+export function WhyChooseUs() {
+  return (
+    <section className="py-24 bg-background">
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-aira-gold font-medium tracking-wider uppercase text-sm">
+              Why Choose Us
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mt-4 mb-6">
+              Making Your{" "}
+              <span className="text-primary">Dreams</span>{" "}
+              Come True
+            </h2>
+            <p className="text-muted-foreground text-lg mb-8">
+              With over 15 years of experience, Aira Events has become synonymous
+              with excellence in event planning. We combine creativity,
+              precision, and passion to deliver celebrations that exceed
+              expectations.
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-6 mb-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-start gap-4"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-aira-gold/10 flex items-center justify-center">
+                    <feature.icon className="w-6 h-6 text-aira-gold" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-1">
+                      {feature.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <Button variant="pink" size="lg" asChild>
+              <Link href="/about">Learn More About Us</Link>
+            </Button>
+          </motion.div>
+
+          {/* Right Visual */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="relative aspect-square rounded-3xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-aira-blue/20 via-secondary/20 to-aira-gold/20" />
+              <div className="absolute inset-4 bg-card rounded-2xl shadow-card flex items-center justify-center">
+                <div className="text-center p-8">
+                  <div className="font-display text-7xl font-bold text-gradient mb-4">
+                    15+
+                  </div>
+                  <p className="text-2xl font-display text-foreground mb-2">
+                    Years of Excellence
+                  </p>
+                  <p className="text-muted-foreground">
+                    Creating Magical Moments
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Elements */}
+            <motion.div
+              animate={{ y: [-10, 10, -10] }}
+              transition={{ duration: 4, repeat: Infinity }}
+              className="absolute -top-6 -left-6 w-24 h-24 bg-secondary rounded-2xl shadow-card flex items-center justify-center"
+            >
+              <Heart className="w-10 h-10 text-secondary-foreground" />
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [10, -10, 10] }}
+              transition={{ duration: 5, repeat: Infinity }}
+              className="absolute -bottom-6 -right-6 w-24 h-24 bg-aira-gold rounded-2xl shadow-glow flex items-center justify-center"
+            >
+              <Sparkles className="w-10 h-10 text-foreground" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
