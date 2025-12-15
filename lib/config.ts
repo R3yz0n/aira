@@ -23,4 +23,6 @@ export const config = {
       youtube: process.env.NEXT_PUBLIC_YOUTUBE_URL || "",
     },
   },
+  // Brochure URL: prefer site-config.json, then env, then a safe fallback placeholder
+  brochureUrl: process.env.NEXT_PUBLIC_BROCHURE_URL,
 };
