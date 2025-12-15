@@ -41,6 +41,13 @@ const services = [
 ];
 
 export function Footer() {
+  const openBrochure = (e: any) => {
+    e.preventDefault();
+    const url = config.brochureUrl;
+    if (typeof window !== "undefined") {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Main Footer */}
@@ -72,7 +79,12 @@ export function Footer() {
               className="border-aira-gold text-aira-gold hover:bg-aira-gold hover:text-foreground w-fit"
               asChild
             >
-              <a href="/brochure.pdf" target="_blank" rel="noopener noreferrer">
+              <a
+                href={config.brochureUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={openBrochure}
+              >
                 <FileText className="w-4 h-4 mr-2" />
                 Download Brochure
               </a>

@@ -90,7 +90,17 @@ export function Navbar() {
               <span>{config.companyDetails.contact.phonePrimary}</span>
             </a>
             <Button variant="outline" size="lg" asChild>
-              <a href="/brochure.pdf" target="_blank" rel="noopener noreferrer">
+              <a
+                href={config.brochureUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (typeof window !== "undefined") {
+                    window.open(config.brochureUrl, "_blank", "noopener,noreferrer");
+                  }
+                }}
+              >
                 <FileText className="w-4 h-4 mr-2" />
                 Brochure
               </a>
@@ -144,7 +154,17 @@ export function Navbar() {
                 </motion.div>
               ))}
               <Button variant="outline" size="lg" className="mt-4" asChild>
-                <a href="/brochure.pdf" target="_blank" rel="noopener noreferrer">
+                <a
+                  href={config.brochureUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (typeof window !== "undefined") {
+                      window.open(config.brochureUrl, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                >
                   <FileText className="w-4 h-4 mr-2" />
                   View Brochure
                 </a>
