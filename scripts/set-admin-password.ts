@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
-import { AdminModel, AdminMongoModel } from "../lib/models/admin.js";
-import { connectMongoose, mongoose } from "../lib/db/mongoose.js";
+import { AdminModel, AdminMongoModel } from "../lib/models/admin";
+import { connectMongoose, mongoose } from "../lib/db/mongoose";
 
 /**
- * scripts/set-admin-password.mjs
+ * scripts/set-admin-password.ts
  *
  * CLI helper to update the single admin user's password directly in the DB.
  * This is useful when you cannot use the running app (or want an out-of-band
@@ -13,7 +14,7 @@ import { connectMongoose, mongoose } from "../lib/db/mongoose.js";
  * `.env` if you need an extra layer of safety.
  *
  * Usage:
- *   node scripts/set-admin-password.mjs NEW_PASSWORD SCRIPT_SECRET
+ *   npx tsx scripts/set-admin-password.ts NEW_PASSWORD SCRIPT_SECRET
  */
 
 dotenv.config();
@@ -24,7 +25,7 @@ const scriptSecretEnv = process.env.ADMIN_SCRIPT_SECRET;
 async function main() {
   const [, , newPassword, scriptSecret] = process.argv;
   if (!newPassword || !scriptSecret) {
-    console.error("Usage: node scripts/set-admin-password.mjs NEW_PASSWORD SCRIPT_SECRET");
+    console.error("Usage: npx tsx scripts/set-admin-password.ts NEW_PASSWORD SCRIPT_SECRET");
     process.exit(1);
   }
   if (scriptSecretEnv && scriptSecret !== scriptSecretEnv) {

@@ -6,16 +6,21 @@ import jwt from "jsonwebtoken";
  * Requires `JWT_SECRET` env var to sign and verify tokens. Tokens are used by
  * the admin API to authenticate requests. Keep the secret secure.
  */
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) throw new Error("JWT_SECRET environment variable is required");
+const secret = process.env.JWT_SECRET;
+if (!secret) throw new Error("JWT_SECRET environment variable is required");
+const JWT_SECRET: jwt.Secret = secret;
 
 /**
  * Sign a JWT with a payload. By default the token expires in 2 hours.
  *
  * Payload should be a small object containing identifying claims (e.g. `sub`, `email`).
  */
-export function signToken(payload: object, expiresIn = "2h") {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+
+export function signToken(
+  payload: string | object | Buffer,
+  expiresIn: jwt.SignOptions["expiresIn"] = "2h"
+) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn } as jwt.SignOptions);
 }
 
 /**

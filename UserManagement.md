@@ -1,10 +1,9 @@
 # User Management (Admin) — API Documentation
 
-This document describes the single-admin user management endpoints and utilities
-implemented in this project. The system is intentionally simple: it supports a
-single admin user whose email is provided via environment variables. Use the
-endpoints to create the admin (one-time), authenticate (login), and change the
-password. A CLI script is included for out-of-band password rotation.
+This document describes the single-admin user management system and utilities implemented in this project. The system is intentionally simple: it supports a single admin user whose email is provided via environment variables.
+
+**Admin setup and password update are now performed via scripts, not API.**
+Use the scripts to create the admin (one-time) and update the password. The API is used for login and password change (with JWT) only.
 
 ## Environment variables
 
@@ -20,38 +19,28 @@ password. A CLI script is included for out-of-band password rotation.
 - `lib/hash.ts` — `hashPassword` and `verifyPassword` wrappers around `bcryptjs`.
 - `lib/jwt.ts` — `signToken` and `verifyToken` helpers using `jsonwebtoken`.
 
-## API Endpoints
+## Admin Setup (Script)
 
-All routes are under `/api/admin`.
+**Do not use the API for admin creation. Use the provided script:**
 
-### POST /api/admin/setup
+- `scripts/create-admin.mjs` — Node script to create the initial admin directly in MongoDB.
+- `scripts/admin-setup.sh` — Bash helper for the above (makes it easy to call with env vars).
 
-Purpose: Create the single admin user. This should be executed only once.
+Usage:
 
-Request body (JSON):
+```bash
+# Make sure ADMIN_EMAIL, MONGODB_URI, and (optionally) ADMIN_SETUP_SECRET are set in your .env.local or environment
 
+# Using the Node script directly:
+node scripts/create-admin.mjs StrongPass123 optional-setup-secret
+
+# Or using the Bash helper (recommended):
+chmod +x scripts/admin-setup.sh
+./scripts/admin-setup.sh StrongPass123 optional-setup-secret
 ```
-{
-  "email": "admin@example.com",
-  "password": "StrongPass123",
-  "setupSecret": "optional-setup-secret"
-}
-```
 
-Rules:
-
-- `email` must exactly match `ADMIN_EMAIL` in environment.
-- If `ADMIN_SETUP_SECRET` is set, `setupSecret` must match it.
-- Password must be at least 8 characters.
-
-Responses:
-
-- 201 Created — admin created
-- 400 Bad Request — invalid or too-short password
-- 403 Forbidden — email mismatch or bad setup secret
-- 409 Conflict — admin already exists
-
-Implementation: `app/api/admin/setup/route.ts`.
+- The script will refuse to run if an admin already exists.
+- If `ADMIN_SETUP_SECRET` is set in env, you must provide it as the second argument.
 
 ### POST /api/admin/login
 
@@ -63,17 +52,17 @@ Request body:
 { "email": "admin@example.com", "password": "StrongPass123" }
 ```
 
-Response on success:
+Response on success (200):
 
 ```
-{ "token": "<JWT>" }
+{ "success": true, "data": { "token": "<JWT>" } }
 ```
 
-Status codes:
+Error responses:
 
-- 200 OK — returns token
-- 400 Bad Request — missing fields
-- 401 Unauthorized — invalid credentials
+- 400 Bad Request — `{ "success": false, "error": { "code": "INVALID_INPUT", "message": "Invalid input", "details": <zod issues> } }`
+- 401 Unauthorized — `{ "success": false, "error": { "code": "INVALID_CREDENTIALS", "message": "Invalid credentials" } }`
+- 500 Internal Server Error — `{ "success": false, "error": { "code": "INTERNAL_ERROR", "message": "Internal server error" } }`
 
 Implementation: `app/api/admin/login/route.ts`.
 
@@ -102,17 +91,23 @@ Implementation: `app/api/admin/change-password/route.ts`.
 
 ## CLI: set-admin-password.mjs
 
-Purpose: Update the admin password directly in the database (out-of-band).
+Purpose: Update the admin password directly in the database (out-of-band, script-only).
+
+Scripts:
+
+- `scripts/set-admin-password.mjs` — Node script to update the admin password.
+- `scripts/update-admin-password.sh` — Bash helper for the above.
 
 Usage:
 
 ```bash
-node scripts/set-admin-password.mjs NEW_PASSWORD SCRIPT_SECRET
-# or
-npm run set-admin-password -- NEW_PASSWORD SCRIPT_SECRET
-```
+# Using the Node script directly:
+node scripts/set-admin-password.mjs NEW_PASSWORD optional-script-secret
 
-Notes:
+# Or using the Bash helper:
+chmod +x scripts/update-admin-password.sh
+./scripts/update-admin-password.sh NEW_PASSWORD optional-script-secret
+```
 
 - Requires `MONGODB_URI` and `ADMIN_EMAIL` in env.
 - If `ADMIN_SCRIPT_SECRET` is set in env, pass the same secret as the second arg.
@@ -126,12 +121,13 @@ Notes:
 
 ## Examples
 
-Create admin (one-time):
+Create admin (one-time, script):
 
 ```bash
-curl -X POST http://localhost:3000/api/admin/setup \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"StrongPass123","setupSecret":"mysetup"}'
+# Node script
+node scripts/create-admin.mjs StrongPass123 optional-setup-secret
+# or Bash helper
+./scripts/admin-setup.sh StrongPass123 optional-setup-secret
 ```
 
 Login:
@@ -149,6 +145,11 @@ curl -X POST http://localhost:3000/api/admin/change-password \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <JWT>" \
   -d '{"oldPassword":"StrongPass123","newPassword":"NewPass456"}'
+
+# Or change password directly in DB (script):
+node scripts/set-admin-password.mjs NewPass456 optional-script-secret
+# or
+./scripts/update-admin-password.sh NewPass456 optional-script-secret
 ```
 
 ## Where to go next
