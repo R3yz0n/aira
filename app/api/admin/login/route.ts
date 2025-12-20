@@ -1,7 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { adminLoginSchema } from "@/domain/admin";
-import { AdminAuthService, InvalidCredentialsError } from "@/services/admin/auth-service";
+import {
+  AdminAuthService,
+  IAuthServiceResult,
+  InvalidCredentialsError,
+} from "@/services/admin/auth-service";
 import { MongoAdminRepository } from "@/repositories/admin-repository";
+import { successResponse, errorResponse } from "@/lib/api/response-handler";
+import type { IAdminLoginResponse } from "@/lib/types/api";
 
 const authService = new AdminAuthService(new MongoAdminRepository());
 
@@ -17,8 +23,7 @@ const authService = new AdminAuthService(new MongoAdminRepository());
  * { "success": true, "data": { "token": "<jwt>" } }
  *
  * Errors:
- * 400 { "success": false, "error": { "code": "INVALID_INPUT", "message": "Invalid input", "details": <zod issues> } }
- * 401 { "success": false, "error": { "code": "INVALID_CREDENTIALS", "message": "Invalid credentials" } }
+ * 400 { "success": false, "error": { "code": "INVALID_INpUT", "message": "Invalid input", "details": <zod issues> } }
  * 500 { "success": false, "error": { "code": "INTERNAL_ERROR", "message": "Internal server error" } }
  */
 export async function POST(req: NextRequest) {
@@ -26,39 +31,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = adminLoginSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: "INVALID_INPUT",
-            message: "Invalid input",
-            details: parsed.error.flatten(),
-          },
-        },
-        { status: 400 }
-      );
+      return errorResponse("INVALID_INPUT", "Invalid input", 400, parsed.error.flatten());
     }
 
-    const { token } = await authService.login(parsed.data);
-    return NextResponse.json({ success: true, data: { token } }, { status: 200 });
+    const { token }: IAuthServiceResult = await authService.login(parsed.data);
+    return successResponse<IAdminLoginResponse>({ token }, 200);
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: { code: "INVALID_CREDENTIALS", message: "Invalid credentials" },
-        },
-        { status: 401 }
-      );
+      return errorResponse("INVALID_CREDENTIALS", "Invalid credentials", 401, {
+        reason: "The email or password provided is incorrect",
+      });
     }
 
     console.error(err);
-    return NextResponse.json(
-      {
-        success: false,
-        error: { code: "INTERNAL_ERROR", message: "Internal server error" },
-      },
-      { status: 500 }
-    );
+    return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }
 }

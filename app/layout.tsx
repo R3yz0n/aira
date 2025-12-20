@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { Toaster } from "@/components/ui/sonner";
+import { AppChrome } from "@/components/layout/AppChrome";
+import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { config } from "@/lib/config";
@@ -50,11 +49,7 @@ export default function RootLayout({
       <body className={`${dmSans.variable} ${playfairDisplay.variable} font-sans antialiased`}>
         <Providers>
           <ScrollToTop />
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1 pt-20">{children}</main>
-            <Footer />
-          </div>
+          <AppChrome>{children}</AppChrome>
           <Toaster />
         </Providers>
       </body>
