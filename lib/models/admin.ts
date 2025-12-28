@@ -1,6 +1,6 @@
 import { connectMongoose, mongoose } from "@/lib/db/mongoose";
 
-export interface AdminDoc {
+export interface IAdminDoc {
   _id?: mongoose.Types.ObjectId;
   email: string;
   passwordHash: string;
@@ -8,7 +8,7 @@ export interface AdminDoc {
   updatedAt?: Date;
 }
 
-const AdminSchema = new mongoose.Schema<AdminDoc>(
+const AdminSchema = new mongoose.Schema<IAdminDoc>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },

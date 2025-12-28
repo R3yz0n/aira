@@ -1,12 +1,12 @@
-import { Admin } from "@/domain/admin";
+import { IAdmin } from "@/domain/admin";
 import { AdminModel } from "@/lib/models/admin";
 
 export interface AdminRepository {
-  findByEmail(email: string): Promise<Admin | null>;
+  findByEmail(email: string): Promise<IAdmin | null>;
 }
 
 export class MongoAdminRepository implements AdminRepository {
-  async findByEmail(email: string): Promise<Admin | null> {
+  async findByEmail(email: string): Promise<IAdmin | null> {
     const doc = await AdminModel.findByEmail(email);
     if (!doc) return null;
 

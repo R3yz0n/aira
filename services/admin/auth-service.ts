@@ -10,14 +10,14 @@ export class InvalidCredentialsError extends Error {
   }
 }
 
-export interface AuthServiceResult {
+export interface IAuthServiceResult {
   token: string;
 }
 
 export class AdminAuthService {
   constructor(private adminRepository: AdminRepository) {}
 
-  async login(input: AdminLoginInput): Promise<AuthServiceResult> {
+  async login(input: AdminLoginInput): Promise<IAuthServiceResult> {
     const admin = await this.adminRepository.findByEmail(input.email);
     if (!admin) throw new InvalidCredentialsError();
 
