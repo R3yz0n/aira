@@ -1,6 +1,6 @@
 "use client";
 
-import { Category } from "./types";
+import { ICategory } from "@/domain/category";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -13,10 +13,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
+type CategoryWithStats = Pick<ICategory, "id" | "name" | "description"> & {
+  totalEvents: number;
+};
+
 interface CategoryTableProps {
-  category: Category[];
-  onEdit: (category: Category) => void;
-  onDelete?: (category: Category) => void;
+  category: CategoryWithStats[];
+  onEdit: (category: CategoryWithStats) => void;
+  onDelete?: (category: CategoryWithStats) => void;
 }
 
 export function CategoryTable({ category, onEdit, onDelete }: CategoryTableProps) {
@@ -40,7 +44,7 @@ export function CategoryTable({ category, onEdit, onDelete }: CategoryTableProps
             </TableRow>
           ) : (
             category.map((category) => (
-              <TableRow key={category.name}>
+              <TableRow key={category.id}>
                 <TableCell className="font-medium text-foreground">{category.name}</TableCell>
                 <TableCell className="text-muted-foreground">{category.totalEvents}</TableCell>
                 <TableCell className="text-muted-foreground">{category.description}</TableCell>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Category } from "./types";
+
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-
+import { ICategory } from "@/domain/category";
+type CategoryForUI = Pick<ICategory, "id" | "name" | "description">;
 interface CategoryEditDialogProps {
   open: boolean;
-  initialValue: Category | null;
+  initialValue: CategoryForUI | null;
   onClose: () => void;
-  onSave: (category: Category) => void;
+  onSave: (category: CategoryForUI) => void;
 }
 
 export function CategoryEditDialog({
@@ -29,25 +30,22 @@ export function CategoryEditDialog({
   onSave,
 }: CategoryEditDialogProps) {
   const [name, setName] = useState("");
-  const [totalEvents, setTotalEvents] = useState("0");
   const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (initialValue) {
       setName(initialValue.name);
-      setTotalEvents(String(initialValue.totalEvents));
       setDescription(initialValue.description);
     } else {
       setName("");
-      setTotalEvents("0");
       setDescription("");
     }
   }, [initialValue]);
 
   const handleSave = () => {
     onSave({
+      id: initialValue?.id || Date.now().toString(),
       name: name.trim(),
-      totalEvents: Number(totalEvents) || 0,
       description: description.trim(),
     });
   };
@@ -68,17 +66,6 @@ export function CategoryEditDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter category name"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="category-items">Items</Label>
-            <Input
-              id="category-items"
-              type="number"
-              min="0"
-              value={totalEvents}
-              onChange={(e) => setTotalEvents(e.target.value)}
             />
           </div>
 

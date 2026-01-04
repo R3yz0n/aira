@@ -2,25 +2,39 @@
 
 import { useState } from "react";
 
-import { Category } from "@/components/admin/categories/types";
 import { CategoryEditDialog } from "@/components/admin/categories/CategoryEditDialog";
 import { CategoryTable } from "@/components/admin/categories/CategoryTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { ICategory } from "@/domain/category";
 
-const seedCategories: Category[] = [
-  { name: "Wedding", totalEvents: 42, description: "Weddings and receptions" },
-  { name: "Corporate", totalEvents: 28, description: "Corporate summits and meetups" },
-  { name: "Birthday", totalEvents: 18, description: "Birthday parties and celebrations" },
-  { name: "Concert", totalEvents: 9, description: "Concerts and live shows" },
+type CategoryWithStats = Pick<ICategory, "id" | "name" | "description"> & {
+  totalEvents: number;
+};
+
+const seedCategories: CategoryWithStats[] = [
+  { id: "wedding", name: "Wedding", totalEvents: 42, description: "Weddings and receptions" },
+  {
+    id: "corporate",
+    name: "Corporate",
+    totalEvents: 28,
+    description: "Corporate summits and meetups",
+  },
+  {
+    id: "birthday",
+    name: "Birthday",
+    totalEvents: 18,
+    description: "Birthday parties and celebrations",
+  },
+  { id: "concert", name: "Concert", totalEvents: 9, description: "Concerts and live shows" },
 ];
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>(seedCategories);
+  const [categories, setCategories] = useState<CategoryWithStats[]>(seedCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<CategoryWithStats | null>(null);
 
-  const handleEdit = (category: Category) => {
+  const handleEdit = (category: CategoryWithStats) => {
     setEditingCategory(category);
     setDialogOpen(true);
   };
@@ -30,14 +44,19 @@ export default function CategoriesPage() {
     setDialogOpen(true);
   };
 
-  const handleSave = (category: Category) => {
+  const handleSave = (category: Pick<ICategory, "id" | "name" | "description">) => {
+    const categoryWithStats: CategoryWithStats = {
+      ...category,
+      totalEvents: editingCategory?.totalEvents ?? 0,
+    };
+
     setCategories((prev) => {
       if (editingCategory) {
-        return prev.map((item) => (item.name === editingCategory.name ? category : item));
+        return prev.map((item) => (item.id === editingCategory.id ? categoryWithStats : item));
       }
-      return [...prev, category];
+      return [...prev, categoryWithStats];
     });
- 
+
     setDialogOpen(false);
     setEditingCategory(null);
   };
