@@ -18,20 +18,33 @@ export type TCategoryWithStats = Pick<ICategoryEntity, "id" | "name" | "descript
 
 export const categoryCreateSchema = z.object({
   name: z
-    .string()
+    .string({ required_error: "Name is required", invalid_type_error: "Name must be a string" })
     .trim()
     .min(1, "Name is required")
     .max(100, "Name must be 100 characters or less"),
   description: z
-    .string()
+    .string({
+      required_error: "Description is required",
+      invalid_type_error: "Description must be a string",
+    })
     .trim()
     .min(1, "Description is required")
     .max(500, "Description must be 500 characters or less"),
 });
 
 export const categoryUpdateSchema = z.object({
-  name: z.string().trim().min(1).max(100).optional(),
-  description: z.string().trim().min(1).max(500).optional(),
+  name: z
+    .string({ invalid_type_error: "Name must be a string" })
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or less")
+    .optional(),
+  description: z
+    .string({ invalid_type_error: "Description must be a string" })
+    .trim()
+    .min(1, "Description is required")
+    .max(500, "Description must be 500 characters or less")
+    .optional(),
 });
 
 export const categoryIdSchema = z.object({

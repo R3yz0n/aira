@@ -17,6 +17,13 @@ function mapDoc(doc: any): ICategoryEntity {
   };
 }
 
+export class DuplicateCategoryError extends Error {
+  constructor(message = "Category already exists") {
+    super(message);
+    this.name = "DuplicateCategoryError";
+  }
+}
+
 export class MongoCategoryRepository implements CategoryRepository {
   async list(): Promise<ICategoryEntity[]> {
     const docs = await CategoryModel.findAll();
@@ -24,8 +31,16 @@ export class MongoCategoryRepository implements CategoryRepository {
   }
 
   async create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity> {
-    const doc = await CategoryModel.create(data);
-    return mapDoc(doc);
+    try {
+      const doc = await CategoryModel.create(data);
+      return mapDoc(doc);
+    } catch (err: any) {
+      // translate Mongo duplicate key error into a repository-level error
+      if (err?.name === "MongoServerError" && err?.code === 11000) {
+        throw new DuplicateCategoryError("Category with this name already exists");
+      }
+      throw err;
+    }
   }
 
   async update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null> {

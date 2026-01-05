@@ -46,18 +46,29 @@ export async function POST(req: NextRequest) {
       return errorResponse("INVALID_INPUT", "Invalid input", 400, parsed.error.flatten());
     }
 
-    const created = await categoryService.create(parsed.data);
-    const payload: ICategoryEntity = {
-      id: created.id,
-      name: created.name,
-      description: created.description,
-      createdAt:
-        created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
-      updatedAt:
-        created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
-    };
+    try {
+      const created = await categoryService.create(parsed.data);
+      const payload: ICategoryEntity = {
+        id: created.id,
+        name: created.name,
+        description: created.description,
+        createdAt:
+          created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
+        updatedAt:
+          created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
+      };
 
-    return successResponse<ICategoryEntity>(payload, 201);
+      return successResponse<ICategoryEntity>(payload, 201);
+    } catch (err: any) {
+      // Handle duplicate-name errors translated by the repository
+      const { DuplicateCategoryError } = await import("@/repositories/category-repository");
+      if (err instanceof DuplicateCategoryError) {
+        return errorResponse("DUPLICATE_RESOURCE", "Category with this name already exists", 409, {
+          field: "name",
+        });
+      }
+      throw err;
+    }
   } catch (err) {
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
