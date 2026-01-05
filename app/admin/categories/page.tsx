@@ -6,13 +6,9 @@ import { CategoryEditDialog } from "@/components/admin/categories/CategoryEditDi
 import { CategoryTable } from "@/components/admin/categories/CategoryTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ICategory } from "@/domain/category";
+import { ICategoryEntity, TCategoryWithStats } from "@/domain/category";
 
-type CategoryWithStats = Pick<ICategory, "id" | "name" | "description"> & {
-  totalEvents: number;
-};
-
-const seedCategories: CategoryWithStats[] = [
+const seedCategories: TCategoryWithStats[] = [
   { id: "wedding", name: "Wedding", totalEvents: 42, description: "Weddings and receptions" },
   {
     id: "corporate",
@@ -30,11 +26,12 @@ const seedCategories: CategoryWithStats[] = [
 ];
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<CategoryWithStats[]>(seedCategories);
+  const [categories, setCategories] = useState<TCategoryWithStats[]>(seedCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<CategoryWithStats | null>(null);
+  const [editingCategory, setEditingCategory] = useState<TCategoryWithStats | null>(null);
 
-  const handleEdit = (category: CategoryWithStats) => {
+  const handleEdit = (category: TCategoryWithStats) => {
+    console.log("Editing category", category);
     setEditingCategory(category);
     setDialogOpen(true);
   };
@@ -44,11 +41,13 @@ export default function CategoriesPage() {
     setDialogOpen(true);
   };
 
-  const handleSave = (category: Pick<ICategory, "id" | "name" | "description">) => {
-    const categoryWithStats: CategoryWithStats = {
+  const handleSave = (category: Pick<ICategoryEntity, "id" | "name" | "description">) => {
+    const categoryWithStats: TCategoryWithStats = {
       ...category,
       totalEvents: editingCategory?.totalEvents ?? 0,
     };
+
+    console.log(editingCategory ? "Updated category" : "Added category", categoryWithStats);
 
     setCategories((prev) => {
       if (editingCategory) {

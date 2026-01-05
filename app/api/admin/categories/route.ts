@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { categoryCreateSchema, ICategory } from "@/domain/category";
+import { categoryCreateSchema, ICategoryEntity } from "@/domain/category";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
@@ -15,7 +15,7 @@ const categoryService = new CategoryService(new MongoCategoryRepository());
 export async function GET() {
   try {
     const categories = await categoryService.list();
-    const payload: ICategory[] = categories.map((c) => ({
+    const payload: ICategoryEntity[] = categories.map((c) => ({
       id: c.id,
       name: c.name,
       description: c.description,
@@ -23,7 +23,7 @@ export async function GET() {
       updatedAt: c.updatedAt instanceof Date ? c.updatedAt.toISOString() : c.updatedAt,
     }));
 
-    return successResponse<ICategory[]>(payload, 200);
+    return successResponse<ICategoryEntity[]>(payload, 200);
   } catch (err) {
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     const created = await categoryService.create(parsed.data);
-    const payload: ICategory = {
+    const payload: ICategoryEntity = {
       id: created.id,
       name: created.name,
       description: created.description,
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
     };
 
-    return successResponse<ICategory>(payload, 201);
+    return successResponse<ICategoryEntity>(payload, 201);
   } catch (err) {
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);

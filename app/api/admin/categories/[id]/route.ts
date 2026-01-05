@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { categoryIdSchema, categoryUpdateSchema, ICategory } from "@/domain/category";
+import { categoryIdSchema, categoryUpdateSchema, ICategoryEntity } from "@/domain/category";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError, CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
@@ -30,7 +30,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     const updated = await categoryService.update(parsedId.data.id, parsedBody.data);
-    const payload: ICategory = {
+    const payload: ICategoryEntity = {
       id: updated.id,
       name: updated.name,
       description: updated.description,
@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         updated.updatedAt instanceof Date ? updated.updatedAt.toISOString() : updated.updatedAt,
     };
 
-    return successResponse<ICategory>(payload, 200);
+    return successResponse<ICategoryEntity>(payload, 200);
   } catch (err) {
     if (err instanceof CategoryNotFoundError) {
       return errorResponse("NOT_FOUND", "Category not found", 404);

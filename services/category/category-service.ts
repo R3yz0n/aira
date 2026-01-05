@@ -1,7 +1,7 @@
 import {
   CategoryCreateInput,
   CategoryUpdateInput,
-  ICategory,
+  ICategoryEntity,
   categoryCreateSchema,
   categoryUpdateSchema,
 } from "@/domain/category";
@@ -17,11 +17,11 @@ export class CategoryNotFoundError extends Error {
 export class CategoryService {
   constructor(private repository: CategoryRepository) {}
 
-  async list(): Promise<ICategory[]> {
+  async list(): Promise<ICategoryEntity[]> {
     return this.repository.list();
   }
 
-  async create(input: CategoryCreateInput): Promise<ICategory> {
+  async create(input: CategoryCreateInput): Promise<ICategoryEntity> {
     const parsed = categoryCreateSchema.parse(input);
     return this.repository.create({
       name: parsed.name,
@@ -29,7 +29,7 @@ export class CategoryService {
     });
   }
 
-  async update(id: string, input: CategoryUpdateInput): Promise<ICategory> {
+  async update(id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> {
     const parsed = categoryUpdateSchema.parse(input);
     const updated = await this.repository.update(id, parsed);
     if (!updated) throw new CategoryNotFoundError();

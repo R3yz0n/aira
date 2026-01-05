@@ -1,13 +1,13 @@
-import { ICategory } from "@/domain/category";
+import { ICategoryEntity } from "@/domain/category";
 import { CategoryModel } from "@/lib/models/category";
 
 export interface CategoryRepository {
-  list(): Promise<ICategory[]>;
-  create(data: Pick<ICategory, "name" | "description">): Promise<ICategory>;
-  update(id: string, data: Partial<ICategory>): Promise<ICategory | null>;
+  list(): Promise<ICategoryEntity[]>;
+  create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity>;
+  update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null>;
 }
 
-function mapDoc(doc: any): ICategory {
+function mapDoc(doc: any): ICategoryEntity {
   return {
     id: doc._id ? String(doc._id) : "",
     name: doc.name,
@@ -18,17 +18,17 @@ function mapDoc(doc: any): ICategory {
 }
 
 export class MongoCategoryRepository implements CategoryRepository {
-  async list(): Promise<ICategory[]> {
+  async list(): Promise<ICategoryEntity[]> {
     const docs = await CategoryModel.findAll();
     return docs.map(mapDoc);
   }
 
-  async create(data: Pick<ICategory, "name" | "description">): Promise<ICategory> {
+  async create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity> {
     const doc = await CategoryModel.create(data);
     return mapDoc(doc);
   }
 
-  async update(id: string, data: Partial<ICategory>): Promise<ICategory | null> {
+  async update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null> {
     const doc = await CategoryModel.updateById(id, data);
     return doc ? mapDoc(doc) : null;
   }

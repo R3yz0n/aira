@@ -1,12 +1,20 @@
 import { z } from "zod";
 
 export interface ICategory {
-  id: string;
   name: string;
   description: string;
+}
+export interface ICategoryEntity extends ICategory {
+  id: string;
   createdAt: Date | string;
   updatedAt?: Date | string;
 }
+
+export type TCategoryWithStats = Pick<ICategoryEntity, "id" | "name" | "description"> & {
+  totalEvents: number;
+};
+
+// export type IAdmin = z.infer<typeof adminLoginSchema>;
 
 export const categoryCreateSchema = z.object({
   name: z
