@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { adminAuthApi } from "@/lib/api/admin-auth";
-import type { IAdminLoginRequest, IAdminLoginResponse, IErrorResponse } from "@/lib/types/api";
+import type { IErrorResponse } from "@/lib/types/api";
+import { IAdmin, IAuthToken } from "@/domain/admin";
 
 interface IUseAdminLoginOptions {
   onSuccess?: () => void;
@@ -14,12 +15,10 @@ export function useAdminLogin(options: IUseAdminLoginOptions = {}) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const login = async (
-    credentials: IAdminLoginRequest
-  ): Promise<{ success: boolean; error?: string }> => {
+  const login = async (credentials: IAdmin): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      const { token }: IAdminLoginResponse = await adminAuthApi.login(credentials);
+      const { token }: IAuthToken = await adminAuthApi.login(credentials);
 
       adminAuthApi.storeToken(token);
 

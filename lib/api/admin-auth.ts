@@ -1,17 +1,12 @@
+import { IAdmin, IAuthToken } from "@/domain/admin";
 import axiosInstance from "./axios";
 import { isTokenExpired } from "@/lib/auth/jwt-client";
-import type {
-  IAdminLoginRequest,
-  IAdminLoginResponse,
-  IAxiosResponse,
-  IApiErrorResponse,
-  IErrorResponse,
-} from "@/lib/types/api";
+import type { IAxiosResponse, IApiErrorResponse, IErrorResponse } from "@/lib/types/api";
 
 export const adminAuthApi = {
-  async login(credentials: IAdminLoginRequest): Promise<IAdminLoginResponse> {
+  async login(credentials: IAdmin): Promise<IAuthToken> {
     try {
-      let { data }: IAxiosResponse<IAdminLoginResponse> = await axiosInstance.post(
+      let { data }: IAxiosResponse<IAuthToken> = await axiosInstance.post(
         "/api/admin/login",
         credentials
       );
@@ -26,7 +21,7 @@ export const adminAuthApi = {
         } satisfies IErrorResponse;
       }
 
-      return { token } satisfies IAdminLoginResponse;
+      return { token } satisfies IAuthToken;
     } catch (error) {
       const err = error as IApiErrorResponse;
 

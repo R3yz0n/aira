@@ -1,4 +1,4 @@
-import { AdminLoginInput } from "@/domain/admin";
+import { IAdmin } from "@/domain/admin";
 import { verifyPassword } from "@/lib/auth/hash";
 import { signToken } from "@/lib/auth/jwt";
 import { AdminRepository } from "@/repositories/admin-repository";
@@ -17,11 +17,11 @@ export interface IAuthServiceResult {
 export class AdminAuthService {
   constructor(private adminRepository: AdminRepository) {}
 
-  async login(input: AdminLoginInput): Promise<IAuthServiceResult> {
+  async login(input: IAdmin): Promise<IAuthServiceResult> {
     const admin = await this.adminRepository.findByEmail(input.email);
     if (!admin) throw new InvalidCredentialsError();
 
-    const match = await verifyPassword(input.password, admin.passwordHash);
+    const match = await verifyPassword(input.password, admin.password);
     if (!match) throw new InvalidCredentialsError();
 
     const token = signToken({ sub: admin.id, email: admin.email });

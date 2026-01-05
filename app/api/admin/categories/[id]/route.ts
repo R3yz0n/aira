@@ -15,9 +15,10 @@ const categoryService = new CategoryService(new MongoCategoryRepository());
  * - 404: NOT_FOUND
  * - 500: INTERNAL_ERROR
  */
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const parsedId = categoryIdSchema.safeParse({ id: params.id });
+    const { id } = await params;
+    const parsedId = categoryIdSchema.safeParse({ id });
     if (!parsedId.success) {
       return errorResponse("INVALID_INPUT", "Invalid category id", 400, parsedId.error.flatten());
     }
