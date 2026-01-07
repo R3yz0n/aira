@@ -5,7 +5,8 @@ import { errorResponse } from "@/lib/api/response-handler";
 import { verifyToken } from "@/lib/auth/jwt";
 
 interface DefaultRouteContext {
-  params?: Record<string, string | string[]>;
+  // Next.js may pass `params` as a plain object or as a Promise of an object
+  params?: Record<string, string | string[]> | Promise<Record<string, string | string[]>>;
 }
 
 export interface AdminAuthClaims extends JwtPayload {
