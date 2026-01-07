@@ -31,14 +31,4 @@ export interface IErrorResponse {
   details: unknown;
 }
 
-// Admin Auth Specific
-export interface IAdminLoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface IAdminLoginResponse {
-  token: string;
-}
-
 export type IAxiosResponse<T = object> = AxiosResponse<IApiSuccessResponse<T>>;

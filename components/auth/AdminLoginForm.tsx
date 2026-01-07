@@ -2,32 +2,25 @@
 
 import * as React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { adminLoginSchema, IAdmin } from "@/domain/admin";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Eye, EyeOff, Lock } from "lucide-react";
 import { useAdminLogin } from "@/hooks/use-admin-login";
 
-const LoginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-
-type LoginValues = z.infer<typeof LoginSchema>;
-
 export default function AdminLoginForm() {
   const { login, isLoading } = useAdminLogin();
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const { register, handleSubmit, formState, reset } = useForm<LoginValues>({
-    resolver: zodResolver(LoginSchema),
+  const { register, handleSubmit, formState, reset } = useForm<IAdmin>({
+    resolver: zodResolver(adminLoginSchema),
     defaultValues: { email: "airaevents001@gmail.com", password: "password" },
     mode: "onChange",
   });
 
-  async function onSubmit(values: LoginValues) {
+  async function onSubmit(values: IAdmin) {
     const result: { success: boolean; error?: string } = await login(values);
     if (result.success) {
       reset();

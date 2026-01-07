@@ -3,23 +3,36 @@
 import { RequireAdmin } from "@/components/auth/RequireAdmin";
 import { Button } from "@/components/ui/button";
 import { useAdminLogin } from "@/hooks/use-admin-login";
+import { Sidebar } from "@/components/admin/Sidebar";
+import { LogOut } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAdminLogin();
+
   return (
     <RequireAdmin>
-      <div className="min-h-screen bg-gradient-to-br from-aira-blue to-aira-gold p-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
-              <p className="text-white/80">Welcome to the admin panel</p>
+      <div className="min-h-screen bg-background flex">
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Main Content */}
+        <div className="flex-1">
+          {/* Header */}
+          <div className="bg-card border-b border-border sticky top-0 z-40">
+            <div className="flex items-center justify-between px-8 py-4">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>
+                <p className="text-sm text-muted-foreground">Manage your events and categories</p>
+              </div>
+              <Button variant="outline" onClick={logout} className="flex items-center gap-2">
+                <LogOut className="w-4 h-4" />
+                Logout
+              </Button>
             </div>
-            <Button variant="elegant" onClick={logout}>
-              Logout
-            </Button>
           </div>
-          {children}
+
+          {/* Page Content */}
+          <div className="p-8">{children}</div>
         </div>
       </div>
     </RequireAdmin>

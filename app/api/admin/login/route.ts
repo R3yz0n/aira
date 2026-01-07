@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { adminLoginSchema } from "@/domain/admin";
+import { adminLoginSchema, IAuthToken } from "@/domain/admin";
 import {
   AdminAuthService,
   IAuthServiceResult,
@@ -7,7 +7,6 @@ import {
 } from "@/services/admin/auth-service";
 import { MongoAdminRepository } from "@/repositories/admin-repository";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import type { IAdminLoginResponse } from "@/lib/types/api";
 
 const authService = new AdminAuthService(new MongoAdminRepository());
 
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { token }: IAuthServiceResult = await authService.login(parsed.data);
-    return successResponse<IAdminLoginResponse>({ token }, 200);
+    return successResponse<IAuthToken>({ token }, 200);
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
       return errorResponse("INVALID_CREDENTIALS", "Invalid credentials", 401, {
