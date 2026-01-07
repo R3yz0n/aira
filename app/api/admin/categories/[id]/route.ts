@@ -3,8 +3,13 @@ import { categoryIdSchema, categoryUpdateSchema, ICategoryEntity } from "@/domai
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError, CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
+import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
 
 const categoryService = new CategoryService(new MongoCategoryRepository());
+
+interface CategoryRouteContext {
+  params: { id: string };
+}
 
 /**
  * PUT /api/admin/categories/:id
@@ -15,10 +20,9 @@ const categoryService = new CategoryService(new MongoCategoryRepository());
  * - 404: NOT_FOUND
  * - 500: INTERNAL_ERROR
  */
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const PUT = withAdminAuth<CategoryRouteContext>(async (req: NextRequest, { params }) => {
   try {
-    const { id } = await params;
-    const parsedId = categoryIdSchema.safeParse({ id });
+    const parsedId = categoryIdSchema.safeParse({ id: params?.id });
     if (!parsedId.success) {
       return errorResponse("INVALID_INPUT", "Invalid category id", 400, parsedId.error.flatten());
     }
@@ -48,4 +52,4 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }
-}
+});

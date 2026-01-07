@@ -3,6 +3,7 @@ import { categoryCreateSchema, ICategoryEntity } from "@/domain/category";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
+import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
 
 const categoryService = new CategoryService(new MongoCategoryRepository());
 
@@ -22,6 +23,8 @@ export async function GET() {
       createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : c.createdAt,
       updatedAt: c.updatedAt instanceof Date ? c.updatedAt.toISOString() : c.updatedAt,
     }));
+    
+    
 
     return successResponse<ICategoryEntity[]>(payload, 200);
   } catch (err) {
@@ -38,7 +41,7 @@ export async function GET() {
  * - 400: INVALID_INPUT (zod issues)
  * - 500: INTERNAL_ERROR
  */
-export async function POST(req: NextRequest) {
+export const POST = withAdminAuth(async (req: NextRequest) => {
   try {
     const body = await req.json();
     const parsed = categoryCreateSchema.safeParse(body);
@@ -73,4 +76,4 @@ export async function POST(req: NextRequest) {
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }
-}
+});
