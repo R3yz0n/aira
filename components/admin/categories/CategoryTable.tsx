@@ -14,12 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
 interface CategoryTableProps {
-  category: TCategoryWithStats[];
-  onEdit: (category: TCategoryWithStats) => void;
-  onDelete?: (category: TCategoryWithStats) => void;
+  categories: any[];
+  // categories: TCategoryWithStats[];
+  onEdit: (categories: TCategoryWithStats) => void;
+  onDelete?: (categories: TCategoryWithStats) => void;
 }
 
-export function CategoryTable({ category, onEdit, onDelete }: CategoryTableProps) {
+export function CategoryTable({ categories, onEdit, onDelete }: CategoryTableProps) {
   return (
     <Card className="p-6 bg-card shadow-md">
       <Table>
@@ -32,14 +33,14 @@ export function CategoryTable({ category, onEdit, onDelete }: CategoryTableProps
           </TableRow>
         </TableHeader>
         <TableBody>
-          {category.length === 0 ? (
+          {categories.length === 0 ? (
             <TableRow>
               <TableCell colSpan={4} className="py-8 text-lg text-center text-muted-foreground">
                 No categories available
               </TableCell>
             </TableRow>
           ) : (
-            category.map((category) => (
+            categories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell className="font-medium text-foreground">{category.name}</TableCell>
                 <TableCell className="text-muted-foreground">{category.totalEvents}</TableCell>
