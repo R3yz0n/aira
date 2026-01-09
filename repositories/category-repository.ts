@@ -26,7 +26,8 @@ export class DuplicateCategoryError extends Error {
 
 export class MongoCategoryRepository implements CategoryRepository {
   async list(): Promise<ICategoryEntity[]> {
-    const docs = await CategoryModel.findAll();
+    const docs: ICategoryEntity[] = await CategoryModel.findAll();
+
     return docs.map(mapDoc);
   }
 

@@ -16,28 +16,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { CategoryCreateInput, categoryCreateSchema, ICategoryEntity } from "@/domain/category";
-type CategoryForUI = Pick<ICategoryEntity, "id" | "name" | "description">;
+import {
+  CategoryCreateInput,
+  categoryCreateSchema,
+  categoryUpdateSchema,
+  ICategory,
+  ICategoryEntity,
+  TCategoryWithStats,
+} from "@/domain/category";
 interface CategoryEditDialogProps {
   open: boolean;
-  initialValue: CategoryForUI | null;
+  initialValue: TCategoryWithStats | null;
   onClose: () => void;
-  onSave: (category: CategoryForUI) => void;
+  onCreate: (category: ICategory) => Promise<ICategoryEntity>;
+  // onUpdate: (id: string, category: Partial<ICategory>) => Promise<ICategoryEntity>;
+  isLoading: boolean;
 }
 
 export function CategoryEditDialog({
   open,
   initialValue,
   onClose,
-  onSave,
-}: CategoryEditDialogProps) {
+  onCreate,
+}: // onUpdate,
+CategoryEditDialogProps) {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CategoryCreateInput>({
-    resolver: zodResolver(categoryCreateSchema),
+    resolver: zodResolver(initialValue ? categoryUpdateSchema : categoryCreateSchema),
     defaultValues: {
       name: initialValue?.name ?? "",
       description: initialValue?.description ?? "",
@@ -51,12 +60,13 @@ export function CategoryEditDialog({
     });
   }, [initialValue, reset]);
 
-  const handleSubmitForm = (values: CategoryCreateInput) => {
-    onSave({
-      id: initialValue?.id || Date.now().toString(),
-      name: values.name.trim(),
-      description: values.description.trim(),
-    });
+  const handleSubmitForm = async (values: CategoryCreateInput) => {
+    if (initialValue) {
+    } else {
+      await onCreate(values);
+      reset();
+    }
+    onClose();
   };
 
   return (

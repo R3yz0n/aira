@@ -25,6 +25,8 @@ const CategoryModelInternal =
 export class CategoryModel {
   static async ensureConnected() {
     await connectMongoose();
+    // Ensure all indexes are created/synced (including unique constraint on name)
+    await CategoryModelInternal.syncIndexes();
   }
 
   static async findAll() {
