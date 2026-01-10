@@ -6,7 +6,7 @@ export const categoryApi = {
   async list(): Promise<ICategoryEntity[]> {
     try {
       let { data }: IAxiosResponse<ICategoryEntity[]> = await axiosInstance.get(
-        "/api/admin/categories"
+        "/api/public/categories"
       );
       return data?.data as ICategoryEntity[];
     } catch (error) {

@@ -8,32 +8,6 @@ import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
 const categoryService = new CategoryService(new MongoCategoryRepository());
 
 /**
- * GET /api/admin/categories
- * Lists all categories.
- * - 200: array of categories
- * - 500: INTERNAL_ERROR
- */
-export async function GET() {
-  try {
-    const categories = await categoryService.list();
-    const payload: ICategoryEntity[] = categories.map((c) => ({
-      id: c.id,
-      name: c.name,
-      description: c.description,
-      createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : c.createdAt,
-      updatedAt: c.updatedAt instanceof Date ? c.updatedAt.toISOString() : c.updatedAt,
-    }));
-    
-    
-
-    return successResponse<ICategoryEntity[]>(payload, 200);
-  } catch (err) {
-    console.error(err);
-    return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
-  }
-}
-
-/**
  * POST /api/admin/categories
  * Creates a category.
  * - Body: { name, description }

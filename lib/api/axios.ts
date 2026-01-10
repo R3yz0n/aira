@@ -17,6 +17,9 @@ axiosInstance.interceptors.request.use(
     if (config.url?.includes("/api/admin/login")) {
       return config;
     }
+    if (config?.url?.includes("/api/public/")) {
+      return config;
+    }
 
     const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
 
@@ -24,6 +27,7 @@ axiosInstance.interceptors.request.use(
       if (isTokenExpired(token)) {
         if (typeof window !== "undefined") {
           localStorage.removeItem("admin_token");
+          window.location.href = "/login";
         }
       } else {
         config.headers.Authorization = `Bearer ${token}`;
@@ -50,6 +54,10 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("admin_token");
+        // Only redirect to login if we're on an admin route
+        if (window.location.pathname.startsWith("/admin")) {
+          window.location.href = "/login";
+        }
       }
     }
 
