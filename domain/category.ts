@@ -37,18 +37,16 @@ export const categoryUpdateSchema = z.object({
     .string({ invalid_type_error: "Name must be a string" })
     .trim()
     .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or less")
-    .optional(),
+    .max(100, "Name must be 100 characters or less"),
   description: z
     .string({ invalid_type_error: "Description must be a string" })
     .trim()
     .min(1, "Description is required")
-    .max(500, "Description must be 500 characters or less")
-    .optional(),
+    .max(500, "Description must be 500 characters or less"),
 });
 
 export const categoryIdSchema = z.object({
-  id: z.string().trim().min(1),
+  id: z.string().trim().min(1, "ID is required"),
 });
 
 export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>;

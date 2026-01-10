@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server";
 import { categoryCreateSchema, ICategoryEntity } from "@/domain/category";
-import { MongoCategoryRepository } from "@/repositories/category-repository";
+import {
+  DuplicateCategoryError,
+  MongoCategoryRepository,
+} from "@/repositories/category-repository";
 import { CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
@@ -23,30 +26,22 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
       return errorResponse("INVALID_INPUT", "Invalid input", 400, parsed.error.flatten());
     }
 
-    try {
-      const created = await categoryService.create(parsed.data);
-      const payload: ICategoryEntity = {
-        id: created.id,
-        name: created.name,
-        description: created.description,
-        createdAt:
-          created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
-        updatedAt:
-          created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
-      };
+    const created = await categoryService.create(parsed.data);
+    const payload: ICategoryEntity = {
+      id: created.id,
+      name: created.name,
+      description: created.description,
+      createdAt:
+        created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
+      updatedAt:
+        created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
+    };
 
-      return successResponse<ICategoryEntity>(payload, 201);
-    } catch (err: any) {
-      // Handle duplicate-name errors translated by the repository
-      const { DuplicateCategoryError } = await import("@/repositories/category-repository");
-      if (err instanceof DuplicateCategoryError) {
-        return errorResponse("DUPLICATE_RESOURCE", "Category with this name already exists", 409, {
-          field: "name",
-        });
-      }
-      throw err;
+    return successResponse<ICategoryEntity>(payload, 201);
+  } catch (err: any) {
+    if (err instanceof DuplicateCategoryError) {
+      return errorResponse("DUPLICATE_CATEGORY", err.message, 409);
     }
-  } catch (err) {
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }

@@ -24,6 +24,13 @@ export class DuplicateCategoryError extends Error {
   }
 }
 
+export class InvalidCategoryIdError extends Error {
+  constructor(message = "Invalid category ID format") {
+    super(message);
+    this.name = "InvalidCategoryIdError";
+  }
+}
+
 export class MongoCategoryRepository implements CategoryRepository {
   async list(): Promise<ICategoryEntity[]> {
     const docs: ICategoryEntity[] = await CategoryModel.findAll();
@@ -45,7 +52,19 @@ export class MongoCategoryRepository implements CategoryRepository {
   }
 
   async update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null> {
-    const doc = await CategoryModel.updateById(id, data);
-    return doc ? mapDoc(doc) : null;
+    try {
+      const doc: ICategoryEntity = await CategoryModel.updateById(id, data);
+      return doc ? mapDoc(doc) : null;
+    } catch (err: any) {
+      // Handle invalid ObjectId format
+      if (err?.name === "CastError" || err?.name === "BSONError") {
+        throw new InvalidCategoryIdError("Invalid category ID format");
+      }
+      // Handle duplicate key error
+      if (err?.name === "MongoServerError" && err?.code === 11000) {
+        throw new DuplicateCategoryError("Category with this name already exists");
+      }
+      throw err;
+    }
   }
 }
