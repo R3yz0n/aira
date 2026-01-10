@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { categoryIdSchema, categoryUpdateSchema, ICategoryEntity } from "@/domain/category";
-import { MongoCategoryRepository } from "@/repositories/category-repository";
+import {
+  DuplicateCategoryError,
+  InvalidCategoryIdError,
+  MongoCategoryRepository,
+} from "@/repositories/category-repository";
 import { CategoryNotFoundError, CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
@@ -49,9 +53,15 @@ export const PUT = withAdminAuth<CategoryRouteContext>(
       };
 
       return successResponse<ICategoryEntity>(payload, 200);
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof CategoryNotFoundError) {
         return errorResponse("NOT_FOUND", "Category not found", 404);
+      }
+      if (err instanceof DuplicateCategoryError) {
+        return errorResponse("DUPLICATE_CATEGORY", err.message, 409);
+      }
+      if (err instanceof InvalidCategoryIdError) {
+        return errorResponse("INVALID_INPUT", err.message, 400);
       }
       console.error(err);
       return errorResponse("INTERNAL_ERROR", "Internal server error", 500);

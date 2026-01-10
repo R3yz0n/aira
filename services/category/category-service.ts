@@ -31,7 +31,10 @@ export class CategoryService {
 
   async update(id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> {
     const parsed = categoryUpdateSchema.parse(input);
-    const updated = await this.repository.update(id, parsed);
+    const updated = await this.repository.update(id, {
+      name: parsed.name,
+      description: parsed.description,
+    });
     if (!updated) throw new CategoryNotFoundError();
     return updated;
   }
