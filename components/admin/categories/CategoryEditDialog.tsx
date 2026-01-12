@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
-  CategoryCreateInput,
+  TCategoryCreateInput,
   categoryCreateSchema,
   categoryUpdateSchema,
   ICategory,
@@ -45,7 +45,7 @@ export function CategoryEditDialog({
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CategoryCreateInput>({
+  } = useForm<TCategoryCreateInput>({
     resolver: zodResolver(initialValue ? categoryUpdateSchema : categoryCreateSchema),
     defaultValues: {
       name: initialValue?.name ?? "",
@@ -60,7 +60,7 @@ export function CategoryEditDialog({
     });
   }, [initialValue, reset]);
 
-  const handleSubmitForm = async (values: CategoryCreateInput) => {
+  const handleSubmitForm = async (values: TCategoryCreateInput) => {
     if (initialValue) {
       await onUpdate(initialValue.id, values);
     } else {

@@ -1,6 +1,6 @@
 import {
-  CategoryCreateInput,
-  CategoryUpdateInput,
+  TCategoryCreateInput,
+  TCategoryUpdateInput,
   ICategoryEntity,
   categoryCreateSchema,
   categoryUpdateSchema,
@@ -21,7 +21,7 @@ export class CategoryService {
     return this.repository.list();
   }
 
-  async create(input: CategoryCreateInput): Promise<ICategoryEntity> {
+  async create(input: TCategoryCreateInput): Promise<ICategoryEntity> {
     const parsed = categoryCreateSchema.parse(input);
     return this.repository.create({
       name: parsed.name,
@@ -29,7 +29,7 @@ export class CategoryService {
     });
   }
 
-  async update(id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> {
+  async update(id: string, input: TCategoryUpdateInput): Promise<ICategoryEntity> {
     const parsed = categoryUpdateSchema.parse(input);
     const updated = await this.repository.update(id, {
       name: parsed.name,

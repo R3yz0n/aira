@@ -3,6 +3,7 @@ import { CategoryModel } from "@/lib/models/category";
 
 export interface CategoryRepository {
   list(): Promise<ICategoryEntity[]>;
+  findById(id: string): Promise<ICategoryEntity | null>;
   create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity>;
   update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null>;
 }
@@ -36,6 +37,19 @@ export class MongoCategoryRepository implements CategoryRepository {
     const docs: ICategoryEntity[] = await CategoryModel.findAll();
 
     return docs.map(mapDoc);
+  }
+
+  async findById(id: string): Promise<ICategoryEntity | null> {
+    try {
+      const doc = await CategoryModel.findById(id);
+      return doc ? mapDoc(doc) : null;
+    } catch (err: any) {
+      // Handle invalid ObjectId format
+      if (err?.name === "CastError" || err?.name === "BSONError") {
+        throw new InvalidCategoryIdError("Invalid category ID format");
+      }
+      throw err;
+    }
   }
 
   async create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity> {
