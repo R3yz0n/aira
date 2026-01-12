@@ -29,7 +29,7 @@ interface CategoryEditDialogProps {
   initialValue: TCategoryWithStats | null;
   onClose: () => void;
   onCreate: (category: ICategory) => Promise<ICategoryEntity>;
-  // onUpdate: (id: string, category: Partial<ICategory>) => Promise<ICategoryEntity>;
+  onUpdate: (id: string, category: ICategory) => Promise<ICategoryEntity>;
   isLoading: boolean;
 }
 
@@ -38,8 +38,8 @@ export function CategoryEditDialog({
   initialValue,
   onClose,
   onCreate,
-}: // onUpdate,
-CategoryEditDialogProps) {
+  onUpdate,
+}: CategoryEditDialogProps) {
   const {
     register,
     handleSubmit,
@@ -62,10 +62,11 @@ CategoryEditDialogProps) {
 
   const handleSubmitForm = async (values: CategoryCreateInput) => {
     if (initialValue) {
+      await onUpdate(initialValue.id, values);
     } else {
       await onCreate(values);
-      reset();
     }
+    reset();
     onClose();
   };
 
