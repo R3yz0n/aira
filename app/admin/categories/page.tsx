@@ -13,7 +13,7 @@ export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<TCategoryWithStats | null>(null);
 
-  const { list, create, categories, isLoading } = useCategory();
+  const { list, create, update, categories, isLoading } = useCategory();
 
   // load categories once on mount
   useEffect(() => {
@@ -61,6 +61,7 @@ export default function CategoriesPage() {
         initialValue={editingCategory}
         onClose={handleClose}
         onCreate={create}
+        onUpdate={update}
         isLoading={isLoading}
       />
     </div>

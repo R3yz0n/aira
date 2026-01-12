@@ -35,4 +35,21 @@ export const categoryApi = {
       throw { message, status, details: err.error?.details } satisfies IErrorResponse;
     }
   },
+
+  async update(id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> {
+    try {
+      let { data }: IAxiosResponse<ICategoryEntity> = await axiosInstance.put(
+        `/api/admin/categories/${id}`,
+        input
+      );
+      return data?.data as ICategoryEntity;
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      const status: number = err.status;
+      let message: string = err.error?.message || "Update category failed";
+
+      // surface validation errors / duplicate resource / not found
+      throw { message, status, details: err.error?.details } satisfies IErrorResponse;
+    }
+  },
 };
