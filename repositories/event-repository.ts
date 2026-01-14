@@ -2,7 +2,6 @@ import { IEventEntity } from "@/domain/event";
 import { EventModel } from "@/lib/models/event";
 
 export interface EventRepository {
-  list(): Promise<IEventEntity[]>;
   findById(id: string): Promise<IEventEntity | null>;
   findByCategory(categoryId: string): Promise<IEventEntity[]>;
   create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity>;
@@ -37,11 +36,6 @@ export class InvalidCategoryError extends Error {
 }
 
 export class MongoEventRepository implements EventRepository {
-  async list(): Promise<IEventEntity[]> {
-    const docs = await EventModel.findAll();
-    return docs.map(mapDoc);
-  }
-
   async findById(id: string): Promise<IEventEntity | null> {
     try {
       const doc = await EventModel.findById(id);

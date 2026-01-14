@@ -16,10 +16,6 @@ export class EventService {
     private categoryRepository: CategoryRepository
   ) {}
 
-  async list(): Promise<IEventEntity[]> {
-    return this.eventRepository.list();
-  }
-
   async findById(id: string): Promise<IEventEntity> {
     const event = await this.eventRepository.findById(id);
     if (!event) throw new EventNotFoundError();
