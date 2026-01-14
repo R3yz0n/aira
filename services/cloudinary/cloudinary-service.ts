@@ -22,6 +22,13 @@ export class CloudinaryUploadError extends Error {
   }
 }
 
+export class CloudinaryQuotaError extends Error {
+  constructor(message = "Storage quota exceeded") {
+    super(message);
+    this.name = "CloudinaryQuotaError";
+  }
+}
+
 export class CloudinaryService {
   /**
    * Upload image buffer to Cloudinary with optimization
@@ -36,21 +43,19 @@ export class CloudinaryService {
           .upload_stream(
             {
               folder,
-              // Optimization settings
-              transformation: [
-                {
-                  quality: "auto:best", // Auto quality optimization
-                  fetch_format: "auto", // Auto format (WebP, AVIF when supported)
-                },
-                {
-                  width: 1920, // Max width
-                  height: 1080, // Max height
-                  crop: "limit", // Don't upscale, only downscale if larger
-                },
-              ],
-              // Additional settings
               resource_type: "image",
               allowed_formats: ["jpg", "png", "webp", "gif", "jpeg"],
+              // Eager transformations: create optimized versions during upload
+              eager: [
+                {
+                  quality: "auto:best", // Smart compression - maintains visual quality
+                  fetch_format: "auto", // Auto WebP/AVIF conversion (50% smaller, same quality)
+                  width: 1920,
+                  height: 1080,
+                  crop: "limit", // Only resize if larger
+                },
+              ],
+              eager_async: false, // Wait for transformation to complete
             },
             (error, result) => {
               if (error) reject(error);
@@ -60,8 +65,11 @@ export class CloudinaryService {
           .end(buffer);
       });
 
+      // Use the eager transformed URL (optimized version)
+      const optimizedUrl = result.eager?.[0]?.secure_url || result.secure_url;
+
       return {
-        url: result.secure_url,
+        url: optimizedUrl,
         publicId: result.public_id,
         width: result.width,
         height: result.height,
@@ -69,6 +77,12 @@ export class CloudinaryService {
       };
     } catch (error: any) {
       console.error("Cloudinary upload error:", error);
+
+      // Check for quota exceeded errors
+      if (error.message?.includes("quota") || error.message?.includes("limit")) {
+        throw new CloudinaryQuotaError();
+      }
+
       throw new CloudinaryUploadError(error.message || "Failed to upload image");
     }
   }

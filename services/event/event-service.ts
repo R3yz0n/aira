@@ -1,18 +1,12 @@
-import { EventCreateInput, IEventEntity, eventCreateSchema } from "@/domain/event";
+import { EventCreateInput, IEventEntity, eventCreateSchema, imageUrlSchema } from "@/domain/event";
 import { EventRepository } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
+import { CategoryNotFoundError } from "../category/category-service";
 
 export class EventNotFoundError extends Error {
   constructor() {
     super("Event not found");
     this.name = "EventNotFoundError";
-  }
-}
-
-export class CategoryNotFoundError extends Error {
-  constructor() {
-    super("Category not found");
-    this.name = "CategoryNotFoundError";
   }
 }
 
@@ -36,23 +30,25 @@ export class EventService {
     return this.eventRepository.findByCategory(categoryId);
   }
 
-  async create(input: EventCreateInput): Promise<IEventEntity> {
-    // Validate input
-    const parsed = eventCreateSchema.parse(input);
+  async create(input: EventCreateInput & { imageUrl: string }): Promise<IEventEntity> {
+    // Validate event fields
+    const eventParsed = eventCreateSchema.parse(input);
+
+    // Validate image URL
+    const urlParsed = imageUrlSchema.parse({ imageUrl: input.imageUrl });
 
     // Verify category exists
-    const category = await this.categoryRepository.list();
-    const categoryExists = category.some((cat) => cat.id === parsed.categoryId);
-    if (!categoryExists) {
+    const category = await this.categoryRepository.findById(eventParsed.categoryId);
+    if (!category) {
       throw new CategoryNotFoundError();
     }
 
     // Create event
     return this.eventRepository.create({
-      title: parsed.title,
-      description: parsed.description,
-      imageUrl: parsed.imageUrl,
-      categoryId: parsed.categoryId,
+      title: eventParsed.title,
+      description: eventParsed.description,
+      imageUrl: urlParsed.imageUrl,
+      categoryId: eventParsed.categoryId,
     });
   }
 
