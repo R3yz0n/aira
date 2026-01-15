@@ -4,6 +4,7 @@ export interface IEvent {
   title: string;
   description: string;
   imageUrl: string;
+  publicId: string;
   categoryId: string;
 }
 
@@ -11,6 +12,7 @@ export interface IEventEntity extends IEvent {
   id: string;
   createdAt: Date | string;
   updatedAt?: Date | string;
+  publicId: string;
 }
 
 export const eventCreateSchema = z.object({

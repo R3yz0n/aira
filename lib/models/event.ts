@@ -6,6 +6,7 @@ export interface IEventDoc {
   title: string;
   description: string;
   imageUrl: string;
+  publicId: string;
   categoryId: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt?: Date;
@@ -16,6 +17,7 @@ const EventSchema = new mongoose.Schema<IEventDoc>(
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     imageUrl: { type: String, required: true, trim: true },
+    publicId: { type: String, required: true, trim: true },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -54,10 +56,17 @@ export class EventModel {
 
   static async create(payload: Omit<IEvent, "id">) {
     await this.ensureConnected();
+    console.log("EventModel.create payload:", {
+      title: payload.title,
+      publicId: payload.publicId,
+      imageUrl: payload.imageUrl,
+      payload_keys: Object.keys(payload),
+    });
     const doc = await EventModelInternal.create({
       ...payload,
       categoryId: new mongoose.Types.ObjectId(payload.categoryId),
     });
+
     return doc.toObject();
   }
 

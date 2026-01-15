@@ -35,7 +35,9 @@ export class EventService {
     return this.eventRepository.findByCategory(categoryId);
   }
 
-  async create(input: EventCreateInput & { imageUrl: string }): Promise<IEventEntity> {
+  async create(
+    input: EventCreateInput & { imageUrl: string; publicId: string }
+  ): Promise<IEventEntity> {
     // Validate event fields
     const eventParsed = eventCreateSchema.parse(input);
 
@@ -54,12 +56,14 @@ export class EventService {
       description: eventParsed.description,
       imageUrl: urlParsed.imageUrl,
       categoryId: eventParsed.categoryId,
+      publicId: input.publicId,
     });
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<IEventEntity> {
     const deleted = await this.eventRepository.deleteById(id);
     if (!deleted) throw new EventNotFoundError();
+    return deleted;
   }
 
   async countByCategory(categoryId: string): Promise<number> {

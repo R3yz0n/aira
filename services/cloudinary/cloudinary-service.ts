@@ -99,19 +99,4 @@ export class CloudinaryService {
       // Don't throw - deletion failures shouldn't block operations
     }
   }
-
-  /**
-   * Extract public ID from Cloudinary URL
-   * @param url - Cloudinary URL
-   * @returns Public ID or null
-   */
-  extractPublicId(url: string): string | null {
-    try {
-      // Example URL: https://res.cloudinary.com/{cloud_name}/image/upload/v123456/events/image.jpg
-      const matches = url.match(/\/upload\/(?:v\d+\/)?(.+)\.\w+$/);
-      return matches ? matches[1] : null;
-    } catch {
-      return null;
-    }
-  }
 }

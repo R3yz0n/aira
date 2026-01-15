@@ -34,6 +34,7 @@ function mapDoc(doc: any): IEventEntity {
     categoryId: doc.categoryId ? String(doc.categoryId) : "",
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
+    publicId: doc.publicId,
   };
 }
 
@@ -44,10 +45,10 @@ export class InvalidEventIdError extends Error {
   }
 }
 
-export class InvalidCategoryError extends Error {
-  constructor(message = "Invalid category") {
+export class InvalidCategoryIdError extends Error {
+  constructor(message = "Invalid category ID format") {
     super(message);
-    this.name = "InvalidCategoryError";
+    this.name = "InvalidCategoryIdError";
   }
 }
 
@@ -70,7 +71,7 @@ export class MongoEventRepository implements EventRepository {
       return docs.map(mapDoc);
     } catch (err: any) {
       if (err?.name === "CastError" || err?.name === "BSONError") {
-        throw new InvalidCategoryError("Invalid category ID format");
+        throw new InvalidCategoryIdError("Invalid category ID format");
       }
       throw err;
     }
@@ -123,7 +124,7 @@ export class MongoEventRepository implements EventRepository {
     } catch (err: any) {
       // Handle invalid category ID reference
       if (err?.name === "CastError" || err?.name === "BSONError") {
-        throw new InvalidCategoryError("Invalid category ID");
+        throw new InvalidCategoryIdError("Invalid category ID format");
       }
       throw err;
     }
@@ -146,7 +147,7 @@ export class MongoEventRepository implements EventRepository {
       return await EventModel.countByCategory(categoryId);
     } catch (err: any) {
       if (err?.name === "CastError" || err?.name === "BSONError") {
-        throw new InvalidCategoryError("Invalid category ID format");
+        throw new InvalidCategoryIdError("Invalid category ID format");
       }
       throw err;
     }
