@@ -84,6 +84,39 @@ Implement a clean, testable, and decoupled layered architecture inspired by Clea
 - **Error Handling**: Centralized in services or middleware. Use `error.js` boundaries in UI.
 - **Testing**: Write unit tests for services/repositories (easy to mock). Integration tests for routes.
 
+## API Testing & cURL Documentation
+
+When documenting or testing API endpoints with cURL:
+
+- **Always format JSON payloads with proper indentation** for readability:
+
+  ```bash
+  curl -X POST http://localhost:3000/api/endpoint \
+    -H "Content-Type: application/json" \
+    -d '{
+      "key": "value",
+      "nested": {
+        "field": "data"
+      }
+    }' | jq .
+  ```
+
+- **Always format responses with `jq`** for readability and syntax highlighting (include `| jq .` at the end)
+
+- **For verbose request/response inspection**, use the `-v` flag:
+
+  ```bash
+  curl -v -X POST http://localhost:3000/api/endpoint \
+    -H "Content-Type: application/json" \
+    -d '{
+      "key": "value"
+    }' 2>&1
+  ```
+
+- **All code examples in documentation and comments should:**
+  - Use multi-line formatted JSON payloads with proper indentation
+  - Include `| jq .` at the end for consistent, prettified JSON output with colors
+
 ## When Generating Code
 
 - Always respect the layered architecture — never put business logic in route handlers or components.
