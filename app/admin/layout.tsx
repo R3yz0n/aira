@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex items-center justify-between px-8 py-4">
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>
-                <p className="text-sm text-muted-foreground">Manage your events and categories</p>
+                <p className="text-sm text-muted-foreground">Manage your events and services</p>
               </div>
               <Button variant="outline" onClick={logout} className="flex items-center gap-2">
                 <LogOut className="w-4 h-4" />

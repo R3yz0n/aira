@@ -12,6 +12,7 @@ import {
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
 import { CategoryNotFoundError } from "@/services/category/category-service";
+import { InvalidCategoryIdError } from "@/repositories/category-repository";
 
 const eventService = new EventService(new MongoEventRepository(), new MongoCategoryRepository());
 const cloudinaryService = new CloudinaryService();
@@ -37,7 +38,6 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
     const description = formData.get("description") as string;
     const categoryId = formData.get("categoryId") as string;
     console.log("Received form data:", file.type);
-    debugger;
 
     // Validate file with imageFileSchema
     const fileValidation = imageFileSchema.safeParse({ file });
@@ -95,6 +95,9 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
     }
     if (err instanceof CategoryNotFoundError) {
       return errorResponse("CATEGORY_NOT_FOUND", "Category not found", 404);
+    }
+    if (err instanceof InvalidCategoryIdError) {
+      return errorResponse("INVALID_INPUT", err.message, 400);
     }
     if (err instanceof InvalidCategoryError) {
       return errorResponse("INVALID_INPUT", err.message, 400);

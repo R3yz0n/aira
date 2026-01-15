@@ -79,33 +79,41 @@ export class MongoEventRepository implements EventRepository {
   async list(
     options: { search?: string; categoryId?: string } & PaginationParams
   ): Promise<PaginationResult<IEventEntity>> {
-    const { search, categoryId, page, limit } = options;
-    const skip = (page - 1) * limit;
+    try {
+      const { search, categoryId, page, limit } = options;
+      const skip = (page - 1) * limit;
 
-    // Build MongoDB filter
-    const filter: any = {};
+      // Build MongoDB filter
+      const filter: any = {};
 
-    // Add category filter
-    if (categoryId) {
-      filter.categoryId = categoryId;
+      // Add category filter
+      if (categoryId) {
+        filter.categoryId = categoryId;
+      }
+
+      // Add search filter (case-insensitive regex on title and description)
+      if (search && search.trim()) {
+        const regex = new RegExp(search.trim(), "i");
+        filter.$or = [{ title: regex }, { description: regex }];
+      }
+
+      // Get total count for pagination
+      const total = await EventModel.countDocuments(filter);
+
+      // Get paginated results sorted by latest (createdAt desc)
+      const docs = await EventModel.findPaginated(filter, skip, limit);
+
+      const data = docs.map(mapDoc);
+      const pages = Math.ceil(total / limit);
+
+      return { data, total, page, limit, pages };
+    } catch (err: any) {
+      // If invalid ObjectId format, return empty results instead of error
+      if (err.kind === "ObjectId" || err.name === "CastError") {
+        return { data: [], total: 0, page: options.page, limit: options.limit, pages: 0 };
+      }
+      throw err;
     }
-
-    // Add search filter (case-insensitive regex on title and description)
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), "i");
-      filter.$or = [{ title: regex }, { description: regex }];
-    }
-
-    // Get total count for pagination
-    const total = await EventModel.countDocuments(filter);
-
-    // Get paginated results sorted by latest (createdAt desc)
-    const docs = await EventModel.findPaginated(filter, skip, limit);
-
-    const data = docs.map(mapDoc);
-    const pages = Math.ceil(total / limit);
-
-    return { data, total, page, limit, pages };
   }
 
   async create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity> {

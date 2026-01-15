@@ -47,14 +47,14 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "status": 201,
   "data": {
     "id": "696154267fdba0e6636c2376",
     "name": "Corporate Events",
     "description": "Professional corporate gatherings and conferences",
     "createdAt": "2026-01-15T12:45:30.123Z",
     "updatedAt": "2026-01-15T12:45:30.123Z"
-  }
+  },
+  "status": 201
 }
 ```
 
@@ -65,47 +65,6 @@ Content-Type: application/json
 - `description` - Category description
 - `createdAt` - Category creation timestamp
 - `updatedAt` - Last update timestamp
-
----
-
-## Use Case 2: Create Minimal Category (Name Only)
-
-Create a category with just a name (description optional).
-
-### Request
-
-```bash
-curl -X POST http://localhost:3005/api/admin/categories \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Virtual Events"
-  }'
-```
-
-**Body (JSON):**
-
-```json
-{
-  "name": "Virtual Events"
-}
-```
-
-### Response Success (201)
-
-```json
-{
-  "success": true,
-  "status": 201,
-  "data": {
-    "id": "696157417fdba0e6636c238f",
-    "name": "Virtual Events",
-    "description": "",
-    "createdAt": "2026-01-15T12:46:15.456Z",
-    "updatedAt": "2026-01-15T12:46:15.456Z"
-  }
-}
-```
 
 ---
 
@@ -132,7 +91,10 @@ _(No Authorization header)_
 {
   "success": false,
   "status": 401,
-  "error": "Unauthorized - No token provided"
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Missing authorization token"
+  }
 }
 ```
 
@@ -158,7 +120,10 @@ curl -X POST http://localhost:3005/api/admin/categories \
 {
   "success": false,
   "status": 401,
-  "error": "Unauthorized - Invalid or expired token"
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or expired authorization token"
+  }
 }
 ```
 
@@ -186,7 +151,10 @@ _(Token expired)_
 {
   "success": false,
   "status": 401,
-  "error": "Unauthorized - Token expired"
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or expired authorization token"
+  }
 }
 ```
 
@@ -213,10 +181,14 @@ _(name field missing)_
 {
   "success": false,
   "status": 400,
-  "error": "INVALID_INPUT",
-  "details": {
-    "fieldErrors": {
-      "name": ["Required"]
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Invalid input",
+    "details": {
+      "formErrors": [],
+      "fieldErrors": {
+        "name": ["Name is required"]
+      }
     }
   }
 }
@@ -246,10 +218,14 @@ _(Empty name)_
 {
   "success": false,
   "status": 400,
-  "error": "INVALID_INPUT",
-  "details": {
-    "fieldErrors": {
-      "name": ["String must contain at least 1 character(s)"]
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Invalid input",
+    "details": {
+      "formErrors": [],
+      "fieldErrors": {
+        "name": ["Name is required"]
+      }
     }
   }
 }
@@ -279,10 +255,14 @@ _(Name > 100 characters)_
 {
   "success": false,
   "status": 400,
-  "error": "INVALID_INPUT",
-  "details": {
-    "fieldErrors": {
-      "name": ["String must contain at most 100 character(s)"]
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Invalid input",
+    "details": {
+      "formErrors": [],
+      "fieldErrors": {
+        "name": ["Name must be 100 characters or less"]
+      }
     }
   }
 }
@@ -312,10 +292,14 @@ _(Description > 500 characters)_
 {
   "success": false,
   "status": 400,
-  "error": "INVALID_INPUT",
-  "details": {
-    "fieldErrors": {
-      "description": ["String must contain at most 500 character(s)"]
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "Invalid input",
+    "details": {
+      "formErrors": [],
+      "fieldErrors": {
+        "description": ["Description must be 500 characters or less"]
+      }
     }
   }
 }
@@ -345,8 +329,10 @@ _(Category "Wedding" already exists)_
 {
   "success": false,
   "status": 409,
-  "error": "DUPLICATE_CATEGORY",
-  "message": "Category with name 'Wedding' already exists"
+  "error": {
+    "code": "DUPLICATE_CATEGORY",
+    "message": "Category with this name already exists"
+  }
 }
 ```
 
@@ -374,8 +360,10 @@ _(MongoDB connection lost)_
 {
   "success": false,
   "status": 500,
-  "error": "INTERNAL_ERROR",
-  "message": "Internal server error"
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "Internal server error"
+  }
 }
 ```
 
@@ -386,7 +374,7 @@ _(MongoDB connection lost)_
 | Parameter     | Type   | Required | Constraints      | Example                |
 | ------------- | ------ | -------- | ---------------- | ---------------------- |
 | `name`        | string | Yes      | 1-100 characters | "Wedding"              |
-| `description` | string | No       | 0-500 characters | "Wedding celebrations" |
+| `description` | string | Yes      | 1-500 characters | "Wedding celebrations" |
 
 ---
 
