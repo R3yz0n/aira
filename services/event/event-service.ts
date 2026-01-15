@@ -1,5 +1,5 @@
 import { EventCreateInput, IEventEntity, eventCreateSchema, imageUrlSchema } from "@/domain/event";
-import { EventRepository } from "@/repositories/event-repository";
+import { EventRepository, PaginationResult } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
 
@@ -15,6 +15,15 @@ export class EventService {
     private eventRepository: EventRepository,
     private categoryRepository: CategoryRepository
   ) {}
+
+  async list(options: {
+    page: number;
+    limit: number;
+    search?: string;
+    categoryId?: string;
+  }): Promise<PaginationResult<IEventEntity>> {
+    return this.eventRepository.list(options);
+  }
 
   async findById(id: string): Promise<IEventEntity> {
     const event = await this.eventRepository.findById(id);

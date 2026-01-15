@@ -1,9 +1,25 @@
 import { IEventEntity } from "@/domain/event";
 import { EventModel } from "@/lib/models/event";
 
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}
+
+export interface PaginationResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
 export interface EventRepository {
   findById(id: string): Promise<IEventEntity | null>;
   findByCategory(categoryId: string): Promise<IEventEntity[]>;
+  list(
+    options: { search?: string; categoryId?: string } & PaginationParams
+  ): Promise<PaginationResult<IEventEntity>>;
   create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity>;
   deleteById(id: string): Promise<IEventEntity | null>;
   countByCategory(categoryId: string): Promise<number>;
@@ -58,6 +74,38 @@ export class MongoEventRepository implements EventRepository {
       }
       throw err;
     }
+  }
+
+  async list(
+    options: { search?: string; categoryId?: string } & PaginationParams
+  ): Promise<PaginationResult<IEventEntity>> {
+    const { search, categoryId, page, limit } = options;
+    const skip = (page - 1) * limit;
+
+    // Build MongoDB filter
+    const filter: any = {};
+
+    // Add category filter
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
+
+    // Add search filter (case-insensitive regex on title and description)
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), "i");
+      filter.$or = [{ title: regex }, { description: regex }];
+    }
+
+    // Get total count for pagination
+    const total = await EventModel.countDocuments(filter);
+
+    // Get paginated results sorted by latest (createdAt desc)
+    const docs = await EventModel.findPaginated(filter, skip, limit);
+
+    const data = docs.map(mapDoc);
+    const pages = Math.ceil(total / limit);
+
+    return { data, total, page, limit, pages };
   }
 
   async create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity> {

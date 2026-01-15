@@ -79,4 +79,19 @@ export class EventModel {
     await this.ensureConnected();
     return EventModelInternal.countDocuments({ categoryId });
   }
+
+  static async countDocuments(filter: any = {}) {
+    await this.ensureConnected();
+    return EventModelInternal.countDocuments(filter);
+  }
+
+  static async findPaginated(filter: any, skip: number, limit: number) {
+    await this.ensureConnected();
+    return EventModelInternal.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec();
+  }
 }
