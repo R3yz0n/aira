@@ -19,7 +19,9 @@ export function useAdminLogin(options: IUseAdminLoginOptions = {}) {
     setIsLoading(true);
     try {
       const { token }: IAuthToken = await adminAuthApi.login(credentials);
-      console.log("Received token:", token);
+      if (process.env.NODE_ENV === "development") {
+        console.log("Received token:", token);
+      }
       adminAuthApi.storeToken(token);
 
       toast({

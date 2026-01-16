@@ -1,4 +1,4 @@
-import { EventCreateInput, IEventEntity, eventCreateSchema, imageUrlSchema } from "@/domain/event";
+import { TEventCreateInput, IEventEntity, eventCreateSchema, imageUrlSchema } from "@/domain/event";
 import { EventRepository, PaginationResult } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
@@ -36,7 +36,7 @@ export class EventService {
   }
 
   async create(
-    input: EventCreateInput & { imageUrl: string; publicId: string }
+    input: TEventCreateInput & { imageUrl: string; publicId: string }
   ): Promise<IEventEntity> {
     // Validate event fields
     const eventParsed = eventCreateSchema.parse(input);

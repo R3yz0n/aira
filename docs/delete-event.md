@@ -116,6 +116,12 @@ If the provided ID is well-formed but doesn't match an event:
 
 ---
 
+## Important Notes
+
+- **Cloudinary Image Deletion**: The associated Cloudinary image is deleted after the database record. If the Cloudinary deletion fails, the database record will still be removed, leaving the image orphaned. Consider implementing a cleanup job to handle orphaned images.
+
+---
+
 ## Edge cases & behaviour (✅ tested)
 
 - Invalid ObjectId format (e.g. `abc`) → 400 `INVALID_INPUT` (route-level validation).

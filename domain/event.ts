@@ -44,17 +44,10 @@ export const imageFileSchema = z.object({
     .refine((file) => file.size > 0, "File is required")
     .refine(
       (file) =>
-        [
-          "image/jpeg",
-          "image/jpg",
-          "image/png",
-          "image/webp",
-          "image/gif",
-          "application/octet-stream",
-        ].includes(file.type),
+        ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(file.type),
       "Invalid file type. Allowed: JPG, PNG, WebP, GIF"
     )
-    .refine((file) => file.size <= 5 * 1024 * 1024, "File size too large. Maximum 5MB allowed"),
+    .refine((file) => file.size <= 10 * 1024 * 1024, "File size too large. Maximum 10MB allowed"),
 });
 
 // Schema for image URL validation
@@ -95,7 +88,7 @@ export const eventIdSchema = z.object({
   id: z.string().trim().min(1, "ID is required"),
 });
 
-export type EventCreateInput = z.infer<typeof eventCreateSchema>;
-export type EventUpdateInput = z.infer<typeof eventUpdateSchema>;
-export type ImageFileInput = z.infer<typeof imageFileSchema>;
-export type ImageUrlInput = z.infer<typeof imageUrlSchema>;
+export type TEventCreateInput = z.infer<typeof eventCreateSchema>;
+export type TEventUpdateInput = z.infer<typeof eventUpdateSchema>;
+export type TImageFileInput = z.infer<typeof imageFileSchema>;
+export type TImageUrlInput = z.infer<typeof imageUrlSchema>;

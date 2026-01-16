@@ -41,10 +41,6 @@ export const DELETE = withAdminAuth(
       // Delete the event
       const deleted: IEventEntity = await eventService.delete(id);
 
-      if (!deleted) {
-        return errorResponse("EVENT_NOT_FOUND", "Event not found", 404);
-      }
-
       // Delete the image from Cloudinary using stored publicId
       if (deleted.publicId) {
         await cloudinaryService.deleteImage(deleted.publicId);

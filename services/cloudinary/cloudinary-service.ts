@@ -47,12 +47,6 @@ export class CloudinaryService {
    * Upload image buffer to Cloudinary with optimization
    * @param buffer - Image file buffer
    * @param folder - Cloudinary folder (default: 'events')
-   * @returns Upload result with URL and metadata
-   */
-  /**
-   * Upload image buffer to Cloudinary with optimization
-   * @param buffer - Image file buffer
-   * @param folder - Cloudinary folder (default: 'events')
    * @param maxSize - Maximum allowed file size in bytes (default: 10MB)
    * @returns Upload result with URL and metadata
    * @throws CloudinaryUploadError if file size exceeds maxSize
@@ -63,7 +57,9 @@ export class CloudinaryService {
     maxSize: number = 10 * 1024 * 1024 // 10MB
   ): Promise<UploadResult> {
     if (buffer.length > maxSize) {
-      throw new CloudinaryUploadError("File size too large. Maximum 10MB allowed");
+      throw new CloudinaryUploadError(
+        `File size too large. Maximum ${maxSize / (1024 * 1024)}MB allowed`
+      );
     }
     try {
       const result = await new Promise<any>((resolve, reject) => {
