@@ -1,24 +1,22 @@
 const fs = require("fs");
 const http = require("http");
 const FormData = require("form-data");
+const dotenv = require("dotenv");
+
 // provide ur token
 const ADMIN_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OTQyZmZhMTliZTNlZGVkMWZhMzYzNWEiLCJlbWFpbCI6ImFpcmFldmVudHMwMDFAZ21haWwuY29tIiwiaWF0IjoxNzY4NDc2MzkyLCJleHAiOjE3Njg0NzY5OTJ9.zHjYH5xNStIc6jcpAxbPbvOSqLT_W8clrn0Iw8SWkBQ";
 const BASE_URL = "http://localhost:3005/api/admin/events";
 
-const categories = {
-  Wedding: "696154267fdba0e6636c2376",
-  Engagement: "696157417fdba0e6636c238f",
-  Birthday: "696157997fdba0e6636c23b5",
-  "Social Event": "696157697fdba0e6636c23b0",
-};
+dotenv.config();
 
-const counts = {
-  Wedding: 13,
-  Engagement: 13,
-  Birthday: 12,
-  "Social Event": 12,
-};
+const categories = JSON.parse(process.env.CATEGORIES || "{}");
+const counts = JSON.parse(process.env.COUNTS || "{}");
+
+if (Object.keys(categories).length === 0 || Object.keys(counts).length === 0) {
+  console.error("CATEGORIES or COUNTS environment variables are not set or invalid.");
+  process.exit(1);
+}
 
 let totalCreated = 0;
 

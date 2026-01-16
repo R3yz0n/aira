@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
-import { z } from "zod";
-import { eventCreateSchema, imageFileSchema, imageUrlSchema, IEventEntity } from "@/domain/event";
+import { eventCreateSchema, imageFileSchema, IEventEntity } from "@/domain/event";
 import { MongoEventRepository, InvalidCategoryIdError } from "@/repositories/event-repository";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventService } from "@/services/event/event-service";
@@ -40,7 +39,7 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
     // Validate file with imageFileSchema
     const fileValidation = imageFileSchema.safeParse({ file });
     if (!fileValidation.success) {
-      return errorResponse("INVALID_INPUT", "Invalid file ", 400, fileValidation.error.flatten());
+      return errorResponse("INVALID_INPUT", "Invalid file", 400, fileValidation.error.flatten());
     }
 
     // Validate event fields with eventCreateSchema (without imageUrl)
@@ -91,6 +90,10 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
       );
     }
     if (err instanceof CloudinaryUploadError) {
+      // If the error is due to file size, return 413 Payload Too Large
+      if (err.message && err.message.includes("File size too large")) {
+        return errorResponse("UPLOAD_FAILED", err.message, 413);
+      }
       return errorResponse("UPLOAD_FAILED", err.message, 500);
     }
     if (err instanceof CategoryNotFoundError) {

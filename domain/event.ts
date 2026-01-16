@@ -12,7 +12,6 @@ export interface IEventEntity extends IEvent {
   id: string;
   createdAt: Date | string;
   updatedAt?: Date | string;
-  publicId: string;
 }
 
 export const eventCreateSchema = z.object({
@@ -50,7 +49,8 @@ export const imageFileSchema = z.object({
           "image/jpg",
           "image/png",
           "image/webp",
-          "image/gif,application/octet-stream",
+          "image/gif",
+          "application/octet-stream",
         ].includes(file.type),
       "Invalid file type. Allowed: JPG, PNG, WebP, GIF"
     )

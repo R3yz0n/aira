@@ -56,12 +56,7 @@ export class EventModel {
 
   static async create(payload: Omit<IEvent, "id">) {
     await this.ensureConnected();
-    console.log("EventModel.create payload:", {
-      title: payload.title,
-      publicId: payload.publicId,
-      imageUrl: payload.imageUrl,
-      payload_keys: Object.keys(payload),
-    });
+
     const doc = await EventModelInternal.create({
       ...payload,
       categoryId: new mongoose.Types.ObjectId(payload.categoryId),

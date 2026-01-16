@@ -1,11 +1,15 @@
 import { v2 as cloudinary } from "cloudinary";
 
-// Initialize Cloudinary configuration
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Validate Cloudinary environment variables
+function validateCloudinaryEnv() {
+  const requiredVars = ["CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"];
+
+  for (const variable of requiredVars) {
+    if (!process.env[variable]) {
+      throw new Error(`Missing required Cloudinary environment variable: ${variable}`);
+    }
+  }
+}
 
 export interface UploadResult {
   url: string;
@@ -30,13 +34,37 @@ export class CloudinaryQuotaError extends Error {
 }
 
 export class CloudinaryService {
+  constructor() {
+    validateCloudinaryEnv();
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  }
+
   /**
    * Upload image buffer to Cloudinary with optimization
    * @param buffer - Image file buffer
    * @param folder - Cloudinary folder (default: 'events')
    * @returns Upload result with URL and metadata
    */
-  async uploadImage(buffer: Buffer, folder: string = "events"): Promise<UploadResult> {
+  /**
+   * Upload image buffer to Cloudinary with optimization
+   * @param buffer - Image file buffer
+   * @param folder - Cloudinary folder (default: 'events')
+   * @param maxSize - Maximum allowed file size in bytes (default: 10MB)
+   * @returns Upload result with URL and metadata
+   * @throws CloudinaryUploadError if file size exceeds maxSize
+   */
+  async uploadImage(
+    buffer: Buffer,
+    folder: string = "events",
+    maxSize: number = 10 * 1024 * 1024 // 10MB
+  ): Promise<UploadResult> {
+    if (buffer.length > maxSize) {
+      throw new CloudinaryUploadError("File size too large. Maximum 10MB allowed");
+    }
     try {
       const result = await new Promise<any>((resolve, reject) => {
         cloudinary.uploader
@@ -78,8 +106,8 @@ export class CloudinaryService {
     } catch (error: any) {
       console.error("Cloudinary upload error:", error);
 
-      // Check for quota exceeded errors
-      if (error.message?.includes("quota") || error.message?.includes("limit")) {
+      // Check for quota exceeded errors using Cloudinary error codes
+      if (error.http_code === 507 || error.error?.code === "quota_exceeded") {
         throw new CloudinaryQuotaError();
       }
 

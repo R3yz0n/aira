@@ -18,8 +18,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -H "Content-Type: multipart/form-data" \
   -F "title=Annual Gala Night" \
   -F "description=A night of celebration and awards." \
-  -F "date=2026-02-20T19:00:00.000Z" \
-  -F "location=Grand Ballroom, City Hotel" \
   -F "categoryId=696154267fdba0e6636c2376" \
   -F "file=@.github/image.png" \
   | jq .
@@ -40,8 +38,6 @@ Content-Type: multipart/form-data
 
 - `title` (string, required)
 - `description` (string, required)
-- `date` (string, required, ISO 8601)
-- `location` (string, required)
 - `categoryId` (string, required)
 - `file` (file, required) — image file to upload
 
@@ -166,8 +162,6 @@ _(Missing required fields)_
       "fieldErrors": {
         "title": ["Title is required"],
         "description": ["Description is required"],
-        "date": ["Date is required"],
-        "location": ["Location is required"],
         "categoryId": ["Category ID is required"]
       }
     }
@@ -177,7 +171,39 @@ _(Missing required fields)_
 
 ---
 
-### Error 400: Bad Request - Invalid Category ID
+### Error 413: Payload Too Large - File Size Exceeded
+
+**Request:**
+
+```bash
+curl -X POST http://localhost:3005/api/admin/events \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: multipart/form-data" \
+  -F "title=Annual Gala Night" \
+  -F "description=A night of celebration and awards." \
+  -F "date=2026-02-20T19:00:00.000Z" \
+  -F "location=Grand Ballroom, City Hotel" \
+  -F "categoryId=696154267fdba0e6636c2376" \
+  -F "file=@/path/to/large-image.jpg" \
+  | jq .
+```
+
+_(File exceeds 10MB limit)_
+
+**Response:**
+
+```json
+{
+  "success": false,
+  "status": 413,
+  "error": {
+    "code": "UPLOAD_FAILED",
+    "message": "File size too large. Maximum 10MB allowed"
+  }
+}
+```
+
+---
 
 **Request:**
 
@@ -315,14 +341,12 @@ _(MongoDB connection lost)_
 
 ## Request Parameters Reference
 
-| Parameter     | Type   | Required | Constraints       | Example                      |
-| ------------- | ------ | -------- | ----------------- | ---------------------------- |
-| `title`       | string | Yes      | 1-200 characters  | "Annual Gala Night"          |
-| `description` | string | Yes      | 1-1000 characters | "A night of celebration"     |
-| `date`        | string | Yes      | ISO 8601 date     | "2026-02-20T19:00:00.000Z"   |
-| `location`    | string | Yes      | 1-300 characters  | "Grand Ballroom, City Hotel" |
-| `categoryId`  | string | Yes      | Valid ObjectId    | "696154267fdba0e6636c2376"   |
-| `file`        | file   | Yes      | Image file        | ".github/image.png"          |
+| Parameter     | Type   | Required | Constraints       | Example                    |
+| ------------- | ------ | -------- | ----------------- | -------------------------- |
+| `title`       | string | Yes      | 1-200 characters  | "Annual Gala Night"        |
+| `description` | string | Yes      | 1-1000 characters | "A night of celebration"   |
+| `categoryId`  | string | Yes      | Valid ObjectId    | "696154267fdba0e6636c2376" |
+| `file`        | file   | Yes      | Image file        | ".github/image.png"        |
 
 **Note:** The request must use `multipart/form-data` and include the image file as `file`.
 

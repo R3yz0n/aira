@@ -17,7 +17,7 @@ const sidebarItems = [
     icon: Calendar,
   },
   {
-    label: "Services",
+    label: "Categories",
     href: "/admin/categories",
     icon: Folder,
   },
