@@ -50,8 +50,6 @@ Content-Type: multipart/form-data
     "id": "697000000000000000000001",
     "title": "Annual Gala Night",
     "description": "A night of celebration and awards.",
-    "date": "2026-02-20T19:00:00.000Z",
-    "location": "Grand Ballroom, City Hotel",
     "categoryId": "696154267fdba0e6636c2376",
     "imageUrl": "https://example.com/uploaded-image.webp",
     "createdAt": "2026-01-15T18:00:00.000Z",
@@ -66,8 +64,6 @@ Content-Type: multipart/form-data
 - `id` - MongoDB ObjectId of created event
 - `title` - Event title
 - `description` - Event description
-- `date` - Event date (ISO 8601)
-- `location` - Event location
 - `categoryId` - Linked category ID
 - `imageUrl` - URL of the uploaded image
 - `createdAt` - Event creation timestamp
@@ -181,8 +177,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -H "Content-Type: multipart/form-data" \
   -F "title=Annual Gala Night" \
   -F "description=A night of celebration and awards." \
-  -F "date=2026-02-20T19:00:00.000Z" \
-  -F "location=Grand Ballroom, City Hotel" \
   -F "categoryId=696154267fdba0e6636c2376" \
   -F "file=@/path/to/large-image.jpg" \
   | jq .
@@ -214,8 +208,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -d '{
     "title": "Annual Gala Night",
     "description": "A night of celebration and awards.",
-    "date": "2026-02-20T19:00:00.000Z",
-    "location": "Grand Ballroom, City Hotel",
     "categoryId": "invalid-id"
   }'
 ```
@@ -248,8 +240,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -d '{
     "title": "Annual Gala Night",
     "description": "A night of celebration and awards.",
-    "date": "2026-02-20T19:00:00.000Z",
-    "location": "Grand Ballroom, City Hotel",
     "categoryId": "507f1f77bcf86cd799439011"
   }'
 ```
@@ -282,8 +272,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -d '{
     "title": "Annual Gala Night",
     "description": "A night of celebration and awards.",
-    "date": "2026-02-20T19:00:00.000Z",
-    "location": "Grand Ballroom, City Hotel",
     "categoryId": "696154267fdba0e6636c2376"
   }'
 ```
@@ -316,8 +304,6 @@ curl -X POST http://localhost:3005/api/admin/events \
   -d '{
     "title": "Annual Gala Night",
     "description": "A night of celebration and awards.",
-    "date": "2026-02-20T19:00:00.000Z",
-    "location": "Grand Ballroom, City Hotel",
     "categoryId": "696154267fdba0e6636c2376"
   }'
 ```
