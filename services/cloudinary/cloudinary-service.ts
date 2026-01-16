@@ -118,8 +118,12 @@ export class CloudinaryService {
   async deleteImage(publicId: string): Promise<void> {
     try {
       await cloudinary.uploader.destroy(publicId);
-    } catch (error: any) {
-      console.error("Cloudinary delete error:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Cloudinary delete error:", error.message);
+      } else {
+        console.error("Cloudinary delete error:", error);
+      }
       // Don't throw - deletion failures shouldn't block operations
     }
   }

@@ -60,7 +60,7 @@ export const DELETE = withAdminAuth(
       };
 
       return successResponse<IEventEntity>(payload, 200);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
 
       if (err instanceof EventNotFoundError) {

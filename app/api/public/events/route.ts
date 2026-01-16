@@ -58,8 +58,7 @@ export async function GET(req: NextRequest) {
     };
 
     return successResponse<PaginationResult<IEventEntity>>(payload, 200);
-  } catch (err: any) {
-    console.error(err);
+  } catch (err: unknown) {
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }
 }
