@@ -1,5 +1,6 @@
 import { IEventEntity } from "@/domain/event";
 import { EventModel } from "@/lib/models/event";
+import { formatTimestamps } from "@/lib/utils/format-entity";
 
 export interface PaginationParams {
   page: number;
@@ -26,7 +27,7 @@ export interface EventRepository {
 }
 
 function mapDoc(doc: any): IEventEntity {
-  return {
+  return formatTimestamps({
     id: doc._id ? String(doc._id) : "",
     title: doc.title,
     description: doc.description,
@@ -35,7 +36,7 @@ function mapDoc(doc: any): IEventEntity {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
     publicId: doc.publicId,
-  };
+  });
 }
 
 export class InvalidEventIdError extends Error {

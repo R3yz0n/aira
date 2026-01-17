@@ -74,10 +74,8 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
       imageUrl: created.imageUrl,
       categoryId: created.categoryId,
       publicId: created.publicId,
-      createdAt:
-        created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
-      updatedAt:
-        created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
     };
 
     return successResponse<IEventEntity>(payload, 201);

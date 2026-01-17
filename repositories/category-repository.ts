@@ -1,5 +1,6 @@
 import { ICategoryEntity } from "@/domain/category";
 import { CategoryModel } from "@/lib/models/category";
+import { formatTimestamps } from "@/lib/utils/format-entity";
 
 export interface CategoryRepository {
   list(): Promise<ICategoryEntity[]>;
@@ -9,13 +10,13 @@ export interface CategoryRepository {
 }
 
 function mapDoc(doc: any): ICategoryEntity {
-  return {
+  return formatTimestamps({
     id: doc._id ? String(doc._id) : "",
     name: doc.name,
     description: doc.description,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
-  };
+  });
 }
 
 export class DuplicateCategoryError extends Error {

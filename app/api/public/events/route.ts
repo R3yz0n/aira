@@ -44,13 +44,7 @@ export async function GET(req: NextRequest) {
 
     // Format response with pagination metadata
     const payload: PaginationResult<IEventEntity> = {
-      data: result.data.map((event) => ({
-        ...event,
-        createdAt:
-          event.createdAt instanceof Date ? event.createdAt.toISOString() : event.createdAt,
-        updatedAt:
-          event.updatedAt instanceof Date ? event.updatedAt.toISOString() : event.updatedAt,
-      })),
+      data: result.data,
       page: result.page,
       limit: result.limit,
       total: result.total,

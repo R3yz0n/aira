@@ -14,13 +14,7 @@ const categoryService = new CategoryService(new MongoCategoryRepository());
 export async function GET() {
   try {
     const categories = await categoryService.list();
-    const payload: ICategoryEntity[] = categories.map((c) => ({
-      id: c.id,
-      name: c.name,
-      description: c.description,
-      createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : c.createdAt,
-      updatedAt: c.updatedAt instanceof Date ? c.updatedAt.toISOString() : c.updatedAt,
-    }));
+    const payload: ICategoryEntity[] = categories;
 
     return successResponse<ICategoryEntity[]>(payload, 200);
   } catch (err) {

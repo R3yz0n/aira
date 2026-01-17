@@ -51,12 +51,10 @@ export const DELETE = withAdminAuth(
         title: deleted.title,
         description: deleted.description,
         imageUrl: deleted.imageUrl,
-        publicId: deleted.publicId,
         categoryId: deleted.categoryId,
-        createdAt:
-          deleted.createdAt instanceof Date ? deleted.createdAt.toISOString() : deleted.createdAt,
-        updatedAt:
-          deleted.updatedAt instanceof Date ? deleted.updatedAt.toISOString() : deleted.updatedAt,
+        publicId: deleted.publicId,
+        createdAt: deleted.createdAt,
+        updatedAt: deleted.updatedAt,
       };
 
       return successResponse<IEventEntity>(payload, 200);

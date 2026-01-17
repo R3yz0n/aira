@@ -46,10 +46,8 @@ export const PUT = withAdminAuth<CategoryRouteContext>(
         id: updated.id,
         name: updated.name,
         description: updated.description,
-        createdAt:
-          updated.createdAt instanceof Date ? updated.createdAt.toISOString() : updated.createdAt,
-        updatedAt:
-          updated.updatedAt instanceof Date ? updated.updatedAt.toISOString() : updated.updatedAt,
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt,
       };
 
       return successResponse<ICategoryEntity>(payload, 200);
