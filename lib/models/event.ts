@@ -27,7 +27,7 @@ const EventSchema = new mongoose.Schema<IEventDoc>(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date },
   },
-  { collection: "events", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { collection: "events", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
 const EventModelInternal = mongoose.models.Event || mongoose.model<IEventDoc>("Event", EventSchema);

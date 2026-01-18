@@ -13,7 +13,7 @@ export class EventNotFoundError extends Error {
 export class EventService {
   constructor(
     private eventRepository: EventRepository,
-    private categoryRepository: CategoryRepository
+    private categoryRepository: CategoryRepository,
   ) {}
 
   async list(options: {
@@ -36,7 +36,7 @@ export class EventService {
   }
 
   async create(
-    input: TEventCreateInput & { imageUrl: string; publicId: string }
+    input: TEventCreateInput & { imageUrl: string; publicId: string },
   ): Promise<IEventEntity> {
     // Validate event fields
     const eventParsed = eventCreateSchema.parse(input);
@@ -68,5 +68,31 @@ export class EventService {
 
   async countByCategory(categoryId: string): Promise<number> {
     return this.eventRepository.countByCategory(categoryId);
+  }
+
+  async update(id: string, data: Partial<IEventEntity>): Promise<IEventEntity> {
+    // Validate event fields if provided
+    if (data.title || data.description || data.categoryId) {
+      const eventParsed = eventCreateSchema.partial().safeParse(data);
+      if (!eventParsed.success) {
+        throw new Error("Invalid event data");
+      }
+    }
+
+    // Verify category exists if categoryId is provided
+    if (data.categoryId) {
+      const category = await this.categoryRepository.findById(data.categoryId);
+      if (!category) {
+        throw new CategoryNotFoundError();
+      }
+    }
+
+    // Update event
+    const updatedEvent = await this.eventRepository.updateById(id, data);
+    if (!updatedEvent) {
+      throw new EventNotFoundError();
+    }
+
+    return updatedEvent;
   }
 }

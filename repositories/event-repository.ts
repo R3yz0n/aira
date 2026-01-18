@@ -19,11 +19,12 @@ export interface EventRepository {
   findById(id: string): Promise<IEventEntity | null>;
   findByCategory(categoryId: string): Promise<IEventEntity[]>;
   list(
-    options: { search?: string; categoryId?: string } & PaginationParams
+    options: { search?: string; categoryId?: string } & PaginationParams,
   ): Promise<PaginationResult<IEventEntity>>;
   create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity>;
   deleteById(id: string): Promise<IEventEntity | null>;
   countByCategory(categoryId: string): Promise<number>;
+  updateById(id: string, data: Partial<IEventEntity>): Promise<IEventEntity | null>;
 }
 
 function mapDoc(doc: any): IEventEntity {
@@ -79,7 +80,7 @@ export class MongoEventRepository implements EventRepository {
   }
 
   async list(
-    options: { search?: string; categoryId?: string } & PaginationParams
+    options: { search?: string; categoryId?: string } & PaginationParams,
   ): Promise<PaginationResult<IEventEntity>> {
     try {
       const { search, categoryId, page, limit } = options;
@@ -149,6 +150,18 @@ export class MongoEventRepository implements EventRepository {
     } catch (err: any) {
       if (err?.name === "CastError" || err?.name === "BSONError") {
         throw new InvalidCategoryIdError("Invalid category ID format");
+      }
+      throw err;
+    }
+  }
+
+  async updateById(id: string, data: Partial<IEventEntity>): Promise<IEventEntity | null> {
+    try {
+      const updatedDoc = await EventModel.updateById(id, data);
+      return updatedDoc ? mapDoc(updatedDoc) : null;
+    } catch (err: any) {
+      if (err?.name === "CastError" || err?.name === "BSONError") {
+        throw new InvalidEventIdError("Invalid event ID format");
       }
       throw err;
     }
