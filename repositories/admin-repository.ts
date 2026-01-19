@@ -1,5 +1,6 @@
 import { IAdminEntity } from "@/domain/admin";
 import { AdminModel } from "@/lib/models/admin";
+import { formatTimestamps } from "@/lib/utils/format-entity";
 
 export interface AdminRepository {
   findByEmail(email: string): Promise<IAdminEntity | null>;
@@ -10,12 +11,12 @@ export class MongoAdminRepository implements AdminRepository {
     const doc = await AdminModel.findByEmail(email);
     if (!doc) return null;
 
-    return {
+    return formatTimestamps({
       id: doc._id ? String(doc._id) : "",
       email: doc.email,
       password: doc.passwordHash,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
-    };
+    });
   }
 }

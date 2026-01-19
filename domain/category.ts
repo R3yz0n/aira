@@ -49,5 +49,5 @@ export const categoryIdSchema = z.object({
   id: z.string().trim().min(1, "ID is required"),
 });
 
-export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>;
-export type CategoryUpdateInput = z.infer<typeof categoryUpdateSchema>;
+export type TCategoryCreateInput = z.infer<typeof categoryCreateSchema>;
+export type TCategoryUpdateInput = z.infer<typeof categoryUpdateSchema>;

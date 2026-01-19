@@ -2,7 +2,11 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { categoryApi } from "@/lib/api/category";
 import type { IErrorResponse } from "@/lib/types/api";
-import type { CategoryCreateInput, CategoryUpdateInput, ICategoryEntity } from "@/domain/category";
+import type {
+  TCategoryCreateInput,
+  TCategoryUpdateInput,
+  ICategoryEntity,
+} from "@/domain/category";
 
 // Shared counter to track how many components are using this hook
 
@@ -46,7 +50,7 @@ export function useCategory() {
   }, [toast]);
 
   const create = useCallback(
-    async (input: CategoryCreateInput): Promise<ICategoryEntity> => {
+    async (input: TCategoryCreateInput): Promise<ICategoryEntity> => {
       if (isMountedRef.current) setIsLoading(true);
       try {
         const created = await categoryApi.create(input);
@@ -82,7 +86,7 @@ export function useCategory() {
   );
 
   const update = useCallback(
-    async (id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> => {
+    async (id: string, input: TCategoryUpdateInput): Promise<ICategoryEntity> => {
       if (isMountedRef.current) setIsLoading(true);
       try {
         const updated = await categoryApi.update(id, input);

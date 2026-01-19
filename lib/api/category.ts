@@ -1,4 +1,4 @@
-import { CategoryCreateInput, CategoryUpdateInput, ICategoryEntity } from "@/domain/category";
+import { TCategoryCreateInput, TCategoryUpdateInput, ICategoryEntity } from "@/domain/category";
 import axiosInstance from "./axios";
 import type { IAxiosResponse, IApiErrorResponse, IErrorResponse } from "@/lib/types/api";
 
@@ -19,7 +19,7 @@ export const categoryApi = {
     }
   },
 
-  async create(input: CategoryCreateInput): Promise<ICategoryEntity> {
+  async create(input: TCategoryCreateInput): Promise<ICategoryEntity> {
     try {
       let { data }: IAxiosResponse<ICategoryEntity> = await axiosInstance.post(
         "/api/admin/categories",
@@ -36,7 +36,7 @@ export const categoryApi = {
     }
   },
 
-  async update(id: string, input: CategoryUpdateInput): Promise<ICategoryEntity> {
+  async update(id: string, input: TCategoryUpdateInput): Promise<ICategoryEntity> {
     try {
       let { data }: IAxiosResponse<ICategoryEntity> = await axiosInstance.put(
         `/api/admin/categories/${id}`,

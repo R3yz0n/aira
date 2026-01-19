@@ -31,10 +31,8 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
       id: created.id,
       name: created.name,
       description: created.description,
-      createdAt:
-        created.createdAt instanceof Date ? created.createdAt.toISOString() : created.createdAt,
-      updatedAt:
-        created.updatedAt instanceof Date ? created.updatedAt.toISOString() : created.updatedAt,
+      createdAt: created.createdAt,
+      updatedAt: created.updatedAt,
     };
 
     return successResponse<ICategoryEntity>(payload, 201);
