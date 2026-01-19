@@ -4,6 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Calendar, Folder, ChevronRight } from "lucide-react";
 import { config } from "@/lib/config";
+import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAdminLogin } from "@/hooks/use-admin-login";
 
 const sidebarItems = [
   {
@@ -25,7 +28,7 @@ const sidebarItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-
+  const { logout } = useAdminLogin();
   return (
     <aside className="w-64  border-r-2 bg-black/5  text-white flex flex-col">
       {/* Logo */}
@@ -39,7 +42,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-6">
+      <nav className="flex-1 px-4 py-6 relative">
         <ul className="space-y-2">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
@@ -64,6 +67,14 @@ export function Sidebar() {
             );
           })}
         </ul>
+        <Button
+          variant="outline"
+          onClick={logout}
+          className="flex absolute rounded bottom-4 w-[95%] -translate-x-1/2 left-1/2 items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Logout
+        </Button>
       </nav>
 
       {/* Footer */}
