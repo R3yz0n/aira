@@ -91,4 +91,4 @@ export const eventIdSchema = z.object({
 export type TEventCreateInput = z.infer<typeof eventCreateSchema>;
 export type TEventUpdateInput = z.infer<typeof eventUpdateSchema>;
 export type TImageFileInput = z.infer<typeof imageFileSchema>;
-export type TImageUrlInput = z.infer<typeof imageUrlSchema>;
+export type TImageUrl = z.infer<typeof imageUrlSchema>;

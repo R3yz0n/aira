@@ -67,24 +67,14 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
       categoryId: eventValidation.data.categoryId,
     });
 
-    const payload: IEventEntity = {
-      id: created.id,
-      title: created.title,
-      description: created.description,
-      imageUrl: created.imageUrl,
-      categoryId: created.categoryId,
-      publicId: created.publicId,
-      createdAt: created.createdAt,
-      updatedAt: created.updatedAt,
-    };
-
-    return successResponse<IEventEntity>(payload, 201);
+    // Return the created event directly as the payload
+    return successResponse<IEventEntity>(created, 201);
   } catch (err: any) {
     if (err instanceof CloudinaryQuotaError) {
       return errorResponse(
         "QUOTA_EXCEEDED",
         "Storage quota exceeded. Please contact support.",
-        429
+        429,
       );
     }
     if (err instanceof CloudinaryUploadError) {

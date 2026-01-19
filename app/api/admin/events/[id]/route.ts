@@ -8,7 +8,7 @@ import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventNotFoundError, EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
-import { IEventEntity, eventIdSchema, imageFileSchema } from "@/domain/event";
+import { IEventEntity, eventIdSchema, imageFileSchema, eventUpdateSchema } from "@/domain/event";
 import {
   CloudinaryQuotaError,
   CloudinaryService,
@@ -137,6 +137,17 @@ export const PATCH = withAdminAuth(
         updateData.publicId = uploadResult.publicId;
       }
 
+      // Validate the entire updateData object
+      const validation = eventUpdateSchema.safeParse(updateData);
+      if (!validation.success) {
+        return errorResponse(
+          "INVALID_INPUT",
+          "Invalid event data",
+          400,
+          validation.error.flatten(),
+        );
+      }
+
       // Fetch the existing event to delete the old image if necessary
       const existingEvent = await eventService.findById(id);
       if (!existingEvent) {
@@ -144,7 +155,7 @@ export const PATCH = withAdminAuth(
       }
 
       // Update the event
-      const updated = await eventService.update(id, updateData);
+      const updated = await eventService.update(id, validation.data);
 
       // Delete the old image if a new one was uploaded
       if (file && existingEvent.publicId) {

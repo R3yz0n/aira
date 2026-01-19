@@ -1,4 +1,10 @@
-import { TEventCreateInput, IEventEntity, eventCreateSchema, imageUrlSchema } from "@/domain/event";
+import {
+  TEventCreateInput,
+  IEventEntity,
+  eventCreateSchema,
+  eventUpdateSchema,
+  imageUrlSchema,
+} from "@/domain/event";
 import { EventRepository, PaginationResult } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
@@ -71,24 +77,10 @@ export class EventService {
   }
 
   async update(id: string, data: Partial<IEventEntity>): Promise<IEventEntity> {
-    // Validate event fields if provided
-    if (data.title || data.description || data.categoryId) {
-      const eventParsed = eventCreateSchema.partial().safeParse(data);
-      if (!eventParsed.success) {
-        throw new Error("Invalid event data");
-      }
-    }
+    // Validate event fields using the domain schema
+    const parsed = eventUpdateSchema.parse(data);
 
-    // Verify category exists if categoryId is provided
-    if (data.categoryId) {
-      const category = await this.categoryRepository.findById(data.categoryId);
-      if (!category) {
-        throw new CategoryNotFoundError();
-      }
-    }
-
-    // Update event
-    const updatedEvent = await this.eventRepository.updateById(id, data);
+    const updatedEvent = await this.eventRepository.updateById(id, parsed);
     if (!updatedEvent) {
       throw new EventNotFoundError();
     }

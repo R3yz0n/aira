@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
 
 // Validate Cloudinary environment variables
 function validateCloudinaryEnv() {
@@ -54,15 +54,15 @@ export class CloudinaryService {
   async uploadImage(
     buffer: Buffer,
     folder: string = "events",
-    maxSize: number = 10 * 1024 * 1024 // 10MB
+    maxSize: number = 10 * 1024 * 1024, // 10MB
   ): Promise<UploadResult> {
     if (buffer.length > maxSize) {
       throw new CloudinaryUploadError(
-        `File size too large. Maximum ${maxSize / (1024 * 1024)}MB allowed`
+        `File size too large. Maximum ${maxSize / (1024 * 1024)}MB allowed`,
       );
     }
     try {
-      const result = await new Promise<any>((resolve, reject) => {
+      const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         cloudinary.uploader
           .upload_stream(
             {
@@ -83,8 +83,12 @@ export class CloudinaryService {
             },
             (error, result) => {
               if (error) reject(error);
-              else resolve(result);
-            }
+              else if (result) {
+                resolve(result);
+              } else {
+                reject(new Error("Cloudinary upload result is undefined"));
+              }
+            },
           )
           .end(buffer);
       });
@@ -116,15 +120,30 @@ export class CloudinaryService {
    * @param publicId - Cloudinary public ID
    */
   async deleteImage(publicId: string): Promise<void> {
-    try {
-      await cloudinary.uploader.destroy(publicId);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Cloudinary delete error:", error.message);
-      } else {
-        console.error("Cloudinary delete error:", error);
+    const maxRetries = 3;
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+      try {
+        await cloudinary.uploader.destroy(publicId);
+        return; // Exit if successful
+      } catch (error: unknown) {
+        attempt++;
+
+        if (error instanceof Error) {
+          console.error(`Cloudinary delete error (attempt ${attempt}):`, error.message);
+        } else {
+          console.error(`Cloudinary delete error (attempt ${attempt}):`, error);
+        }
+
+        // Retry only for transient errors (e.g., network issues)
+        if (attempt >= maxRetries) {
+          console.error(
+            `Cloudinary delete failed after ${maxRetries} attempts. Public ID: ${publicId}`,
+          );
+          return; // Stop retrying after max attempts
+        }
       }
-      // Don't throw - deletion failures shouldn't block operations
     }
   }
 }
