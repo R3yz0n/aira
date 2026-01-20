@@ -11,14 +11,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <RequireAdmin>
-      <div className="min-h-screen bg-background flex">
+      <div className="h-screen bg-background flex">
         {/* Sidebar */}
         <Sidebar />
 
         {/* Main Content */}
         <div className="flex-1">
           {/* Page Content */}
-          <div className="p-4">{children}</div>
+          <div className="p-4 h-full overflow-auto">{children}</div>
         </div>
       </div>
     </RequireAdmin>

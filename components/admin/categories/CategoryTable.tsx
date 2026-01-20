@@ -26,10 +26,10 @@ export function CategoryTable({ categories, onEdit, onDelete }: CategoryTablePro
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-foreground">Category Name</TableHead>
-            <TableHead className="text-foreground">Total Events</TableHead>
-            <TableHead className="text-foreground">Description</TableHead>
-            <TableHead className="text-right text-foreground">Actions</TableHead>
+            <TableHead className="text-foreground font-bold">Category Name</TableHead>
+            <TableHead className="text-foreground font-bold">Total Events</TableHead>
+            <TableHead className="text-foreground font-bold">Description</TableHead>
+            <TableHead className="text-right text-foreground font-bold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

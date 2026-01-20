@@ -5,9 +5,10 @@ import {
   eventUpdateSchema,
   imageUrlSchema,
 } from "@/domain/event";
-import { EventRepository, PaginationResult } from "@/repositories/event-repository";
+import { EventRepository } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
+import { PaginationResult } from "@/domain/event";
 
 export class EventNotFoundError extends Error {
   constructor() {

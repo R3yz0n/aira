@@ -30,7 +30,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAdminLogin();
   return (
-    <aside className="w-64  border-r-2 bg-black/5  text-white flex flex-col">
+    <aside className="w-64  border-r-2  bg-black/5  text-white flex flex-col">
       {/* Logo */}
       <div className="px-6 py-11 border-b  h-20  border-aira-blue/20">
         <div className="flex -mt-4 items-center text-foreground gap-2 text-2xl font-bold">

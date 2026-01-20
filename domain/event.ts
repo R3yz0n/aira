@@ -45,7 +45,7 @@ export const imageFileSchema = z.object({
     .refine(
       (file) =>
         ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(file.type),
-      "Invalid file type. Allowed: JPG, PNG, WebP, GIF"
+      "Invalid file type. Allowed: JPG, PNG, WebP, GIF",
     )
     .refine((file) => file.size <= 10 * 1024 * 1024, "File size too large. Maximum 10MB allowed"),
 });
@@ -92,3 +92,11 @@ export type TEventCreateInput = z.infer<typeof eventCreateSchema>;
 export type TEventUpdateInput = z.infer<typeof eventUpdateSchema>;
 export type TImageFileInput = z.infer<typeof imageFileSchema>;
 export type TImageUrl = z.infer<typeof imageUrlSchema>;
+
+export interface PaginationResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}

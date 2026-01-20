@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { MongoEventRepository, PaginationResult } from "@/repositories/event-repository";
+import { MongoEventRepository } from "@/repositories/event-repository";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import { IEventEntity } from "@/domain/event";
+import { IEventEntity, PaginationResult } from "@/domain/event";
 import { categoryIdSchema } from "@/domain/category";
 
 const eventService = new EventService(new MongoEventRepository(), new MongoCategoryRepository());

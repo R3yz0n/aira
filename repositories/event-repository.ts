@@ -1,18 +1,10 @@
-import { IEventEntity } from "@/domain/event";
+import { IEventEntity, PaginationResult } from "@/domain/event";
 import { EventModel } from "@/lib/models/event";
 import { formatTimestamps } from "@/lib/utils/format-entity";
 
 export interface PaginationParams {
   page: number;
   limit: number;
-}
-
-export interface PaginationResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
 }
 
 export interface EventRepository {
