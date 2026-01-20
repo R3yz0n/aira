@@ -3,7 +3,7 @@ import { MongoEventRepository } from "@/repositories/event-repository";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import { IEventEntity, PaginationResult } from "@/domain/event";
+import { IEventEntity, IPaginationResult } from "@/domain/event";
 import { categoryIdSchema } from "@/domain/category";
 
 const eventService = new EventService(new MongoEventRepository(), new MongoCategoryRepository());
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const result = await eventService.list({ page, limit, search, categoryId });
 
     // Format response with pagination metadata
-    const payload: PaginationResult<IEventEntity> = {
+    const payload: IPaginationResult<IEventEntity> = {
       data: result.data,
       page: result.page,
       limit: result.limit,
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
       pages: result.pages,
     };
 
-    return successResponse<PaginationResult<IEventEntity>>(payload, 200);
+    return successResponse<IPaginationResult<IEventEntity>>(payload, 200);
   } catch (err: unknown) {
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }

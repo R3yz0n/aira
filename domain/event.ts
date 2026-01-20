@@ -93,10 +93,17 @@ export type TEventUpdateInput = z.infer<typeof eventUpdateSchema>;
 export type TImageFileInput = z.infer<typeof imageFileSchema>;
 export type TImageUrl = z.infer<typeof imageUrlSchema>;
 
-export interface PaginationResult<T> {
+export interface IPaginationResult<T> {
   data: T[];
   total: number;
   page: number;
   limit: number;
+  pages: number;
+}
+
+export interface IPaginationParams {
+  page: number;
+  limit: number;
+  total: number;
   pages: number;
 }

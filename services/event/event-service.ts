@@ -8,7 +8,7 @@ import {
 import { EventRepository } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
-import { PaginationResult } from "@/domain/event";
+import { IPaginationResult } from "@/domain/event";
 
 export class EventNotFoundError extends Error {
   constructor() {
@@ -28,7 +28,7 @@ export class EventService {
     limit: number;
     search?: string;
     categoryId?: string;
-  }): Promise<PaginationResult<IEventEntity>> {
+  }): Promise<IPaginationResult<IEventEntity>> {
     return this.eventRepository.list(options);
   }
 

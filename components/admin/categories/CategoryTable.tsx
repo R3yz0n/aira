@@ -41,11 +41,11 @@ export function CategoryTable({ categories, onEdit, onDelete }: CategoryTablePro
             </TableRow>
           ) : (
             categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell className="font-medium text-foreground">{category.name}</TableCell>
-                <TableCell className="text-muted-foreground">{category.totalEvents}</TableCell>
-                <TableCell className="text-muted-foreground">{category.description}</TableCell>
-                <TableCell className="text-right">
+              <TableRow key={category.id} className="h-4">
+                <TableCell className="p-1 font-medium text-foreground">{category.name}</TableCell>
+                <TableCell className="p-1 text-muted-foreground">{category.totalEvents}</TableCell>
+                <TableCell className="p-1 text-muted-foreground">{category.description}</TableCell>
+                <TableCell className="p-1 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <Button
                       variant="ghost"
