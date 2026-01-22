@@ -22,7 +22,7 @@ interface CategoryTableProps {
 
 export function CategoryTable({ categories, onEdit, onDelete }: CategoryTableProps) {
   return (
-    <Card className="p-6 bg-card shadow-md">
+    <Card className="p-3 lg:p-6 bg-card shadow-md">
       <Table>
         <TableHeader>
           <TableRow>
@@ -42,9 +42,13 @@ export function CategoryTable({ categories, onEdit, onDelete }: CategoryTablePro
           ) : (
             categories.map((category) => (
               <TableRow key={category.id} className="h-4">
-                <TableCell className="p-1 font-medium text-foreground">{category.name}</TableCell>
+                <TableCell className="p-1 font-medium text-foreground">
+                  <div>{category.name}</div>
+                </TableCell>
                 <TableCell className="p-1 text-muted-foreground">{category.totalEvents}</TableCell>
-                <TableCell className="p-1 text-muted-foreground">{category.description}</TableCell>
+                <TableCell className="p-1 text-muted-foreground">
+                  <div>{category.description}</div>
+                </TableCell>
                 <TableCell className="p-1 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <Button

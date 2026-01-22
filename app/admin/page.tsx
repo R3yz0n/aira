@@ -1,7 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { ShoppingCart, Calendar, Clock, BarChart3 } from "lucide-react";
+import { ShoppingCart, Calendar, Clock, BarChart3, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export default function AdminPage() {
   const stats = [
@@ -41,10 +43,7 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>
-        <p className="text-sm text-muted-foreground">Manage your events and categories</p>
-      </div>
+      <AdminHeader title="Admin Panel" subtitle="Manage your events and categories" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;

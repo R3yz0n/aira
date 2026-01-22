@@ -18,7 +18,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main Content */}
         <div className="flex-1">
           {/* Page Content */}
-          <div className="p-4 h-full overflow-auto">{children}</div>
+          <div className=" py-4 w-[600px] md:w-auto px-2 lg:p-4 h-full overflow-auto">
+            {children}
+          </div>
         </div>
       </div>
     </RequireAdmin>

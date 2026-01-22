@@ -8,6 +8,7 @@ import { IEventEntity } from "@/domain/event";
 import { useEvent } from "@/hooks/use-event";
 import { useCategory } from "@/hooks/use-category";
 import { EventTable } from "@/components/admin/events/EventTable";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export default function EventsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -37,18 +38,16 @@ export default function EventsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Events</h1>
-          <p className="text-sm text-muted-foreground">Manage and track your events</p>
-        </div>
-        <Button
-          className="flex items-center gap-2 bg-aira-blue text-white hover:bg-aira-blue/90"
-          onClick={handleCreate}
-        >
-          <Plus className="w-4 h-4" />
-          New Event
-        </Button>
+      <div>
+        <AdminHeader title="Events" subtitle="Manage and track your events">
+          <Button
+            className="flex items-center gap-2 bg-aira-blue text-white hover:bg-aira-blue/90"
+            onClick={handleCreate}
+          >
+            <Plus className="w-4 h-4" />
+            New Event
+          </Button>
+        </AdminHeader>
       </div>
 
       <EventTable

@@ -7,6 +7,7 @@ import { CategoryTable } from "@/components/admin/categories/CategoryTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ICategoryEntity, TCategoryWithStats } from "@/domain/category";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 import { useCategory } from "@/hooks/use-category";
 
 export default function CategoriesPage() {
@@ -39,19 +40,17 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Categories</h1>
-          <p className="text-sm text-muted-foreground">Manage and track your event categories</p>
-        </div>
-        <Button
-          className="flex items-center gap-2 bg-aira-blue text-white hover:bg-aira-blue/90"
-          onClick={handleCreate}
-          disabled={isLoading}
-        >
-          <Plus className="w-4 h-4" />
-          {isLoading ? "Loading..." : "New Category"}
-        </Button>
+      <div>
+        <AdminHeader title="Categories" subtitle="Manage and track your event categories">
+          <Button
+            className="flex items-center gap-2 bg-aira-blue text-white hover:bg-aira-blue/90"
+            onClick={handleCreate}
+            disabled={isLoading}
+          >
+            <Plus className="w-4 h-4" />
+            {isLoading ? "Loading..." : "New Category"}
+          </Button>
+        </AdminHeader>
       </div>
 
       <CategoryTable categories={categories} onEdit={handleEdit} />

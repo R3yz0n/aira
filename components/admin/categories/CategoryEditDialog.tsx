@@ -71,7 +71,7 @@ export function CategoryEditDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(val) => (!val ? onClose() : null)}>
+    <Dialog  open={open} onOpenChange={(val) => (!val ? onClose() : null)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{initialValue ? "Edit Category" : "New Category"}</DialogTitle>
@@ -104,7 +104,12 @@ export function CategoryEditDialog({
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              className="md:inline-flex hidden"
+              variant="outline"
+              onClick={onClose}
+            >
               Cancel
             </Button>
             <Button

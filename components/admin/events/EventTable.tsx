@@ -12,8 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IEventEntity, IPaginationParams } from "@/domain/event";
 import { ICategoryEntity } from "@/domain/category";
-import { Pencil, Trash2, Search } from "lucide-react";
+import { Pencil, Trash2, Search, Eye } from "lucide-react";
+import Image from "next/image";
 import { debounce } from "lodash";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface EventTableProps {
   events: IEventEntity[];
@@ -34,6 +37,9 @@ export function EventTable({
   isLoading,
   categories,
 }: EventTableProps) {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
+  const [imgLoading, setImgLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -67,7 +73,7 @@ export function EventTable({
   console.log("Categories:", categories); // Debugging to check if categories are populated
 
   return (
-    <Card className="p-6 bg-card shadow-md">
+    <Card className="p-3 lg:p-6 bg-card shadow-md">
       <div className="flex items-center justify-between mb-4">
         <div className="relative w-1/3">
           <Input
@@ -94,12 +100,12 @@ export function EventTable({
         </div>
       </div>
 
-      <Table>
+      <Table className=" w-full table-fixed">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-foreground font-bold">Event Title</TableHead>
-            <TableHead className="text-foreground font-bold">Description</TableHead>
-            <TableHead className="text-right text-foreground font-bold">Actions</TableHead>
+            <TableHead className="text-foreground font-bold w-[40%]">Event Title</TableHead>
+            <TableHead className="text-foreground font-bold w-[40%]">Description</TableHead>
+            <TableHead className="text-right text-foreground font-bold ">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -112,35 +118,88 @@ export function EventTable({
           ) : (
             events.map((event) => (
               <TableRow key={event.id}>
-                <TableCell className="py-1 font-medium text-foreground">{event.title}</TableCell>
-                <TableCell className="py-1 text-muted-foreground">{event.description}</TableCell>
-                <TableCell className="py-1 text-right">
-                  <div className="flex items-center justify-end gap-2">
+                <TableCell className="py-1 w-[40%]">
+                  <div className="truncate whitespace-nowrap w-full font-medium text-foreground">
+                    {event.title}
+                  </div>
+                </TableCell>
+                <TableCell className="py-1 w-[40%]">
+                  <div className="truncate whitespace-nowrap w-full font-medium text-foreground">
+                    {event.description}
+                  </div>
+                </TableCell>
+                <TableCell className="py-1 text-right flex justify-end gap-2 items-center ">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground p-0.5  hover:text-foreground"
+                    onClick={() => {
+                      setImgLoading(true);
+                      setSelectedEvent(event);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground p-0.5 hover:text-foreground"
+                    onClick={() => onEdit(event)}
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  {onDelete && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-muted-foreground hover:text-foreground"
-                      onClick={() => onEdit(event)}
+                      className="text-destructive p-0.5 hover:text-destructive"
+                      onClick={() => onDelete(event)}
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" />
                     </Button>
-                    {onDelete && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => onDelete(event)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    )}
-                  </div>
+                  )}
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogTitle>Event Details</DialogTitle>
+          {selectedEvent ? (
+            <div className="space-y-4">
+              {selectedEvent.imageUrl && (
+                <div className="relative w-full h-48 rounded-md overflow-hidden">
+                  {imgLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                      <Image src="/placeholder.svg" alt="placeholder" width={64} height={64} />
+                    </div>
+                  )}
+                  <Image
+                    src={selectedEvent.imageUrl}
+                    alt={selectedEvent.title}
+                    fill
+                    className={`object-cover transition-opacity duration-300 ${imgLoading ? "opacity-0" : "opacity-100"}`}
+                    unoptimized
+                    onLoad={() => setImgLoading(false)}
+                    onError={() => setImgLoading(false)}
+                  />
+                </div>
+              )}
+              <div>
+                <h3 className="text-lg font-semibold">{selectedEvent.title} </h3>
+                <Badge className="text-sm  mt-3 ">
+                  {categories.find((c) => c.id === selectedEvent.categoryId)?.name ||
+                    "Uncategorized"}
+                </Badge>
+              </div>
+              <div className="text-sm text-muted-foreground">{selectedEvent.description} </div>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
       <div className="flex items-center justify-between mt-4">
         <Button
           onClick={() => handlePageChange(pagination.page - 1)}
