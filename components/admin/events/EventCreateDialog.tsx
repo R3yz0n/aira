@@ -270,7 +270,12 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
             ) : (
               <div>
                 <div className="mb-2">
-                  <Button type="button" variant="destructive" onClick={handleRemoveFile}>
+                  <Button
+                    className="h-7"
+                    type="button"
+                    variant="destructive"
+                    onClick={handleRemoveFile}
+                  >
                     Remove
                   </Button>
                 </div>

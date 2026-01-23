@@ -31,7 +31,6 @@ export const eventApi = {
       let { data }: IAxiosResponse<IEventEntity> = await axiosInstance.post(
         "/api/admin/events",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
       );
       return data?.data as IEventEntity;
     } catch (error) {
