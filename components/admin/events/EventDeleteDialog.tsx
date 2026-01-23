@@ -66,7 +66,7 @@ export function EventDeleteDialog({
               >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDelete} disabled={!event || isLoading}>
+              <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
                 Delete
               </Button>
             </div>

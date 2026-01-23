@@ -125,7 +125,7 @@ export function EventTable({
                     {event.description}
                   </div>
                 </TableCell>
-                <TableCell className="py-1 text-right flex justify-end gap-2 items-center ">
+                <TableCell className="py-1 text-right w-44 md:w-auto  flex justify-end gap-2 items-center ">
                   <Button
                     variant="ghost"
                     size="icon"

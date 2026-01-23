@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import { LayoutDashboard, Calendar, Folder, ChevronRight, LogOut, Menu, X } from "lucide-react";
 import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,7 @@ export function Sidebar() {
 
   // Close sidebar when route (pathname) changes (useful for mobile/off-canvas)
   React.useEffect(() => {
-    if (open) setOpen(false);
+    setOpen(false);
   }, [pathname]);
 
   return (

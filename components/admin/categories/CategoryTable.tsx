@@ -44,7 +44,9 @@ export function CategoryTable({ categories, onEdit, onDelete }: CategoryTablePro
                 <TableCell className="p-1 font-medium text-foreground">
                   <div>{category.name}</div>
                 </TableCell>
-                <TableCell className="p-1 text-muted-foreground">{category.totalEvents}</TableCell>
+                <TableCell className="p-1 text-muted-foreground">
+                  {category?.totalEvents ?? 0}
+                </TableCell>
                 <TableCell className="p-1 text-muted-foreground">
                   <div>{category.description}</div>
                 </TableCell>
