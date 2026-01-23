@@ -1,12 +1,14 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { ShoppingCart, Calendar, Clock, BarChart3 } from "lucide-react";
+import { ShoppingCart, Calendar, Clock, BarChart3, Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export default function AdminPage() {
   const stats = [
     {
-      title: "Total Items in Cart",
+      title: "Total Events",
       value: "12",
       description: "Items pending review",
       icon: ShoppingCart,
@@ -14,7 +16,7 @@ export default function AdminPage() {
       iconColor: "text-aira-blue",
     },
     {
-      title: "Events Linked",
+      title: "Total Categories",
       value: "5",
       description: "Upcoming events with cart items",
       icon: Calendar,
@@ -22,25 +24,18 @@ export default function AdminPage() {
       iconColor: "text-aira-pink",
     },
     {
-      title: "Pending Actions",
+      title: "Total Bookings",
       value: "5",
       description: "Actions awaiting approval",
       icon: Clock,
       bgColor: "bg-aira-cream",
       iconColor: "text-aira-gold",
     },
-    {
-      title: "Total Revenue",
-      value: "$24,580",
-      description: "This month",
-      icon: BarChart3,
-      bgColor: "bg-aira-ivory",
-      iconColor: "text-aira-blue",
-    },
   ];
 
   return (
     <div className="space-y-8">
+      <AdminHeader title="Admin Panel" subtitle="Manage your events and categories" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;

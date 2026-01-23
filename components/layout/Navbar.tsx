@@ -40,7 +40,7 @@ export function Navbar() {
       animate={{ y: 0 }}
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "bg-background/95 backdrop-blur-md shadow-soft" : "bg-transparent"
+        scrolled ? "bg-background/95 backdrop-blur-md shadow-soft" : "bg-transparent",
       )}
     >
       <nav className="container mx-auto px-4 lg:px-8">
@@ -66,7 +66,7 @@ export function Navbar() {
                 href={link.path}
                 className={cn(
                   "relative font-medium transition-colors duration-200",
-                  pathname === link.path ? "text-primary" : "text-foreground/80 hover:text-primary"
+                  pathname === link.path ? "text-primary" : "text-foreground/80 hover:text-primary",
                 )}
               >
                 {link.name}
@@ -146,7 +146,7 @@ export function Navbar() {
                     href={link.path}
                     className={cn(
                       "block py-2 font-medium transition-colors",
-                      pathname === link.path ? "text-primary" : "text-foreground/80"
+                      pathname === link.path ? "text-primary" : "text-foreground/80",
                     )}
                   >
                     {link.name}

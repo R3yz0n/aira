@@ -30,11 +30,11 @@ export const eventCreateSchema = z.object({
     .max(1000, "Description must be 1000 characters or less"),
   categoryId: z
     .string({
-      required_error: "Category ID is required",
-      invalid_type_error: "Category ID must be a string",
+      required_error: "Category is required",
+      invalid_type_error: "Category must be a string",
     })
     .trim()
-    .min(1, "Category ID is required"),
+    .min(1, "Category is required"),
 });
 
 // Schema for image file validation (type and size)
@@ -45,7 +45,7 @@ export const imageFileSchema = z.object({
     .refine(
       (file) =>
         ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(file.type),
-      "Invalid file type. Allowed: JPG, PNG, WebP, GIF"
+      "Invalid file type. Allowed: JPG, PNG, WebP, GIF",
     )
     .refine((file) => file.size <= 10 * 1024 * 1024, "File size too large. Maximum 10MB allowed"),
 });
@@ -92,3 +92,18 @@ export type TEventCreateInput = z.infer<typeof eventCreateSchema>;
 export type TEventUpdateInput = z.infer<typeof eventUpdateSchema>;
 export type TImageFileInput = z.infer<typeof imageFileSchema>;
 export type TImageUrl = z.infer<typeof imageUrlSchema>;
+
+export interface IPaginationResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+}
+
+export interface IPaginationParams {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}

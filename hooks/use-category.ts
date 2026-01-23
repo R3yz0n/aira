@@ -82,7 +82,7 @@ export function useCategory() {
         if (isMountedRef.current) setIsLoading(false);
       }
     },
-    [toast]
+    [toast],
   );
 
   const update = useCallback(
@@ -128,7 +128,7 @@ export function useCategory() {
         if (isMountedRef.current) setIsLoading(false);
       }
     },
-    [toast]
+    [toast],
   );
 
   const upsertLocal = useCallback((cat: ICategoryEntity) => {

@@ -8,7 +8,13 @@ import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventNotFoundError, EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
-import { IEventEntity, eventIdSchema, imageFileSchema, eventUpdateSchema } from "@/domain/event";
+import {
+  IEventEntity,
+  eventIdSchema,
+  imageFileSchema,
+  eventUpdateSchema,
+  imageUrlSchema,
+} from "@/domain/event";
 import {
   CloudinaryQuotaError,
   CloudinaryService,
@@ -83,7 +89,7 @@ export const DELETE = withAdminAuth(
  * PATCH /api/admin/events/:id
  * Updates an event by ID (admin only).
  * - Path: id (event ID as MongoDB ObjectId)
- * - Body: Partial event data (title, description, categoryId, etc.)
+ * - Body: All event data (title, description, categoryId, imageUrl or file.)
  * - Deletes the old image from Cloudinary if a new image is provided.
  * - 200: updated event data
  * - 400: INVALID_INPUT (invalid event ID format or input validation errors)
@@ -111,6 +117,7 @@ export const PATCH = withAdminAuth(
       const title = formData.get("title") as string | null;
       const description = formData.get("description") as string | null;
       const categoryId = formData.get("categoryId") as string | null;
+      const imageUrl = formData.get("imageUrl") as string | null;
 
       // Validate input data
       const updateData: Record<string, any> = {};
@@ -136,8 +143,20 @@ export const PATCH = withAdminAuth(
         updateData.imageUrl = uploadResult.url;
         updateData.publicId = uploadResult.publicId;
       }
+      // If no file uploaded but client provided an imageUrl, validate and use it (skip upload)
+      if (!file && imageUrl) {
+        const urlValidation = imageUrlSchema.safeParse({ imageUrl });
+        if (!urlValidation.success) {
+          return errorResponse(
+            "INVALID_INPUT",
+            "Invalid image URL",
+            400,
+            urlValidation.error.flatten(),
+          );
+        }
+        updateData.imageUrl = imageUrl;
+      }
 
-      // Validate the entire updateData object
       const validation = eventUpdateSchema.safeParse(updateData);
       if (!validation.success) {
         return errorResponse(

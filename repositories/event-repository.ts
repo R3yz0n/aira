@@ -1,4 +1,4 @@
-import { IEventEntity } from "@/domain/event";
+import { IEventEntity, IPaginationResult } from "@/domain/event";
 import { EventModel } from "@/lib/models/event";
 import { formatTimestamps } from "@/lib/utils/format-entity";
 
@@ -7,20 +7,12 @@ export interface PaginationParams {
   limit: number;
 }
 
-export interface PaginationResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
-}
-
 export interface EventRepository {
   findById(id: string): Promise<IEventEntity | null>;
   findByCategory(categoryId: string): Promise<IEventEntity[]>;
   list(
     options: { search?: string; categoryId?: string } & PaginationParams,
-  ): Promise<PaginationResult<IEventEntity>>;
+  ): Promise<IPaginationResult<IEventEntity>>;
   create(data: Omit<IEventEntity, "id" | "createdAt" | "updatedAt">): Promise<IEventEntity>;
   deleteById(id: string): Promise<IEventEntity | null>;
   countByCategory(categoryId: string): Promise<number>;
@@ -81,7 +73,7 @@ export class MongoEventRepository implements EventRepository {
 
   async list(
     options: { search?: string; categoryId?: string } & PaginationParams,
-  ): Promise<PaginationResult<IEventEntity>> {
+  ): Promise<IPaginationResult<IEventEntity>> {
     try {
       const { search, categoryId, page, limit } = options;
       const skip = (page - 1) * limit;

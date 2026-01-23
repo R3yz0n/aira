@@ -5,9 +5,10 @@ import {
   eventUpdateSchema,
   imageUrlSchema,
 } from "@/domain/event";
-import { EventRepository, PaginationResult } from "@/repositories/event-repository";
+import { EventRepository } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { CategoryNotFoundError } from "../category/category-service";
+import { IPaginationResult } from "@/domain/event";
 
 export class EventNotFoundError extends Error {
   constructor() {
@@ -27,7 +28,7 @@ export class EventService {
     limit: number;
     search?: string;
     categoryId?: string;
-  }): Promise<PaginationResult<IEventEntity>> {
+  }): Promise<IPaginationResult<IEventEntity>> {
     return this.eventRepository.list(options);
   }
 

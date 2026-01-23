@@ -5,9 +5,8 @@ import type { IAxiosResponse, IApiErrorResponse, IErrorResponse } from "@/lib/ty
 export const categoryApi = {
   async list(): Promise<ICategoryEntity[]> {
     try {
-      let { data }: IAxiosResponse<ICategoryEntity[]> = await axiosInstance.get(
-        "/api/public/categories"
-      );
+      let { data }: IAxiosResponse<ICategoryEntity[]> =
+        await axiosInstance.get("/api/public/categories");
       return data?.data as ICategoryEntity[];
     } catch (error) {
       const err = error as IApiErrorResponse;
@@ -23,7 +22,7 @@ export const categoryApi = {
     try {
       let { data }: IAxiosResponse<ICategoryEntity> = await axiosInstance.post(
         "/api/admin/categories",
-        input
+        input,
       );
       return data?.data as ICategoryEntity;
     } catch (error) {
@@ -40,7 +39,7 @@ export const categoryApi = {
     try {
       let { data }: IAxiosResponse<ICategoryEntity> = await axiosInstance.put(
         `/api/admin/categories/${id}`,
-        input
+        input,
       );
       return data?.data as ICategoryEntity;
     } catch (error) {

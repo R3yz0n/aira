@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 
 // provide ur token
 const ADMIN_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OTQyZmZhMTliZTNlZGVkMWZhMzYzNWEiLCJlbWFpbCI6ImFpcmFldmVudHMwMDFAZ21haWwuY29tIiwiaWF0IjoxNzY4NDc2MzkyLCJleHAiOjE3Njg0NzY5OTJ9.zHjYH5xNStIc6jcpAxbPbvOSqLT_W8clrn0Iw8SWkBQ";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OTQyZmZhMTliZTNlZGVkMWZhMzYzNWEiLCJlbWFpbCI6ImFpcmFldmVudHMwMDFAZ21haWwuY29tIiwiaWF0IjoxNzY4ODExODM1LCJleHAiOjE3Njg4MTI0MzV9.jKUzzUnE6_934CJFwt4aYfmZWYmdXUbIUMEdaX3nY68";
 const BASE_URL = "http://localhost:3005/api/admin/events";
 
 dotenv.config();
@@ -24,7 +24,7 @@ async function createEvent(category, index, categoryId) {
   return new Promise((resolve) => {
     const form = new FormData();
     // file path
-    form.append("file", fs.createReadStream("./.github/a.webp"));
+    form.append("file", fs.createReadStream("./.github/a.jpg"));
     form.append("title", `${category}_${index}`);
     form.append("description", `Amazing ${category.toLowerCase()} event number ${index}`);
     form.append("categoryId", categoryId);
@@ -59,7 +59,7 @@ async function createEvent(category, index, categoryId) {
           }
           resolve();
         });
-      }
+      },
     );
 
     req.on("error", (err) => {

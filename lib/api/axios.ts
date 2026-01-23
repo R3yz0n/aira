@@ -21,6 +21,15 @@ axiosInstance.interceptors.request.use(
       return config;
     }
 
+    // If the request body is FormData, remove any pre-set Content-Type
+    // so the browser can add the required multipart boundary.
+    if (typeof FormData !== "undefined" && config.data instanceof FormData && config.headers) {
+      try {
+        delete (config.headers as any)["Content-Type"];
+        delete (config.headers as any)["content-type"];
+      } catch (_) {}
+    }
+
     const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
 
     if (token) {
@@ -37,7 +46,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor
@@ -74,7 +83,7 @@ axiosInstance.interceptors.response.use(
     };
 
     return Promise.reject(axiosError) as Promise<IApiErrorResponse>;
-  }
+  },
 );
 
 export default axiosInstance;

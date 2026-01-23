@@ -24,11 +24,6 @@ export function useAdminLogin(options: IUseAdminLoginOptions = {}) {
       }
       adminAuthApi.storeToken(token);
 
-      toast({
-        title: "Logged in",
-        description: "Welcome back!",
-      });
-
       onSuccess?.();
       router.replace(redirectTo);
 

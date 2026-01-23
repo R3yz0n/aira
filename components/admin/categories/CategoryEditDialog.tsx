@@ -22,11 +22,10 @@ import {
   categoryUpdateSchema,
   ICategory,
   ICategoryEntity,
-  TCategoryWithStats,
 } from "@/domain/category";
 interface CategoryEditDialogProps {
   open: boolean;
-  initialValue: TCategoryWithStats | null;
+  initialValue: ICategoryEntity | null;
   onClose: () => void;
   onCreate: (category: ICategory) => Promise<ICategoryEntity>;
   onUpdate: (id: string, category: ICategory) => Promise<ICategoryEntity>;
@@ -39,6 +38,7 @@ export function CategoryEditDialog({
   onClose,
   onCreate,
   onUpdate,
+  isLoading,
 }: CategoryEditDialogProps) {
   const {
     register,
@@ -104,13 +104,18 @@ export function CategoryEditDialog({
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              className="md:inline-flex hidden"
+              variant="outline"
+              onClick={onClose}
+            >
               Cancel
             </Button>
             <Button
               type="submit"
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
             >
               Save Changes
             </Button>
