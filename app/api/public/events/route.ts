@@ -29,18 +29,28 @@ export async function GET(req: NextRequest) {
 
     // Parse optional filters
     const search = searchParams.get("search") || undefined;
-    let categoryId = searchParams.get("categoryId") || undefined;
 
-    // Validate categoryId format only if provided
-    if (categoryId) {
-      const parsedId = categoryIdSchema.safeParse({ id: categoryId });
-      if (!parsedId.success) {
-        categoryId = undefined; // Ignore invalid categoryId
+    // Support multiple categoryIds: comma-separated or repeated param
+    let categoryIds: string[] | undefined = undefined;
+    const rawCategoryIds = searchParams.get("categoryIds");
+    if (rawCategoryIds) {
+      categoryIds = rawCategoryIds.split(",").map((id) => id.trim()).filter(Boolean);
+      // Validate all categoryIds
+      categoryIds = categoryIds.filter((id) => categoryIdSchema.safeParse({ id }).success);
+      if (categoryIds.length === 0) categoryIds = undefined;
+    } else {
+      // Fallback to single categoryId param for backward compatibility
+      let categoryId = searchParams.get("categoryId") || undefined;
+      if (categoryId) {
+        const parsedId = categoryIdSchema.safeParse({ id: categoryId });
+        if (parsedId.success) {
+          categoryIds = [categoryId];
+        }
       }
     }
 
     // Fetch paginated results
-    const result = await eventService.list({ page, limit, search, categoryId });
+    const result = await eventService.list({ page, limit, search, categoryIds });
 
     // Format response with pagination metadata
     const payload: IPaginationResult<IEventEntity> = {

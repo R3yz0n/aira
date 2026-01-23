@@ -4,39 +4,60 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const services = [
-  {
-    title: "Wedding Events",
-    description:
-      "From engagement to reception, we craft every moment of your wedding journey with elegance and precision.",
-    image: "/hero-wedding.jpg",
-    link: "/services",
-  },
-  {
-    title: "Corporate Events",
-    description:
-      "Professional conferences, product launches, and annual celebrations that leave a lasting impression.",
-    image: "/corporate-event.jpg",
-    link: "/services",
-  },
-  {
-    title: "Birthday & Social",
-    description:
-      "Celebrate life's milestones with unique themes, stunning decorations, and unforgettable experiences.",
-    image: "/birthday-event.jpg",
-    link: "/services",
-  },
-  {
-    title: "Sangeet & Mehendi",
-    description:
-      "Colorful pre-wedding celebrations filled with music, dance, and traditional charm.",
-    image: "/sangeet-event.jpg",
-    link: "/services",
-  },
-];
+import { useCategory } from "@/hooks/use-category";
+import { useEffect, useState } from "react";
+import { useEvent } from "@/hooks/use-event";
+import { ICategoryEntity } from "@/domain/category";
+import { IEventEntity } from "@/domain/event";
+import Image from "next/image";
 
 export function ServicesPreview() {
+  const {
+    list: categoryList,
+
+    categories,
+  } = useCategory();
+  const { list: eventList } = useEvent();
+
+  // Array of { category: ICategoryEntity, event: IEventEntity|null }
+  const [categoryEventPairs, setCategoryEventPairs] = useState<
+    { category: ICategoryEntity; event: IEventEntity | null }[]
+  >([]);
+
+  useEffect(() => {
+    categoryList();
+  }, [categoryList]);
+
+  useEffect(() => {
+    // Only run when categories are loaded
+    if (categories && categories.length > 0) {
+      // Filter categories with totalEvents > 0
+      const eligible = categories.filter(
+        (cat: ICategoryEntity) => cat.totalEvents && cat.totalEvents > 0,
+      );
+      if (eligible.length > 0) {
+        // Shuffle and pick 4
+        const shuffled = [...eligible].sort(() => 0.5 - Math.random());
+        const picked = shuffled.slice(0, 4);
+
+        // Call eventList for each picked category in parallel and map one random event per category
+        Promise.all(picked.map((cat) => eventList(1, 4, "", cat.id))).then((results) => {
+          // results: IEventEntity[][], same order as picked
+          const pairs = picked.map((category, idx) => {
+            const events = results[idx] || [];
+            let event: IEventEntity | null = null;
+            if (events.length > 0) {
+              // Pick a random event from this category
+              event = events[Math.floor(Math.random() * events.length)];
+            }
+            return { category, event };
+          });
+          setCategoryEventPairs(pairs);
+        });
+      }
+    }
+  }, [categories, eventList]);
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
@@ -61,40 +82,53 @@ export function ServicesPreview() {
 
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group"
-            >
-              <div className="relative h-80 rounded-2xl overflow-hidden shadow-card hover-lift">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-display text-xl font-bold text-primary-foreground mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-primary-foreground/80 text-sm mb-4 line-clamp-2">
-                    {service.description}
-                  </p>
-                  <Link
-                    href={service.link}
-                    className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
-                  >
-                    Learn More
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+          {categoryEventPairs.length === 0 ? (
+            <div className="col-span-4 text-xl font-semibold text-center text-secondary py-12">
+              No featured events found.
+            </div>
+          ) : (
+            categoryEventPairs.map(({ category, event }, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group"
+              >
+                <div className="relative h-80 rounded-2xl overflow-hidden shadow-card hover-lift">
+                  <Image
+                    src={event?.imageUrl || "/placeholder.svg"}
+                    alt="placeholder"
+                    placeholder="blur"
+                    blurDataURL="/placeholder.svg"
+                    className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
+                    fill
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="font-display text-xl font-bold text-primary-foreground mb-2 line-clamp-2">
+                      {category.name} event name blah blah lah event name blah blah lah event name
+                      blah blah lah
+                    </h3>
+
+                    {event ? (
+                      <Link
+                        href={"/events/" + event.id}
+                        className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
+                      >
+                        View Event
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">No event found</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          )}
         </div>
 
         {/* CTA */}

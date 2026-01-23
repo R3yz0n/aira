@@ -380,7 +380,13 @@ export function EventCreateDialog({
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
               disabled={isSubmitting || isLoading}
             >
-              {mode === "edit" ? "Save Changes" : "Create Event"}
+              {isSubmitting || isLoading
+                ? mode === "edit"
+                  ? "Saving Changes..."
+                  : "Creating Event..."
+                : mode === "edit"
+                  ? "Save Changes"
+                  : "Create Event"}
             </Button>
           </DialogFooter>
         </form>

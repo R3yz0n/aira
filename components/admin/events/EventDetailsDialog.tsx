@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -19,12 +19,6 @@ export function EventDetailsDialog({
   event,
   categories,
 }: EventDetailsDialogProps) {
-  const [imgLoading, setImgLoading] = useState(true);
-
-  useEffect(() => {
-    setImgLoading(true);
-  }, [event?.imageUrl, open]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -32,20 +26,15 @@ export function EventDetailsDialog({
         {event ? (
           <div className="space-y-4">
             {event.imageUrl && (
-              <div className="relative w-full h-48 rounded-md overflow-hidden">
-                {imgLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
-                    <Image src="/placeholder.svg" alt="placeholder" width={64} height={64} />
-                  </div>
-                )}
+              <div className="relative  w-full  aspect-[4/3] flex justify-start  overflow-hidden">
                 <Image
                   src={event.imageUrl}
                   alt={event.title}
                   fill
-                  className={`object-cover transition-opacity duration-300 ${imgLoading ? "opacity-0" : "opacity-100"}`}
+                  placeholder="blur"
+                  blurDataURL="/placeholder.svg"
+                  className="object-contain object-left   transition-opacity duration-300"
                   unoptimized
-                  onLoad={() => setImgLoading(false)}
-                  onError={() => setImgLoading(false)}
                 />
               </div>
             )}
