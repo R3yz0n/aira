@@ -1,6 +1,6 @@
 "use client";
 
-import { TCategoryWithStats } from "@/domain/category";
+import { ICategoryEntity } from "@/domain/category";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -14,10 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
 interface CategoryTableProps {
-  categories: any[];
-  // categories: TCategoryWithStats[];
-  onEdit: (categories: TCategoryWithStats) => void;
-  onDelete?: (categories: TCategoryWithStats) => void;
+  categories: ICategoryEntity[];
+  onEdit: (categories: ICategoryEntity) => void;
+  onDelete?: (categories: ICategoryEntity) => void;
 }
 
 export function CategoryTable({ categories, onEdit, onDelete }: CategoryTableProps) {

@@ -22,11 +22,10 @@ import {
   categoryUpdateSchema,
   ICategory,
   ICategoryEntity,
-  TCategoryWithStats,
 } from "@/domain/category";
 interface CategoryEditDialogProps {
   open: boolean;
-  initialValue: TCategoryWithStats | null;
+  initialValue: ICategoryEntity | null;
   onClose: () => void;
   onCreate: (category: ICategory) => Promise<ICategoryEntity>;
   onUpdate: (id: string, category: ICategory) => Promise<ICategoryEntity>;
@@ -71,7 +70,7 @@ export function CategoryEditDialog({
   };
 
   return (
-    <Dialog  open={open} onOpenChange={(val) => (!val ? onClose() : null)}>
+    <Dialog open={open} onOpenChange={(val) => (!val ? onClose() : null)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{initialValue ? "Edit Category" : "New Category"}</DialogTitle>

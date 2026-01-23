@@ -6,13 +6,13 @@ import { CategoryEditDialog } from "@/components/admin/categories/CategoryEditDi
 import { CategoryTable } from "@/components/admin/categories/CategoryTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ICategoryEntity, TCategoryWithStats } from "@/domain/category";
+import { ICategoryEntity } from "@/domain/category";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { useCategory } from "@/hooks/use-category";
 
 export default function CategoriesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<TCategoryWithStats | null>(null);
+  const [editingCategory, setEditingCategory] = useState<ICategoryEntity | null>(null);
 
   const { list, create, update, categories, isLoading } = useCategory();
 
@@ -22,8 +22,7 @@ export default function CategoriesPage() {
     list().catch(() => {});
   }, [list]);
 
-  const handleEdit = (category: TCategoryWithStats) => {
-    console.log("Editing category", category);
+  const handleEdit = (category: ICategoryEntity) => {
     setEditingCategory(category);
     setDialogOpen(true);
   };

@@ -8,6 +8,7 @@ export interface ICategoryEntity extends ICategory {
   id: string;
   createdAt: Date | string;
   updatedAt?: Date | string;
+  totalEvents?: number;
 }
 
 export type TCategoryWithStats = Pick<ICategoryEntity, "id" | "name" | "description"> & {

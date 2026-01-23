@@ -6,6 +6,7 @@ import {
   categoryUpdateSchema,
 } from "@/domain/category";
 import { CategoryRepository } from "@/repositories/category-repository";
+import { EventRepository } from "@/repositories/event-repository";
 
 export class CategoryNotFoundError extends Error {
   constructor() {
@@ -37,5 +38,22 @@ export class CategoryService {
     });
     if (!updated) throw new CategoryNotFoundError();
     return updated;
+  }
+
+  /**
+   * List categories including the total number of events for each category.
+   * This implementation makes one repository call per category (simple and decoupled).
+   */
+  async listWithEventCounts(eventRepository: EventRepository): Promise<ICategoryEntity[]> {
+    const categories = await this.repository.list();
+
+    const results = await Promise.all(
+      categories.map(async (c) => {
+        const totalEvents = await eventRepository.countByCategory(c.id);
+        return { ...c, totalEvents };
+      }),
+    );
+
+    return results;
   }
 }
