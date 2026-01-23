@@ -70,8 +70,6 @@ export function EventTable({
     list(1, pagination.limit, search, categoryId === "all" ? undefined : categoryId);
   };
 
-  console.log("Categories:", categories); // Debugging to check if categories are populated
-
   return (
     <Card className="p-3 lg:p-6 bg-card shadow-md">
       <div className="flex items-center justify-between mb-4">

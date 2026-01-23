@@ -30,11 +30,11 @@ export const eventCreateSchema = z.object({
     .max(1000, "Description must be 1000 characters or less"),
   categoryId: z
     .string({
-      required_error: "Category ID is required",
-      invalid_type_error: "Category ID must be a string",
+      required_error: "Category is required",
+      invalid_type_error: "Category must be a string",
     })
     .trim()
-    .min(1, "Category ID is required"),
+    .min(1, "Category is required"),
 });
 
 // Schema for image file validation (type and size)
