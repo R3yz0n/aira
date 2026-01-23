@@ -11,12 +11,6 @@ export interface ICategoryEntity extends ICategory {
   totalEvents?: number;
 }
 
-export type TCategoryWithStats = Pick<ICategoryEntity, "id" | "name" | "description"> & {
-  totalEvents: number;
-};
-
-// export type IAdmin = z.infer<typeof adminLoginSchema>;
-
 export const categoryCreateSchema = z.object({
   name: z
     .string({ required_error: "Name is required", invalid_type_error: "Name must be a string" })
