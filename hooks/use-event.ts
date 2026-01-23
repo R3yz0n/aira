@@ -57,5 +57,45 @@ export function useEvent() {
     [toast],
   );
 
-  return { list, events, pagination, isLoading, error };
+  const create = useCallback(
+    async (formData: FormData): Promise<IEventEntity> => {
+      if (isMountedRef.current) setIsLoading(true);
+      try {
+        const created = await eventApi.create(formData);
+
+        if (isMountedRef.current) {
+          setEvents((prev) => [created, ...prev]);
+          setError(null);
+        }
+
+        toast({ title: "Event created", description: "New event saved." });
+        return created;
+      } catch (error) {
+        const err = error as IErrorResponse;
+        let errorMessage = "Failed to create event";
+
+        if (err?.status === 409) {
+          errorMessage = "An event with this title already exists";
+        } else if (err?.status === 400) {
+          errorMessage = err?.message ?? "Invalid event data";
+        } else if (err?.status === 413) {
+          errorMessage = "File too large. Maximum allowed size exceeded.";
+        } else if (err?.message) {
+          errorMessage = err.message;
+        }
+
+        toast({
+          title: "Create failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw err;
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
+  return { list, create, events, pagination, isLoading, error };
 }

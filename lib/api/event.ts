@@ -15,7 +15,7 @@ export const eventApi = {
         "/api/public/events",
         { params },
       );
-      return data?.data ?? []; // Return only the data array
+      return (data?.data satisfies IPaginationResult<IEventEntity>) ?? []; // Return only the data array
     } catch (error) {
       const err = error as IApiErrorResponse;
       throw {
@@ -23,6 +23,23 @@ export const eventApi = {
         status: err.status,
         details: err.error?.details,
       } satisfies IErrorResponse;
+    }
+  },
+
+  async create(formData: FormData): Promise<IEventEntity> {
+    try {
+      let { data }: IAxiosResponse<IEventEntity> = await axiosInstance.post(
+        "/api/admin/events",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+      return data?.data as IEventEntity;
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      const status: number = err.status;
+      let message: string = err.error?.message || "Create event failed";
+
+      throw { message, status, details: err.error?.details } satisfies IErrorResponse;
     }
   },
 };

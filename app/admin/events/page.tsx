@@ -9,12 +9,13 @@ import { useEvent } from "@/hooks/use-event";
 import { useCategory } from "@/hooks/use-category";
 import { EventTable } from "@/components/admin/events/EventTable";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import EventCreateDialog from "@/components/admin/events/EventCreateDialog";
 
 export default function EventsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<IEventEntity | null>(null);
 
-  const { events, pagination, list, isLoading } = useEvent();
+  const { events, pagination, list, isLoading, create } = useEvent();
   const { categories, list: fetchCategories } = useCategory();
 
   // Load events and categories once on mount
@@ -57,6 +58,12 @@ export default function EventsPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         isLoading={isLoading}
+        categories={categories}
+      />
+      <EventCreateDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onCreate={create}
         categories={categories}
       />
     </div>
