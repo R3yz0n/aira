@@ -38,6 +38,7 @@ export function CategoryEditDialog({
   onClose,
   onCreate,
   onUpdate,
+  isLoading,
 }: CategoryEditDialogProps) {
   const {
     register,
@@ -114,7 +115,7 @@ export function CategoryEditDialog({
             <Button
               type="submit"
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
             >
               Save Changes
             </Button>

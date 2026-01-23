@@ -47,7 +47,7 @@ async function main() {
 
   const hash = await bcrypt.hash(newPassword, 10);
   await AdminModel.updatePassword(String(admin._id), hash);
-  console.log("Admin password updated for", adminEmail);
+
   await mongoose.disconnect();
 }
 

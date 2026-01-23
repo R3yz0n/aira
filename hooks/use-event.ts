@@ -160,10 +160,22 @@ export function useEvent() {
         return deleted;
       } catch (error) {
         const err = error as IErrorResponse;
+        let errorMessage = "Failed to delete event";
+
+        if (err?.status === 401) {
+          errorMessage = err?.message || "Unauthorized: Missing or invalid token";
+        } else if (err?.status === 400) {
+          errorMessage = err?.message || "Invalid event ID format";
+        } else if (err?.status === 404) {
+          errorMessage = err?.message || "Event not found";
+        } else if (err?.message) {
+          errorMessage = err.message;
+        }
+
         if (isMountedRef.current) setError(err);
         toast({
           title: "Delete failed",
-          description: err?.message ?? "Failed to delete event",
+          description: errorMessage,
           variant: "destructive",
         });
         throw err;

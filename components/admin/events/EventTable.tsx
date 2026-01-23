@@ -13,16 +13,16 @@ import { Input } from "@/components/ui/input";
 import { IEventEntity, IPaginationParams } from "@/domain/event";
 import { ICategoryEntity } from "@/domain/category";
 import { Pencil, Trash2, Search, Eye } from "lucide-react";
-import Image from "next/image";
 import { debounce } from "lodash";
 import EventDetailsDialog from "./EventDetailsDialog";
+import EventDeleteDialog from "./EventDeleteDialog";
 
 interface EventTableProps {
   events: IEventEntity[];
   pagination: IPaginationParams;
   list: (page: number, limit: number, search?: string, categoryId?: string) => void;
   onEdit: (event: IEventEntity) => void;
-  onDelete?: (event: IEventEntity) => void;
+  onDelete: (id: string) => Promise<IEventEntity>;
   isLoading: boolean;
   categories: ICategoryEntity[];
 }
@@ -38,6 +38,7 @@ export function EventTable({
 }: EventTableProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -144,16 +145,18 @@ export function EventTable({
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
-                  {onDelete && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive p-0.5 hover:text-destructive"
-                      onClick={() => onDelete(event)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive p-0.5 hover:text-destructive"
+                    onClick={() => {
+                      setSelectedEvent(event);
+                      setDeleteDialogOpen(true);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))
@@ -165,6 +168,13 @@ export function EventTable({
         onOpenChange={setDialogOpen}
         event={selectedEvent}
         categories={categories}
+      />
+      <EventDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        event={selectedEvent}
+        onDelete={onDelete}
+        isLoading={isLoading}
       />
       <div className="flex items-center justify-between mt-4">
         <Button

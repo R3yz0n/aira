@@ -26,7 +26,7 @@ interface EventCreateDialogProps {
   onCreate: (formData: FormData) => Promise<IEventEntity>;
   onUpdate?: (id: string, formData: FormData) => Promise<IEventEntity>;
   categories: ICategoryEntity[];
-  isLoading?: boolean;
+  isLoading: boolean;
   initialValue?: IEventEntity | null;
 }
 
@@ -378,7 +378,7 @@ export function EventCreateDialog({
             <Button
               type="submit"
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading}
             >
               {mode === "edit" ? "Save Changes" : "Create Event"}
             </Button>
