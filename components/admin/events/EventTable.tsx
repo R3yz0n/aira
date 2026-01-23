@@ -15,8 +15,7 @@ import { ICategoryEntity } from "@/domain/category";
 import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import Image from "next/image";
 import { debounce } from "lodash";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import EventDetailsDialog from "./EventDetailsDialog";
 
 interface EventTableProps {
   events: IEventEntity[];
@@ -39,7 +38,6 @@ export function EventTable({
 }: EventTableProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
-  const [imgLoading, setImgLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -132,7 +130,6 @@ export function EventTable({
                     size="icon"
                     className="text-muted-foreground p-0.5  hover:text-foreground"
                     onClick={() => {
-                      setImgLoading(true);
                       setSelectedEvent(event);
                       setDialogOpen(true);
                     }}
@@ -163,41 +160,12 @@ export function EventTable({
           )}
         </TableBody>
       </Table>
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogTitle>Event Details</DialogTitle>
-          {selectedEvent ? (
-            <div className="space-y-4">
-              {selectedEvent.imageUrl && (
-                <div className="relative w-full h-48 rounded-md overflow-hidden">
-                  {imgLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-muted">
-                      <Image src="/placeholder.svg" alt="placeholder" width={64} height={64} />
-                    </div>
-                  )}
-                  <Image
-                    src={selectedEvent.imageUrl}
-                    alt={selectedEvent.title}
-                    fill
-                    className={`object-cover transition-opacity duration-300 ${imgLoading ? "opacity-0" : "opacity-100"}`}
-                    unoptimized
-                    onLoad={() => setImgLoading(false)}
-                    onError={() => setImgLoading(false)}
-                  />
-                </div>
-              )}
-              <div>
-                <h3 className="text-lg font-semibold">{selectedEvent.title} </h3>
-                <Badge className="text-sm  mt-3 ">
-                  {categories.find((c) => c.id === selectedEvent.categoryId)?.name ||
-                    "Uncategorized"}
-                </Badge>
-              </div>
-              <div className="text-sm text-muted-foreground">{selectedEvent.description} </div>
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+      <EventDetailsDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        event={selectedEvent}
+        categories={categories}
+      />
       <div className="flex items-center justify-between mt-4">
         <Button
           onClick={() => handlePageChange(pagination.page - 1)}

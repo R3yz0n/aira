@@ -89,7 +89,7 @@ export const DELETE = withAdminAuth(
  * PATCH /api/admin/events/:id
  * Updates an event by ID (admin only).
  * - Path: id (event ID as MongoDB ObjectId)
- * - Body: Partial event data (title, description, categoryId, etc.)
+ * - Body: All event data (title, description, categoryId, imageUrl or file.)
  * - Deletes the old image from Cloudinary if a new image is provided.
  * - 200: updated event data
  * - 400: INVALID_INPUT (invalid event ID format or input validation errors)
@@ -157,8 +157,7 @@ export const PATCH = withAdminAuth(
         updateData.imageUrl = imageUrl;
       }
 
-      // Validate the entire updateData object (allow partial updates)
-      const validation = eventUpdateSchema.partial().safeParse(updateData);
+      const validation = eventUpdateSchema.safeParse(updateData);
       if (!validation.success) {
         return errorResponse(
           "INVALID_INPUT",

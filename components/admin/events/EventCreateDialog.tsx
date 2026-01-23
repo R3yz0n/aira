@@ -139,9 +139,14 @@ export function EventCreateDialog({
     const files = e.target.files;
     if (files && files[0]) {
       const url = URL.createObjectURL(files[0]);
-      // revoke previous
-      if (prevUrlRef.current) {
-        URL.revokeObjectURL(prevUrlRef.current);
+      // revoke previous only if it was an object URL we created
+      const prev = prevUrlRef.current;
+      if (prev && prev.startsWith("blob:")) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {
+          // ignore
+        }
       }
       prevUrlRef.current = url;
       setPreviewUrl(url);
@@ -156,8 +161,15 @@ export function EventCreateDialog({
         } catch (_) {}
       } catch (_) {}
     } else {
-      if (prevUrlRef.current) {
-        URL.revokeObjectURL(prevUrlRef.current);
+      const prev = prevUrlRef.current;
+      if (prev && prev.startsWith("blob:")) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {
+          // ignore
+        }
+        prevUrlRef.current = null;
+      } else {
         prevUrlRef.current = null;
       }
       setPreviewUrl(null);
@@ -195,10 +207,15 @@ export function EventCreateDialog({
 
   useEffect(() => {
     return () => {
-      if (prevUrlRef.current) {
-        URL.revokeObjectURL(prevUrlRef.current);
-        prevUrlRef.current = null;
+      const prev = prevUrlRef.current;
+      if (prev && prev.startsWith("blob:")) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {
+          // ignore
+        }
       }
+      prevUrlRef.current = null;
     };
   }, []);
 
@@ -246,10 +263,15 @@ export function EventCreateDialog({
 
   useEffect(() => {
     if (!open) {
-      if (prevUrlRef.current) {
-        URL.revokeObjectURL(prevUrlRef.current);
-        prevUrlRef.current = null;
+      const prev = prevUrlRef.current;
+      if (prev && prev.startsWith("blob:")) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {
+          // ignore
+        }
       }
+      prevUrlRef.current = null;
       setPreviewUrl(null);
     }
   }, [open]);

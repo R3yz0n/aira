@@ -7,7 +7,7 @@ export const categoryApi = {
     try {
       let { data }: IAxiosResponse<ICategoryEntity[]> =
         await axiosInstance.get("/api/public/categories");
-      return data?.data satisfies ICategoryEntity[];
+      return data?.data as ICategoryEntity[];
     } catch (error) {
       const err = error as IApiErrorResponse;
       throw {

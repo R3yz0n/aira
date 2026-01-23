@@ -57,4 +57,19 @@ export const eventApi = {
       throw { message, status, details: err.error?.details } satisfies IErrorResponse;
     }
   },
+
+  async delete(id: string): Promise<IEventEntity> {
+    try {
+      const { data }: IAxiosResponse<IEventEntity> = await axiosInstance.delete(
+        `/api/admin/events/${id}`,
+      );
+      return data?.data as IEventEntity;
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      const status: number = err.status;
+      let message: string = err.error?.message || "Delete event failed";
+
+      throw { message, status, details: err.error?.details } satisfies IErrorResponse;
+    }
+  },
 };

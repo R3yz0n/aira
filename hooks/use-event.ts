@@ -145,5 +145,34 @@ export function useEvent() {
     [toast],
   );
 
-  return { list, create, update, events, pagination, isLoading, error };
+  const deleteEvent = useCallback(
+    async (id: string): Promise<IEventEntity> => {
+      if (isMountedRef.current) setIsLoading(true);
+      try {
+        const deleted = await eventApi.delete(id);
+
+        if (isMountedRef.current) {
+          setEvents((prev) => prev.filter((e) => e.id !== id));
+          setError(null);
+        }
+
+        toast({ title: "Event deleted", description: "Event removed." });
+        return deleted;
+      } catch (error) {
+        const err = error as IErrorResponse;
+        if (isMountedRef.current) setError(err);
+        toast({
+          title: "Delete failed",
+          description: err?.message ?? "Failed to delete event",
+          variant: "destructive",
+        });
+        throw err;
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
+  return { list, create, update, deleteEvent, events, pagination, isLoading, error };
 }
