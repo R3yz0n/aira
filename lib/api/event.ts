@@ -41,4 +41,20 @@ export const eventApi = {
       throw { message, status, details: err.error?.details } satisfies IErrorResponse;
     }
   },
+
+  async update(id: string, formData: FormData): Promise<IEventEntity> {
+    try {
+      const { data }: IAxiosResponse<IEventEntity> = await axiosInstance.patch(
+        `/api/admin/events/${id}`,
+        formData,
+      );
+      return data?.data as IEventEntity;
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      const status: number = err.status;
+      let message: string = err.error?.message || "Update event failed";
+
+      throw { message, status, details: err.error?.details } satisfies IErrorResponse;
+    }
+  },
 };

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { eventCreateSchema } from "@/domain/event";
+import { eventCreateSchema, eventUpdateSchema } from "@/domain/event";
 import {
   Dialog,
   DialogContent,
@@ -24,8 +24,10 @@ interface EventCreateDialogProps {
   open: boolean;
   onClose: () => void;
   onCreate: (formData: FormData) => Promise<IEventEntity>;
+  onUpdate?: (id: string, formData: FormData) => Promise<IEventEntity>;
   categories: ICategoryEntity[];
   isLoading?: boolean;
+  initialValue?: IEventEntity | null;
 }
 
 type FormValues = {
@@ -35,7 +37,16 @@ type FormValues = {
   file: File | null;
 };
 
-export function EventCreateDialog({ open, onClose, onCreate, categories }: EventCreateDialogProps) {
+export function EventCreateDialog({
+  open,
+  onClose,
+  onCreate,
+  categories,
+  initialValue = null,
+  isLoading,
+  onUpdate,
+}: EventCreateDialogProps) {
+  const mode = initialValue ? "edit" : "create";
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -45,48 +56,51 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
     "image/svg+xml",
   ];
 
-  const createFormSchema = eventCreateSchema.extend({
-    file: z.preprocess(
-      (v) => {
-        // normalize FileList, File[], or File to a single File-like object or null
-        if (v == null) return null;
-        if (typeof (v as any)?.item === "function") return (v as FileList).item(0) ?? null;
-        if (Array.isArray(v)) return v[0] ?? null;
-        if (v instanceof File) return v;
-        return v;
-      },
-      z.any().superRefine((val, ctx) => {
-        const file = val as any;
-        if (file == null) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "File is required" });
-          return;
-        }
+  const fileValidator = z.preprocess(
+    (v) => {
+      // normalize FileList, File[], or File to a single File-like object or null
+      if (v == null) return null;
+      if (typeof (v as any)?.item === "function") return (v as FileList).item(0) ?? null;
+      if (Array.isArray(v)) return v[0] ?? null;
+      if (v instanceof File) return v;
+      return v;
+    },
+    z.any().superRefine((val, ctx) => {
+      const file = val as any;
+      // allow null here — required-ness is enforced in the submit handler
+      if (file == null) {
+        return;
+      }
 
-        if (
-          typeof file.name !== "string" ||
-          typeof file.size !== "number" ||
-          typeof file.type !== "string"
-        ) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid file" });
-          return;
-        }
+      if (
+        typeof file.name !== "string" ||
+        typeof file.size !== "number" ||
+        typeof file.type !== "string"
+      ) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid file" });
+        return;
+      }
 
-        if (!allowedTypes.includes(file.type)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Invalid file type. Allowed: JPG, PNG, WebP, GIF, SVG",
-          });
-        }
+      if (!allowedTypes.includes(file.type)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid file type. Allowed: JPG, PNG, WebP, GIF, SVG",
+        });
+      }
 
-        if (file.size > 10 * 1024 * 1024) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "File size too large. Maximum 10MB allowed",
-          });
-        }
-      }),
-    ),
-  });
+      if (file.size > 10 * 1024 * 1024) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "File size too large. Maximum 10MB allowed",
+        });
+      }
+    }),
+  );
+
+  const createFormSchema = eventCreateSchema.extend({ file: fileValidator });
+  const updateFormSchema = eventUpdateSchema
+    .omit({ imageUrl: true })
+    .extend({ file: fileValidator });
 
   const {
     register,
@@ -95,9 +109,10 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
     setValue,
     clearErrors,
     trigger,
+    setError,
     formState: { isSubmitting, errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(createFormSchema),
+    resolver: zodResolver(mode === "edit" ? updateFormSchema : createFormSchema),
     defaultValues: { title: "", description: "", categoryId: "", file: null },
     mode: "onSubmit",
   });
@@ -105,8 +120,17 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    reset({ title: "", description: "", categoryId: "", file: null });
-  }, [open, reset]);
+    reset({
+      title: initialValue?.title ?? "",
+      description: initialValue?.description ?? "",
+      categoryId: initialValue?.categoryId ?? "",
+      file: null,
+    });
+    if (mode === "edit" && initialValue?.imageUrl) {
+      setPreviewUrl(initialValue.imageUrl);
+      prevUrlRef.current = initialValue.imageUrl;
+    }
+  }, [open, reset, initialValue, mode]);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const prevUrlRef = useRef<string | null>(null);
@@ -150,10 +174,10 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
   };
 
   const handleRemoveFile = () => {
-    if (prevUrlRef.current) {
+    if (prevUrlRef.current && prevUrlRef.current.startsWith("blob:")) {
       URL.revokeObjectURL(prevUrlRef.current);
-      prevUrlRef.current = null;
     }
+    prevUrlRef.current = null;
     setPreviewUrl(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -179,6 +203,23 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
   }, []);
 
   const handleSubmitForm = async (values: FormValues) => {
+    // enforce required-file rules depending on mode:
+    // - create: file required
+    // - edit: file required only if user removed existing image or there is no existing image
+    const hasFile = !!values.file;
+    if (!hasFile) {
+      if (mode === "create") {
+        setError("file", { type: "required", message: "File is required" });
+        return;
+      }
+      if (mode === "edit") {
+        const hasExisting = Boolean(initialValue?.imageUrl);
+        if (!hasExisting) {
+          setError("file", { type: "required", message: "File is required" });
+          return;
+        }
+      }
+    }
     const fd = new FormData();
     fd.append("title", values.title ?? "");
     fd.append("description", values.description ?? "");
@@ -187,7 +228,17 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
       fd.append("file", values.file);
     }
 
-    await onCreate(fd);
+    // If editing and the user didn't upload a new file, include the existing imageUrl
+    // so servers that validate it will receive it (keeps the image unchanged).
+    if (mode === "edit" && !values.file && initialValue?.imageUrl) {
+      fd.append("imageUrl", initialValue.imageUrl);
+    }
+
+    if (initialValue && onUpdate) {
+      await onUpdate(initialValue.id, fd);
+    } else {
+      await onCreate(fd);
+    }
     reset();
     setPreviewUrl(null);
     onClose();
@@ -210,8 +261,12 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
     <Dialog open={open} onOpenChange={(val) => (!val ? onClose() : null)}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Event</DialogTitle>
-          <DialogDescription>Create a new event and upload an image.</DialogDescription>
+          <DialogTitle>{mode === "edit" ? "Edit Event" : "New Event"}</DialogTitle>
+          <DialogDescription>
+            {mode === "edit"
+              ? "Update the event and optionally replace the image."
+              : "Create a new event and upload an image."}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-4">
@@ -269,7 +324,7 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
               />
             ) : (
               <div>
-                <div className="mb-2">
+                <div className="mb-2 flex items-center gap-3">
                   <Button
                     className="h-7"
                     type="button"
@@ -303,7 +358,7 @@ export function EventCreateDialog({ open, onClose, onCreate, categories }: Event
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
               disabled={isSubmitting}
             >
-              Create Event
+              {mode === "edit" ? "Save Changes" : "Create Event"}
             </Button>
           </DialogFooter>
         </form>

@@ -97,5 +97,53 @@ export function useEvent() {
     [toast],
   );
 
-  return { list, create, events, pagination, isLoading, error };
+  const update = useCallback(
+    async (id: string, formData: FormData): Promise<IEventEntity> => {
+      if (isMountedRef.current) setIsLoading(true);
+      try {
+        const updated = await eventApi.update(id, formData);
+
+        if (isMountedRef.current) {
+          setEvents((prev) => {
+            const idx = prev.findIndex((e) => e.id === updated.id);
+            if (idx >= 0) {
+              const copy = [...prev];
+              copy[idx] = updated;
+              return copy;
+            }
+            return prev;
+          });
+          setError(null);
+        }
+
+        toast({ title: "Event updated", description: "Event saved." });
+        return updated;
+      } catch (error) {
+        const err = error as IErrorResponse;
+        let errorMessage = "Failed to update event";
+
+        if (err?.status === 404) {
+          errorMessage = "Event not found";
+        } else if (err?.status === 400) {
+          errorMessage = err?.message ?? "Invalid event data";
+        } else if (err?.status === 413) {
+          errorMessage = "File too large. Maximum allowed size exceeded.";
+        } else if (err?.message) {
+          errorMessage = err.message;
+        }
+
+        toast({
+          title: "Update failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw err;
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
+  return { list, create, update, events, pagination, isLoading, error };
 }

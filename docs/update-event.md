@@ -23,6 +23,12 @@ curl -X PATCH http://localhost:3005/api/admin/events/<EVENT_ID> \
 
 - Path parameter: `id` (string) — MongoDB ObjectId of the event to update
 
+Notes on image handling:
+
+- If you provide a `file` (multipart file) the server will upload it to Cloudinary and replace the existing image (old Cloudinary asset deleted).
+- If you don't upload a `file` but supply `imageUrl` (string) the server will accept that URL and keep/use it (no upload performed).
+- To remove the existing image, include `removeImage=1` in the form data; the server will clear `imageUrl`/`publicId` and delete the old Cloudinary asset if present.
+
 ### Successful Response (200)
 
 Returns the updated event object.
@@ -150,12 +156,14 @@ or
 
 ## Request Parameters Reference
 
-| Parameter     | Type   | Required | Constraints       | Example                    |
-| ------------- | ------ | -------- | ----------------- | -------------------------- |
-| `title`       | string | No       | 1-200 characters  | "Updated Event Title"      |
-| `description` | string | No       | 1-1000 characters | "Updated description"      |
-| `categoryId`  | string | No       | Valid ObjectId    | "696154267fdba0e6636c2376" |
-| `file`        | file   | No       | Image file        | ".github/new-image.png"    |
+| Parameter     | Type   | Required | Constraints                         | Example                       |
+| ------------- | ------ | -------- | ----------------------------------- | ----------------------------- |
+| `title`       | string | No       | 1-200 characters                    | "Updated Event Title"         |
+| `description` | string | No       | 1-1000 characters                   | "Updated description"         |
+| `categoryId`  | string | No       | Valid ObjectId                      | "696154267fdba0e6636c2376"    |
+| `file`        | file   | No       | Image file                          | ".github/new-image.png"       |
+| `imageUrl`    | string | No       | URL or existing image path          | "https://example.com/img.png" |
+| `removeImage` | string | No       | Set to `1` to remove existing image | `1`                           |
 
 **Note:** The request must use `multipart/form-data` when including a file.
 
@@ -181,7 +189,9 @@ or
 - **Content-Type:** multipart/form-data
 - **Validation:** All fields validated with Zod schema before processing
 - **Cloudinary Integration:**
-  - If a new file is provided, the old image is deleted from Cloudinary.
+  - If a new `file` is provided, the old image is deleted from Cloudinary and the new file is uploaded.
+  - If `imageUrl` is provided (and no `file`), the server will use that URL and will not upload to Cloudinary.
+  - If `removeImage=1` is supplied, the server will delete the old Cloudinary asset (if any) and clear the stored `imageUrl`/`publicId`.
   - Cloudinary errors are handled gracefully and logged.
 - **Response Format:** Consistent with API standard (success/data/status structure)
 - **Timestamps:** ISO 8601 format for createdAt and updatedAt

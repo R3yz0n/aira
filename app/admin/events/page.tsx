@@ -15,7 +15,7 @@ export default function EventsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<IEventEntity | null>(null);
 
-  const { events, pagination, list, isLoading, create } = useEvent();
+  const { events, pagination, list, isLoading, create, update } = useEvent();
   const { categories, list: fetchCategories } = useCategory();
 
   // Load events and categories once on mount
@@ -30,7 +30,8 @@ export default function EventsPage() {
   };
 
   const handleEdit = (event: IEventEntity) => {
-    console.log(`Edit event with ID: ${event.id}`);
+    setEditingEvent(event);
+    setDialogOpen(true);
   };
 
   const handleDelete = (event: IEventEntity) => {
@@ -64,7 +65,10 @@ export default function EventsPage() {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onCreate={create}
+        onUpdate={update}
         categories={categories}
+        initialValue={editingEvent}
+        isLoading={isLoading}
       />
     </div>
   );

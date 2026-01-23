@@ -8,7 +8,13 @@ import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventNotFoundError, EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
 import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
-import { IEventEntity, eventIdSchema, imageFileSchema, eventUpdateSchema } from "@/domain/event";
+import {
+  IEventEntity,
+  eventIdSchema,
+  imageFileSchema,
+  eventUpdateSchema,
+  imageUrlSchema,
+} from "@/domain/event";
 import {
   CloudinaryQuotaError,
   CloudinaryService,
@@ -111,6 +117,7 @@ export const PATCH = withAdminAuth(
       const title = formData.get("title") as string | null;
       const description = formData.get("description") as string | null;
       const categoryId = formData.get("categoryId") as string | null;
+      const imageUrl = formData.get("imageUrl") as string | null;
 
       // Validate input data
       const updateData: Record<string, any> = {};
@@ -136,9 +143,22 @@ export const PATCH = withAdminAuth(
         updateData.imageUrl = uploadResult.url;
         updateData.publicId = uploadResult.publicId;
       }
+      // If no file uploaded but client provided an imageUrl, validate and use it (skip upload)
+      if (!file && imageUrl) {
+        const urlValidation = imageUrlSchema.safeParse({ imageUrl });
+        if (!urlValidation.success) {
+          return errorResponse(
+            "INVALID_INPUT",
+            "Invalid image URL",
+            400,
+            urlValidation.error.flatten(),
+          );
+        }
+        updateData.imageUrl = imageUrl;
+      }
 
-      // Validate the entire updateData object
-      const validation = eventUpdateSchema.safeParse(updateData);
+      // Validate the entire updateData object (allow partial updates)
+      const validation = eventUpdateSchema.partial().safeParse(updateData);
       if (!validation.success) {
         return errorResponse(
           "INVALID_INPUT",
