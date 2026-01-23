@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,10 @@ export function EventDetailsDialog({
   categories,
 }: EventDetailsDialogProps) {
   const [imgLoading, setImgLoading] = useState(true);
+
+  useEffect(() => {
+    setImgLoading(true);
+  }, [event?.imageUrl, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

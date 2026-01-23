@@ -8,7 +8,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 export default function AdminPage() {
   const stats = [
     {
-      title: "Total Items in Cart",
+      title: "Total Events",
       value: "12",
       description: "Items pending review",
       icon: ShoppingCart,
@@ -16,7 +16,7 @@ export default function AdminPage() {
       iconColor: "text-aira-blue",
     },
     {
-      title: "Events Linked",
+      title: "Total Categories",
       value: "5",
       description: "Upcoming events with cart items",
       icon: Calendar,
@@ -24,20 +24,12 @@ export default function AdminPage() {
       iconColor: "text-aira-pink",
     },
     {
-      title: "Pending Actions",
+      title: "Total Bookings",
       value: "5",
       description: "Actions awaiting approval",
       icon: Clock,
       bgColor: "bg-aira-cream",
       iconColor: "text-aira-gold",
-    },
-    {
-      title: "Total Revenue",
-      value: "$24,580",
-      description: "This month",
-      icon: BarChart3,
-      bgColor: "bg-aira-ivory",
-      iconColor: "text-aira-blue",
     },
   ];
 

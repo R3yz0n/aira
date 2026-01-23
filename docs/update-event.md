@@ -28,7 +28,7 @@ Notes on image handling:
 - If you provide a `file` (multipart file) the server will upload it to Cloudinary and replace the existing image (old Cloudinary asset deleted).
 - If you don't upload a `file` but supply `imageUrl` (string) the server will accept that URL and keep/use it (no upload performed).
 
-**Note:** Removing the existing image by sending `removeImage=1` is not currently supported by the API. The documentation will be updated if this feature is implemented in the future.
+**Note:** This endpoint currently expects a full update. The `title`, `description`, and `categoryId` fields must always be provided. In addition, at least one of `file` or `imageUrl` is required (the request must include a new file upload or an image URL). When including a file, the request must use `multipart/form-data`.
 
 ### Successful Response (200)
 
@@ -164,7 +164,6 @@ or
 | `categoryId`  | string | Yes         | Valid ObjectId                                                | "696154267fdba0e6636c2376"    |
 | `file`        | file   | Conditional | Image file; required if no `imageUrl` is provided             | ".github/new-image.png"       |
 | `imageUrl`    | string | Conditional | URL or existing image path; required if no `file` is provided | "https://example.com/img.png" |
-| `removeImage` | string | No          | Set to `1` to remove existing image                           | `1`                           |
 
 **Note:** This endpoint currently expects a full update. The `title`, `description`, and `categoryId` fields must always be provided. In addition, at least one of `file` or `imageUrl` is required (the request must include a new file upload or an image URL). When including a file, the request must use `multipart/form-data`.
 
