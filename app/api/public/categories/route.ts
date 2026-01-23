@@ -1,6 +1,9 @@
 import { ICategoryEntity } from "@/domain/category";
 import { errorResponse, successResponse } from "@/lib/api/response-handler";
-import { MongoCategoryRepository } from "@/repositories/category-repository";
+import {
+  InvalidCategoryIdError,
+  MongoCategoryRepository,
+} from "@/repositories/category-repository";
 import { MongoEventRepository } from "@/repositories/event-repository";
 import { CategoryService } from "@/services/category/category-service";
 
@@ -20,6 +23,9 @@ export async function GET() {
     return successResponse<ICategoryEntity[]>(payload, 200);
   } catch (err) {
     console.error(err);
+    if (err instanceof InvalidCategoryIdError) {
+      return errorResponse("INVALID_INPUT", err.message, 400);
+    }
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }
 }

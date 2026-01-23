@@ -67,6 +67,8 @@ export function useCategory() {
         if (err?.status === 409) {
           errorMessage = "A category with this name already exists";
         } else if (err?.status === 400) {
+          errorMessage = err?.message ?? "Invalid category ID";
+        } else if (err?.status === 400) {
           errorMessage = err?.message ?? "Invalid category data";
         } else if (err?.message) {
           errorMessage = err.message;
@@ -82,7 +84,7 @@ export function useCategory() {
         if (isMountedRef.current) setIsLoading(false);
       }
     },
-    [toast]
+    [toast],
   );
 
   const update = useCallback(
@@ -128,7 +130,7 @@ export function useCategory() {
         if (isMountedRef.current) setIsLoading(false);
       }
     },
-    [toast]
+    [toast],
   );
 
   const upsertLocal = useCallback((cat: ICategoryEntity) => {
