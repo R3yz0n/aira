@@ -1,9 +1,9 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ICategoryEntity } from "@/domain/category";
 import { IEventEntity } from "@/domain/event";
-import { DialogOverlay } from "@radix-ui/react-dialog";
 import Image from "next/image";
 
 interface EventDetailsDialogProps {
@@ -11,6 +11,7 @@ interface EventDetailsDialogProps {
   onOpenChange: (open: boolean) => void;
   event: IEventEntity | null;
   categories: ICategoryEntity[];
+  showOverlay?: boolean;
 }
 
 export function EventDetailsDialog({
@@ -18,26 +19,39 @@ export function EventDetailsDialog({
   onOpenChange,
   event,
   categories,
+  showOverlay = false,
 }: EventDetailsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="fixed  inset-0 bg-black/50 z-50" />
+      {showOverlay && (
+        <DialogOverlay className="fixed  inset-0 bg-black/50 z-50 backdrop-blur-sm" />
+      )}
       <DialogContent>
-        <DialogTitle>Event Details</DialogTitle>
+        <DialogTitle asChild>
+          <VisuallyHidden>{event?.title || "Event Details"}</VisuallyHidden>
+        </DialogTitle>
         {event ? (
           <div className="space-y-4">
             {event.imageUrl && (
-              <div className="relative  w-full  aspect-[4/3] flex justify-start  overflow-hidden">
-                <Image
-                  src={event.imageUrl}
-                  alt={event.title}
-                  fill
-                  placeholder="blur"
-                  blurDataURL="/placeholder.svg"
-                  className="object-contain object-left   transition-opacity duration-300"
-                  unoptimized
-                />
-              </div>
+              <a
+                href={event.imageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                tabIndex={0}
+                aria-label="Open event image in new tab"
+              >
+                <div className="relative mt-4 w-full aspect-[4/3] flex justify-start overflow-hidden">
+                  <Image
+                    src={event.imageUrl}
+                    alt={event.title}
+                    fill
+                    placeholder="blur"
+                    blurDataURL="/placeholder.svg"
+                    className="object-contain cursor-pointer transition-opacity duration-300"
+                    unoptimized
+                  />
+                </div>
+              </a>
             )}
 
             <div>

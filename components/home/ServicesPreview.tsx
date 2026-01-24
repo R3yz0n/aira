@@ -4,12 +4,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import { useCategory } from "@/hooks/use-category";
 import { useEffect, useState } from "react";
 import { useEvent } from "@/hooks/use-event";
 import { ICategoryEntity } from "@/domain/category";
 import { IEventEntity } from "@/domain/event";
 import Image from "next/image";
+import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog";
 
 export function ServicesPreview() {
   const {
@@ -23,6 +25,10 @@ export function ServicesPreview() {
   const [categoryEventPairs, setCategoryEventPairs] = useState<
     { category: ICategoryEntity; event: IEventEntity | null }[]
   >([]);
+
+  // Modal state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
 
   useEffect(() => {
     categoryList();
@@ -109,18 +115,21 @@ export function ServicesPreview() {
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
                     <h3 className="font-display text-xl font-bold text-primary-foreground mb-2 line-clamp-2">
-                      {category.name} event name blah blah lah event name blah blah lah event name
-                      blah blah lah
+                      {category.name}
                     </h3>
 
                     {event ? (
-                      <Link
-                        href={"/events/" + event.id}
+                      <button
                         className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
+                        onClick={() => {
+                          setSelectedEvent(event);
+                          setDialogOpen(true);
+                        }}
+                        type="button"
                       >
                         View Event
                         <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      </button>
                     ) : (
                       <span className="text-xs text-muted-foreground">No event found</span>
                     )}
@@ -130,6 +139,14 @@ export function ServicesPreview() {
             ))
           )}
         </div>
+        {/* Single Event Details Dialog at root */}
+        <EventDetailsDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          event={selectedEvent}
+          categories={categories}
+          showOverlay={true}
+        />
 
         {/* CTA */}
         <motion.div
