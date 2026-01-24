@@ -1,10 +1,10 @@
 "use client";
-import React from "react";
-import Image from "next/image";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { IEventEntity } from "@/domain/event";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ICategoryEntity } from "@/domain/category";
+import { IEventEntity } from "@/domain/event";
+import { DialogOverlay } from "@radix-ui/react-dialog";
+import Image from "next/image";
 
 interface EventDetailsDialogProps {
   open: boolean;
@@ -21,6 +21,7 @@ export function EventDetailsDialog({
 }: EventDetailsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogOverlay className="fixed  inset-0 bg-black/50 z-50" />
       <DialogContent>
         <DialogTitle>Event Details</DialogTitle>
         {event ? (
