@@ -27,14 +27,14 @@ export default function Page() {
   useEffect(() => {
     const categoryId = activeCategory === "all" ? "" : activeCategory;
     if ((categories?.length ?? 0) > 0) {
-      eventList(1, 9, "", categoryId);
+      eventList(1, 16, "", categoryId);
     }
   }, [eventList, activeCategory, categories]);
 
   return (
     <>
       {/* Filter Tabs */}
-      <section className="py-3 md:py-8 border-b border-border sticky top-20 bg-background/95 backdrop-blur-md z-40">
+      <section className="py-3  md:py-8 border-b border-border sticky top-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5 backdrop-blur-md z-40">
         <div className="container mx-auto px-2 md:px-4 lg:px-8">
           <div className="flex flex-wrap justify-center gap-2 md:gap-3">
             {/* All Categories Button */}
