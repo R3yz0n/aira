@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-import { X } from "lucide-react";
-
-const categories = ["All", "Weddings", "Corporate", "Birthdays", "Luxury"];
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, X } from "lucide-react";
+import { useCategory } from "@/hooks/use-category";
+import { useEvent } from "@/hooks/use-event";
+import Image from "next/image";
+import { IEventEntity } from "@/domain/event";
+import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog";
+import Masonry from "react-masonry-css";
 
 const galleryItems = [
   { id: 1, category: "Weddings", image: "/hero-wedding.jpg", title: "Royal Wedding - Jaipur" },
@@ -51,18 +56,25 @@ const galleryItems = [
   },
   { id: 12, category: "Luxury", image: "/hero-wedding.jpg", title: "Palace Wedding - Jodhpur" },
 ];
-
 export default function Page() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedImage, setSelectedImage] = useState<{
-    image: string;
-    title: string;
-  } | null>(null);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { list: categoryList, categories, isLoading: isCategoryLoading } = useCategory();
+  const { list: eventList, loadMore, events, pagination, isLoading } = useEvent();
+  // Modal state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
+  // Fetch categories only once on mount
+  useEffect(() => {
+    categoryList();
+  }, [categoryList]);
 
-  const filteredItems =
-    activeCategory === "All"
-      ? galleryItems
-      : galleryItems.filter((item) => item.category === activeCategory);
+  // Fetch events on mount and when activeCategory changes
+  useEffect(() => {
+    const categoryId = activeCategory === "all" ? "" : activeCategory;
+    if ((categories?.length ?? 0) > 0) {
+      eventList(1, 9, "", categoryId);
+    }
+  }, [eventList, activeCategory, categories]);
 
   return (
     <>
@@ -92,17 +104,31 @@ export default function Page() {
       <section className="py-8 border-b border-border sticky top-20 bg-background/95 backdrop-blur-md z-40">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category) => (
+            {/* All Categories Button */}
+            {!isCategoryLoading && (categories?.length ?? 0) > 0 && (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
+                key="all"
+                onClick={() => setActiveCategory("all")}
                 className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                  activeCategory === category
+                  activeCategory === "all"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                {category}
+                All
+              </button>
+            )}
+            {categories?.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  activeCategory === category.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {category.name}
               </button>
             ))}
           </div>
@@ -113,29 +139,24 @@ export default function Page() {
       <section className="py-24">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {filteredItems.map((item, index) => (
+            {events?.map((event, index) => (
               <motion.div
-                key={item.id}
+                key={event.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="break-inside-avoid group cursor-pointer"
-                onClick={() => setSelectedImage({ image: item.image, title: item.title })}
+                transition={{ delay: index * 0.1 }}
+                className="group bg-card rounded-2xl overflow-hidden shadow-md hover-lift"
               >
-                <div className="relative rounded-2xl overflow-hidden shadow-card">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full transition-transform duration-500 group-hover:scale-110"
+                <div className="relative h-56 hover-lift shadow-md overflow-hidden">
+                  <Image
+                    src={event?.imageUrl || "/placeholder.svg"}
+                    alt={event?.title || "Event image"}
+                    placeholder="blur"
+                    blurDataURL="/placeholder.svg"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+                    fill
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="text-xs text-aira-gold font-medium">{item.category}</span>
-                    <h3 className="font-display text-lg font-bold text-primary-foreground">
-                      {item.title}
-                    </h3>
-                  </div>
                 </div>
               </motion.div>
             ))}
@@ -144,18 +165,18 @@ export default function Page() {
       </section>
 
       {/* Lightbox */}
-      <AnimatePresence>
-        {selectedImage && (
+      {/* <AnimatePresence>
+        {selectedEvent && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-foreground/90 z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
+            onClick={() => setSelectedEvent(null)}
           >
             <button
               className="absolute top-6 right-6 text-primary-foreground hover:text-aira-gold transition-colors"
-              onClick={() => setSelectedImage(null)}
+              onClick={() => setSelectedEvent(null)}
             >
               <X className="w-8 h-8" />
             </button>
@@ -167,17 +188,17 @@ export default function Page() {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={selectedImage.image}
-                alt={selectedImage.title}
+                src={selectedEvent.imageUrl}
+                alt={selectedEvent.title}
                 className="w-full h-full object-contain rounded-lg"
               />
               <p className="text-center text-primary-foreground font-display text-xl mt-4">
-                {selectedImage.title}
+                {selectedEvent.title}
               </p>
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 }

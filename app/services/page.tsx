@@ -153,13 +153,6 @@ export default function Page() {
                   </div>
                 </motion.div>
               ))}
-              <EventDetailsDialog
-                open={dialogOpen}
-                onOpenChange={setDialogOpen}
-                event={selectedEvent}
-                categories={categories}
-                showOverlay={true}
-              />
             </div>
           )}
           <div className="mt-8 flex justify-center">
@@ -204,6 +197,13 @@ export default function Page() {
             </Button>
           </motion.div>
         </div>
+        <EventDetailsDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          event={selectedEvent}
+          categories={categories}
+          showOverlay={true}
+        />
       </section>
     </>
   );
