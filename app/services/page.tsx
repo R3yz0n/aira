@@ -8,11 +8,21 @@ import { ArrowRight } from "lucide-react";
 import { useCategory } from "@/hooks/use-category";
 import { useEvent } from "@/hooks/use-event";
 import Image from "next/image";
+import { IEventEntity } from "@/domain/event";
+import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog";
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const { list: categoryList, categories } = useCategory();
-  const { list: eventList, events, pagination } = useEvent();
+  const {
+    list: categoryList,
+    categories,
+    isLoading: isCategoryLoading,
+    error: categoryError,
+  } = useCategory();
+  const { list: eventList, loadMore, events, pagination, isLoading } = useEvent();
+  // Modal state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
   // Fetch categories only once on mount
   useEffect(() => {
     categoryList();
@@ -21,8 +31,10 @@ export default function Page() {
   // Fetch events on mount and when activeCategory changes
   useEffect(() => {
     const categoryId = activeCategory === "all" ? "" : activeCategory;
-    eventList(1, 9, "", categoryId);
-  }, [eventList, activeCategory]);
+    if ((categories?.length ?? 0) > 0) {
+      eventList(1, 9, "", categoryId);
+    }
+  }, [eventList, activeCategory, categories]);
   return (
     <>
       {/* Hero Section */}
@@ -52,18 +64,20 @@ export default function Page() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-wrap justify-center gap-3">
             {/* All Categories Button */}
-            <button
-              key="all"
-              onClick={() => setActiveCategory("all")}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                activeCategory === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((category) => (
+            {!isCategoryLoading && (categories?.length ?? 0) > 0 && (
+              <button
+                key="all"
+                onClick={() => setActiveCategory("all")}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  activeCategory === "all"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                All
+              </button>
+            )}
+            {categories?.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
@@ -83,47 +97,94 @@ export default function Page() {
       {/* Services Grid */}
       <section className="py-24">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.map((event, index) => (
-              <motion.div
-                key={event.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className="group bg-card rounded-2xl overflow-hidden shadow-md hover-lift"
-              >
-                <div className="relative h-56 hover-lift shadow-md overflow-hidden">
-                  <Image
-                    src={event?.imageUrl || "/placeholder.svg"}
-                    alt="placeholder"
-                    placeholder="blur"
-                    blurDataURL="/placeholder.svg"
-                    className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
-                    fill
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-aira-gold text-foreground text-xs font-medium px-3 py-1 rounded-full">
-                      {categories.find((c) => c.id === event.categoryId)?.name || "Uncategorized"}
-                    </span>
+          {(events?.length ?? 0) === 0 && !isLoading && !isCategoryLoading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="col-span-4 text-xl font-semibold text-center text-secondary py-12"
+            >
+              No events found.
+            </motion.div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {events?.map((event, index) => (
+                <motion.div
+                  key={event.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group bg-card rounded-2xl overflow-hidden shadow-md hover-lift"
+                >
+                  <div className="relative h-56 hover-lift shadow-md overflow-hidden">
+                    <Image
+                      src={event?.imageUrl || "/placeholder.svg"}
+                      alt="placeholder"
+                      placeholder="blur"
+                      blurDataURL="/placeholder.svg"
+                      className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
+                      fill
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="bg-aira-gold text-foreground text-xs font-medium px-3 py-1 rounded-full">
+                        {categories?.find((c) => c.id === event.categoryId)?.name ||
+                          "Uncategorized"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-display text-xl font-bold line-clamp-2 mb-3">
-                    {event.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-1">
-                    {event.description}
-                  </p>
-                  <Button variant="pinkOutline" size="sm" asChild>
-                    <Link href="/contact">
-                      Enquire Now
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="p-6">
+                    <h3 className="font-display text-xl font-bold line-clamp-2 mb-3">
+                      {event.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-1">
+                      {event.description}
+                    </p>
+                    <Button variant="pinkOutline" size="sm" asChild>
+                      {event && (
+                        <button
+                          className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setDialogOpen(true);
+                          }}
+                          type="button"
+                        >
+                          View Event
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      )}
+                    </Button>
+                  </div>
+                </motion.div>
+              ))}
+              <EventDetailsDialog
+                open={dialogOpen}
+                onOpenChange={setDialogOpen}
+                event={selectedEvent}
+                categories={categories}
+                showOverlay={true}
+              />
+            </div>
+          )}
+          <div className="mt-8 flex justify-center">
+            {(pagination?.page ?? 0) < (pagination?.pages ?? 0) && (
+              <Button
+                variant="hero"
+                size="lg"
+                onClick={() =>
+                  loadMore(
+                    (pagination?.page ?? 0) + 1,
+                    pagination?.limit ?? 0,
+                    "",
+                    activeCategory === "all" ? "" : activeCategory,
+                  )
+                }
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Load more"}
+              </Button>
+            )}
           </div>
         </div>
       </section>

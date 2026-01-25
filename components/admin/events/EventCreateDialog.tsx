@@ -321,7 +321,7 @@ export function EventCreateDialog({
               {...register("categoryId")}
             >
               <option value="">Select category</option>
-              {categories.map((c) => (
+              {categories?.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>

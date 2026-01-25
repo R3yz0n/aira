@@ -52,7 +52,7 @@ export default function CategoriesPage() {
         </AdminHeader>
       </div>
 
-      <CategoryTable categories={categories} onEdit={handleEdit} />
+      <CategoryTable isLoading={isLoading} categories={categories} onEdit={handleEdit} />
 
       <CategoryEditDialog
         open={dialogOpen}

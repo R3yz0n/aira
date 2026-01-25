@@ -57,7 +57,7 @@ export function EventDetailsDialog({
             <div>
               <h3 className="text-lg font-semibold">{event.title} </h3>
               <Badge className="text-sm mt-3">
-                {categories.find((c) => c.id === event.categoryId)?.name || "Uncategorized"}
+                {categories?.find((c) => c.id === event.categoryId)?.name || "Uncategorized"}
               </Badge>
             </div>
 

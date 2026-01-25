@@ -17,6 +17,7 @@ import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import { debounce } from "lodash";
 import EventDetailsDialog from "./EventDetailsDialog";
 import EventDeleteDialog from "./EventDeleteDialog";
+import { motion } from "framer-motion";
 
 interface EventTableProps {
   events: IEventEntity[];
@@ -29,7 +30,7 @@ interface EventTableProps {
 }
 
 export function EventTable({
-  events,
+  events = [],
   pagination,
   list,
   onEdit,
@@ -42,21 +43,19 @@ export function EventTable({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-
   const handlePageChange = (newPage: number) => {
     list(
       newPage,
-      pagination.limit,
+      pagination?.limit,
       search,
       selectedCategory === "all" ? undefined : selectedCategory,
     );
   };
-
   const debouncedSearch = useCallback(
     debounce((value: string) => {
-      list(1, pagination.limit, value, selectedCategory === "all" ? undefined : selectedCategory);
+      list(1, pagination?.limit, value, selectedCategory === "all" ? undefined : selectedCategory);
     }, 300),
-    [pagination.limit, selectedCategory],
+    [pagination?.limit, selectedCategory],
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +66,7 @@ export function EventTable({
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    list(1, pagination.limit, search, categoryId === "all" ? undefined : categoryId);
+    list(1, pagination?.limit ?? 0, search, categoryId === "all" ? undefined : categoryId);
   };
 
   return (
@@ -89,7 +88,7 @@ export function EventTable({
             className="w-full h-full  border flex px-2  rounded-md"
           >
             <option value="all">All Categories</option>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -107,14 +106,20 @@ export function EventTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {events.length === 0 ? (
+          {events && events?.length === 0 && !isLoading ? (
             <TableRow>
               <TableCell colSpan={3} className="py-8 text-lg text-center text-muted-foreground">
-                No events available
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                >
+                  No events available
+                </motion.div>
               </TableCell>
             </TableRow>
           ) : (
-            events.map((event) => (
+            events?.map((event) => (
               <TableRow key={event.id}>
                 <TableCell className="py-1 w-[40%]">
                   <div className="truncate whitespace-nowrap w-full font-medium text-foreground">
@@ -185,7 +190,7 @@ export function EventTable({
           Previous
         </Button>
         <span>
-          Page {pagination.page} of {pagination.pages}
+          Page {pagination?.page} of {pagination?.pages}
         </span>
         <Button
           onClick={() => handlePageChange(pagination.page + 1)}

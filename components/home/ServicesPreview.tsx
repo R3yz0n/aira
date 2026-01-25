@@ -14,12 +14,8 @@ import Image from "next/image";
 import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog";
 
 export function ServicesPreview() {
-  const {
-    list: categoryList,
-
-    categories,
-  } = useCategory();
-  const { list: eventList } = useEvent();
+  const { list: categoryList, isLoading: isCategoryLoading, categories } = useCategory();
+  const { list: eventList, isLoading: isEventLoading } = useEvent();
 
   // Array of { category: ICategoryEntity, event: IEventEntity|null }
   const [categoryEventPairs, setCategoryEventPairs] = useState<
@@ -36,11 +32,10 @@ export function ServicesPreview() {
 
   useEffect(() => {
     // Only run when categories are loaded
-    if (categories && categories.length > 0) {
+    if ((categories?.length ?? 0) > 0) {
       // Filter categories with totalEvents > 0
-      const eligible = categories.filter(
-        (cat: ICategoryEntity) => cat.totalEvents && cat.totalEvents > 0,
-      );
+      const eligible =
+        categories?.filter((cat: ICategoryEntity) => cat.totalEvents && cat.totalEvents > 0) ?? [];
       if (eligible.length > 0) {
         // Shuffle and pick 4
         const shuffled = [...eligible].sort(() => 0.5 - Math.random());
@@ -52,7 +47,7 @@ export function ServicesPreview() {
           const pairs = picked.map((category, idx) => {
             const events = results[idx] || [];
             let event: IEventEntity | null = null;
-            if (events.length > 0) {
+            if ((events?.length ?? 0) > 0) {
               // Pick a random event from this category
               event = events[Math.floor(Math.random() * events.length)];
             }
@@ -88,55 +83,69 @@ export function ServicesPreview() {
 
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categoryEventPairs.length === 0 ? (
-            <div className="col-span-4 text-xl font-semibold text-center text-secondary py-12">
+          {categoryEventPairs?.length === 0 && !isCategoryLoading && !isEventLoading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="col-span-4 text-xl font-semibold text-center text-secondary py-12"
+            >
               No featured events found.
-            </div>
+            </motion.div>
           ) : (
-            categoryEventPairs.map(({ category, event }, index) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="relative h-80 rounded-2xl overflow-hidden shadow-card hover-lift">
-                  <Image
-                    src={event?.imageUrl || "/placeholder.svg"}
-                    alt="placeholder"
-                    placeholder="blur"
-                    blurDataURL="/placeholder.svg"
-                    className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
-                    fill
-                  />
+            categoryEventPairs
+              ?.filter(({ event }) => event !== null)
+              ?.map(({ category, event }, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group"
+                >
+                  <div className="relative h-80 rounded-2xl overflow-hidden shadow-card hover-lift">
+                    <Image
+                      src={event?.imageUrl || "/placeholder.svg"}
+                      alt="placeholder"
+                      placeholder="blur"
+                      blurDataURL="/placeholder.svg"
+                      className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
+                      fill
+                    />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="font-display text-xl font-bold text-primary-foreground mb-2 line-clamp-2">
-                      {category.name}
-                    </h3>
+                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/40 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <h3 className="font-display text-xl font-bold text-primary-foreground mb-2 line-clamp-2">
+                        {category.name}
+                      </h3>
 
-                    {event ? (
-                      <button
-                        className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
-                        onClick={() => {
-                          setSelectedEvent(event);
-                          setDialogOpen(true);
-                        }}
-                        type="button"
-                      >
-                        View Event
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">No event found</span>
-                    )}
+                      {event ? (
+                        <button
+                          className="inline-flex items-center gap-2 text-aira-gold font-medium text-sm hover:gap-3 transition-all"
+                          onClick={() => {
+                            setSelectedEvent(event);
+                            setDialogOpen(true);
+                          }}
+                          type="button"
+                        >
+                          View Event
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <motion.span
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          className="text-xs text-muted-foreground"
+                        >
+                          No event found
+                        </motion.span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))
+                </motion.div>
+              ))
           )}
         </div>
         {/* Single Event Details Dialog at root */}
