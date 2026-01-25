@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -51,17 +51,27 @@ export function EventTable({
       selectedCategory === "all" ? undefined : selectedCategory,
     );
   };
-  const debouncedSearch = useCallback(
-    debounce((value: string) => {
+  const debouncedRef = useRef<ReturnType<typeof debounce> | null>(null);
+
+  useEffect(() => {
+    // create a new debounced function and store in ref
+    const fn = debounce((value: string) => {
       list(1, pagination?.limit, value, selectedCategory === "all" ? undefined : selectedCategory);
-    }, 300),
-    [pagination?.limit, selectedCategory],
-  );
+    }, 300);
+
+    debouncedRef.current = fn;
+
+    // cleanup previous debounce on dep change or unmount
+    return () => {
+      fn.cancel();
+      debouncedRef.current = null;
+    };
+  }, [pagination?.limit, selectedCategory, list]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
-    debouncedSearch(value);
+    debouncedRef.current?.(value);
   };
 
   const handleCategoryChange = (categoryId: string) => {
@@ -85,7 +95,7 @@ export function EventTable({
           <select
             value={selectedCategory}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className="w-full h-full  border flex px-2  rounded-md"
+            className="w-full h-full border flex px-2  rounded-md"
           >
             <option value="all">All Categories</option>
             {categories?.map((category) => (

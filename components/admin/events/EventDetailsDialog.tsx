@@ -23,9 +23,7 @@ export function EventDetailsDialog({
 }: EventDetailsDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {showOverlay && (
-        <DialogOverlay className="fixed  inset-0 bg-black/50 z-50 backdrop-blur-sm" />
-      )}
+      {showOverlay && <DialogOverlay className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm" />}
       <DialogContent>
         <DialogTitle asChild>
           <VisuallyHidden>{event?.title || "Event Details"}</VisuallyHidden>

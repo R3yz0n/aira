@@ -13,12 +13,7 @@ import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const {
-    list: categoryList,
-    categories,
-    isLoading: isCategoryLoading,
-    error: categoryError,
-  } = useCategory();
+  const { list: categoryList, categories, isLoading: isCategoryLoading } = useCategory();
   const { list: eventList, loadMore, events, pagination, isLoading } = useEvent();
   // Modal state
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -110,7 +105,7 @@ export default function Page() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {events?.map((event, index) => (
                 <motion.div
-                  key={event.title}
+                  key={event.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -120,10 +115,10 @@ export default function Page() {
                   <div className="relative h-56 hover-lift shadow-md overflow-hidden">
                     <Image
                       src={event?.imageUrl || "/placeholder.svg"}
-                      alt="placeholder"
+                      alt={event?.title || "Event image"}
                       placeholder="blur"
                       blurDataURL="/placeholder.svg"
-                      className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
                       fill
                     />
                     <div className="absolute top-4 left-4">

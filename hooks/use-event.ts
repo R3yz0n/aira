@@ -91,7 +91,7 @@ export function useEvent() {
         if (isMountedRef.current) setIsLoading(false);
       }
     },
-    [toast, pagination.page, pagination.limit],
+    [toast],
   );
 
   const create = useCallback(

@@ -37,8 +37,12 @@ export function ServicesPreview() {
       const eligible =
         categories?.filter((cat: ICategoryEntity) => cat.totalEvents && cat.totalEvents > 0) ?? [];
       if (eligible.length > 0) {
-        // Shuffle and pick 4
-        const shuffled = [...eligible].sort(() => 0.5 - Math.random());
+        // Fisher-Yates shuffle
+        const shuffled = [...eligible];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
         const picked = shuffled.slice(0, 4);
 
         // Call eventList for each picked category in parallel and map one random event per category
@@ -107,10 +111,10 @@ export function ServicesPreview() {
                   <div className="relative h-80 rounded-2xl overflow-hidden shadow-card hover-lift">
                     <Image
                       src={event?.imageUrl || "/placeholder.svg"}
-                      alt="placeholder"
+                      alt={event?.title || "Event image"}
                       placeholder="blur"
                       blurDataURL="/placeholder.svg"
-                      className="w-full  h-full object-cover transition-all duration-300 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
                       fill
                     />
 
