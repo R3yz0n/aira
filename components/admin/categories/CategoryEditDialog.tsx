@@ -117,7 +117,13 @@ export function CategoryEditDialog({
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
               disabled={isSubmitting || isLoading}
             >
-              Save Changes
+              {isSubmitting || isLoading
+                ? initialValue
+                  ? "Saving Changes..."
+                  : "Creating Category..."
+                : initialValue
+                  ? "Save Changes"
+                  : "Create Category"}
             </Button>
           </DialogFooter>
         </form>

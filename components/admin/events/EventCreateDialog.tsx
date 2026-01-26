@@ -321,7 +321,7 @@ export function EventCreateDialog({
               {...register("categoryId")}
             >
               <option value="">Select category</option>
-              {categories.map((c) => (
+              {categories?.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -380,7 +380,13 @@ export function EventCreateDialog({
               className="bg-aira-blue text-white hover:bg-aira-blue/90"
               disabled={isSubmitting || isLoading}
             >
-              {mode === "edit" ? "Save Changes" : "Create Event"}
+              {isSubmitting || isLoading
+                ? mode === "edit"
+                  ? "Saving Changes..."
+                  : "Creating Event..."
+                : mode === "edit"
+                  ? "Save Changes"
+                  : "Create Event"}
             </Button>
           </DialogFooter>
         </form>

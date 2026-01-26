@@ -57,6 +57,43 @@ export function useEvent() {
     [toast],
   );
 
+  const loadMore = useCallback(
+    async (
+      page = pagination.page + 1,
+      limit = pagination.limit,
+      search = "",
+      categoryId = "",
+    ): Promise<IEventEntity[]> => {
+      if (isMountedRef.current) setIsLoading(true);
+      try {
+        const { data, total, pages } = await eventApi.list({
+          page,
+          limit,
+          search,
+          categoryId,
+        });
+        if (isMountedRef.current) {
+          setEvents((prev) => [...prev, ...data]);
+          setPagination({ page, limit, total, pages });
+          setError(null);
+        }
+        return data;
+      } catch (error) {
+        const err = error as IErrorResponse;
+        if (isMountedRef.current) setError(err);
+        toast({
+          title: "Load failed",
+          description: err?.message ?? "Failed to load events",
+          variant: "destructive",
+        });
+        throw err;
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
   const create = useCallback(
     async (formData: FormData): Promise<IEventEntity> => {
       if (isMountedRef.current) setIsLoading(true);
@@ -186,5 +223,5 @@ export function useEvent() {
     [toast],
   );
 
-  return { list, create, update, deleteEvent, events, pagination, isLoading, error };
+  return { list, loadMore, create, update, deleteEvent, events, pagination, isLoading, error };
 }
