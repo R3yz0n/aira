@@ -1,22 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, X } from "lucide-react";
+import { IEventEntity } from "@/domain/event";
 import { useCategory } from "@/hooks/use-category";
 import { useEvent } from "@/hooks/use-event";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 import Image from "next/image";
-import { IEventEntity } from "@/domain/event";
-import { EventDetailsDialog } from "@/components/admin/events/EventDetailsDialog";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState("all");
   const { list: categoryList, categories, isLoading: isCategoryLoading } = useCategory();
   const { list: eventList, loadMore, events, pagination, isLoading } = useEvent();
   // Modal state
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<IEventEntity | null>(null);
   // Fetch categories only once on mount
   useEffect(() => {
@@ -126,7 +123,7 @@ export default function Page() {
                 onClick={() =>
                   loadMore(
                     (pagination?.page ?? 0) + 1,
-                    pagination?.limit ?? 0,
+                    pagination?.limit ?? 12,
                     "",
                     activeCategory === "all" ? "" : activeCategory,
                   )
@@ -171,7 +168,7 @@ export default function Page() {
                 viewport={{ once: true }}
                 src={selectedEvent?.imageUrl || "/placeholder.svg"}
                 alt={selectedEvent?.title || "Event image"}
-                loading="lazy"
+                loading="eager"
                 className=" object-contain mt-[5%] rounded-lg max-h-[70vh] w-full"
               />
               <motion.p

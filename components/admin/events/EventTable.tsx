@@ -76,7 +76,7 @@ export function EventTable({
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    list(1, pagination?.limit ?? 0, search, categoryId === "all" ? undefined : categoryId);
+    list(1, pagination?.limit ?? 9, search, categoryId === "all" ? undefined : categoryId);
   };
 
   return (
