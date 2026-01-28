@@ -23,6 +23,8 @@ export interface BookingRepository {
     limit: number;
     pages: number;
   }>;
+  countAll(): Promise<number>;
+  findLatest(limit: number): Promise<IBookingEntity[]>;
 }
 
 function mapDoc(doc: any): IBookingEntity {
@@ -99,5 +101,14 @@ export class MongoBookingRepository implements BookingRepository {
     } catch (err: any) {
       throw err;
     }
+  }
+
+  async countAll(): Promise<number> {
+    return BookingModel.countDocuments();
+  }
+
+  async findLatest(limit: number): Promise<IBookingEntity[]> {
+    const docs = await BookingModel.findPaginated({}, 0, limit);
+    return docs.map(mapDoc);
   }
 }

@@ -7,6 +7,7 @@ export interface CategoryRepository {
   findById(id: string): Promise<ICategoryEntity | null>;
   create(data: Pick<ICategoryEntity, "name" | "description">): Promise<ICategoryEntity>;
   update(id: string, data: Partial<ICategoryEntity>): Promise<ICategoryEntity | null>;
+  countAll(): Promise<number>;
 }
 
 function mapDoc(doc: any): ICategoryEntity {
@@ -81,5 +82,9 @@ export class MongoCategoryRepository implements CategoryRepository {
       }
       throw err;
     }
+  }
+
+  async countAll(): Promise<number> {
+    return CategoryModel.countDocuments();
   }
 }

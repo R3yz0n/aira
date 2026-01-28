@@ -23,7 +23,7 @@ curl -X POST http://localhost:3005/api/public/bookings \
     "eventDate": "2026-02-15T18:00:00.000Z",
     "budgetRange": "$1000-$2000",
     "message": "Looking forward to this event."
-  }'
+  }' | jq .
 ```
 
 **Method:** POST
@@ -138,7 +138,7 @@ curl -X POST http://localhost:3005/api/public/bookings \
     "eventDate": "2026-02-15T18:00:00.000Z",
     "budgetRange": "$1000-$2000",
     "message": "Looking forward to this event."
-  }'
+  }' | jq .
 ```
 
 **Response:**
@@ -163,9 +163,9 @@ curl -X POST http://localhost:3005/api/public/bookings \
 | `fullName`    | string | Yes      | 1-100 characters  | "John Doe"                       |
 | `phone`       | string | Yes      | 8-20 characters   | "1234567890"                     |
 | `email`       | string | Yes      | Valid email       | "john.doe@example.com"           |
-| `eventType`   | string | Yes      | 1-50 characters   | "Wedding"                        |
+| `eventType`   | string | Yes      | 1-100 characters  | "Wedding"                        |
 | `eventDate`   | string | Yes      | ISO 8601 format   | "2026-02-15T18:00:00.000Z"       |
-| `budgetRange` | string | Yes      | 1-50 characters   | "$1000-$2000"                    |
+| `budgetRange` | string | Yes      | 1+ characters     | "$1000-$2000"                    |
 | `message`     | string | No       | 1-1000 characters | "Looking forward to this event." |
 
 **Note:** The request must use `application/json`.

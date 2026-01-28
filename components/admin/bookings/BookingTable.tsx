@@ -102,7 +102,7 @@ const BookingTable = ({ bookings = [], pagination, list, isLoading }: BookingTab
       <div className="flex items-center justify-between mb-4 ">
         <div className="relative w-96  ">
           <Input
-            placeholder="Search bookings with name email..."
+            placeholder="Search bookings by name email..."
             value={search}
             onChange={handleSearchChange}
             className="pl-10 w-full  text-sm md:text-base"

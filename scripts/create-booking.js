@@ -1,6 +1,5 @@
 const http = require("http");
 
-const args = process.argv.slice(2);
 const BASE_URL = "http://localhost:3005/api/public/bookings";
 
 const bookings = Array.from({ length: 50 }, (_, i) => {

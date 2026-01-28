@@ -259,7 +259,7 @@ export default function Page() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Budget Range</Label>
+                    <Label htmlFor="budgetRange">Budget Range</Label>
                     <select
                       id="budgetRange"
                       className="input ml-3 border-aira-gold/80 border rounded"

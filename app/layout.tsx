@@ -30,12 +30,18 @@ export const metadata: Metadata = {
   description:
     "We craft unforgettable celebrations that tell your unique story. From intimate gatherings to grand weddings, every detail matters.",
   keywords: [
-    "wedding planner",
-    "event management",
-    "corporate events",
-    "birthday celebrations",
-    "destination weddings",
-    "Mumbai events",
+
+    "wedding planning",
+    "guest flow management",
+    "decor planning and execution",
+    "transport & logistic",
+    "food and beverage management",
+    "makeup/ mehendi artist",
+    "tent",
+    "photography and videography",
+    "bar setup",
+    "anchor",
+    "bridal entry",
   ],
 };
 

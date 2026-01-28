@@ -318,42 +318,48 @@ GET /api/admin/bookings
 
 ```bash
 curl -X GET http://localhost:3005/api/admin/bookings \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ### Fetch bookings with pagination (page 2, 5 results)
 
 ```bash
 curl -X GET http://localhost:3005/api/admin/bookings?page=2&limit=5 \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ### Search bookings by keyword
 
 ```bash
 curl -X GET "http://localhost:3005/api/admin/bookings?search=john" \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ### Fetch bookings within a date range
 
 ```bash
 curl -X GET "http://localhost:3005/api/admin/bookings?startDate=2026-01-01&endDate=2026-01-31" \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ### Fetch bookings starting from a specific date
 
 ```bash
 curl -X GET "http://localhost:3005/api/admin/bookings?startDate=2026-01-01" \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ### Fetch bookings up to a specific date
 
 ```bash
 curl -X GET "http://localhost:3005/api/admin/bookings?endDate=2026-01-31" \
-  -H "Content-Type: application/json" | jq .
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_ADMIN_TOKEN>" | jq .
 ```
 
 ---
@@ -385,6 +391,6 @@ This is rare and only occurs if there's a database connection issue or unexpecte
 
 - ✅ **Admin-only endpoint** — requires valid admin authentication
 - ✅ **Defensive pagination handling** — invalid or out-of-range pagination values are auto-corrected
-- ✅ **Graceful filtering for search and status** — invalid non-date filters return empty results, not errors
+- ✅ **Graceful handling of search and date filters** — invalid date strings are ignored (filters omitted) and unmatched search terms simply return empty results
 - ✅ **Combinable filters** — search and date filters work together (AND logic)
 - ✅ **Clear status codes** — returns 200 OK for valid queries (including empty results) and 400 Bad Request for invalid date ranges

@@ -16,7 +16,7 @@ const CategorySchema = new mongoose.Schema<ICategoryDoc>(
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date },
   },
-  { collection: "categories", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { collection: "categories", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
 const CategoryModelInternal =
@@ -48,6 +48,11 @@ export class CategoryModel {
   static async updateById(id: string, payload: Partial<ICategory>) {
     await this.ensureConnected();
     return CategoryModelInternal.findByIdAndUpdate(id, payload, { new: true }).lean();
+  }
+
+  static async countDocuments() {
+    await this.ensureConnected();
+    return CategoryModelInternal.countDocuments();
   }
 }
 

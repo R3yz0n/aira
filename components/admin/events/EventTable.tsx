@@ -85,7 +85,7 @@ export function EventTable({
       <div className="flex items-center justify-between mb-4 ">
         <div className="relative w-96  ">
           <Input
-            placeholder="Search events with title or description..."
+            placeholder="Search events by title or description..."
             value={search}
             onChange={handleSearchChange}
             className="pl-10 w-80 md:w-96 text-sm md:text-base"
