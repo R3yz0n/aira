@@ -71,13 +71,14 @@ export default function AdminPage() {
           <h2 className="text-xl font-semibold text-primary mb-5">Newly Added Images</h2>
           <ul className="columns-2 md:columns-2 relative lg:columns-2 xl:columns-3 gap-1.5 space-y-1.5">
             {stats?.latestEvents?.length > 0 &&
-              stats?.latestEvents?.map((event) => (
+              stats?.latestEvents?.map((event, index) => (
                 <motion.div
                   key={event.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   className="group bg-card cursor-pointer overflow-hidden shadow-md hover-lift"
+                  transition={{ delay: index * 0.1 }}
                   role="button"
                   tabIndex={0}
                 >

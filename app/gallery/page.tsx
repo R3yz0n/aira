@@ -82,8 +82,8 @@ export default function Page() {
               events?.map((event, index) => (
                 <motion.div
                   key={event.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   className="group bg-card cursor-pointer overflow-hidden shadow-md hover-lift"
                   onClick={() => setSelectedEvent(event)}
