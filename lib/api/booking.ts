@@ -6,7 +6,7 @@ export const bookingApi = {
   async create(input: TBookingCreateInput): Promise<IBookingEntity> {
     try {
       const { data }: IAxiosResponse<IBookingEntity> = await axiosInstance.post(
-        "/api/admin/bookings",
+        "/api/public/bookings",
         input,
       );
       return data?.data as IBookingEntity;
@@ -22,7 +22,6 @@ export const bookingApi = {
     page?: number;
     limit?: number;
     search?: string;
-    categoryId?: string;
     startDate?: string;
     endDate?: string;
   }): Promise<IPaginationResult<IBookingEntity>> {

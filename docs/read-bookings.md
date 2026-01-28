@@ -53,12 +53,10 @@ GET /api/admin/bookings?page=0&limit=200
     "data": [
       /* bookings array */
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 100,
-      "total": 150,
-      "pages": 2
-    }
+    "total": 150,
+    "page": 1,
+    "limit": 100,
+    "pages": 2
   }
 }
 ```
@@ -83,12 +81,10 @@ GET /api/admin/bookings?search=nonexistent-keyword
   "status": 200,
   "data": {
     "data": [],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 0,
-      "pages": 0
-    }
+    "total": 0,
+    "page": 1,
+    "limit": 10,
+    "pages": 0
   }
 }
 ```
@@ -115,12 +111,10 @@ GET /api/admin/bookings?page=-5
     "data": [
       /* first 10 bookings */
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 50,
-      "pages": 5
-    }
+    "total": 50,
+    "page": 1,
+    "limit": 10,
+    "pages": 5
   }
 }
 ```
@@ -145,12 +139,10 @@ GET /api/admin/bookings?page=999
   "status": 200,
   "data": {
     "data": [],
-    "pagination": {
-      "page": 999,
-      "limit": 10,
-      "total": 50,
-      "pages": 5
-    }
+    "total": 50,
+    "page": 999,
+    "limit": 10,
+    "pages": 5
   }
 }
 ```
@@ -186,12 +178,10 @@ GET /api/admin/bookings?page=2&limit=5&search=john&startDate=2026-01-01
         "updatedAt": "2026-01-15T10:00:00.000Z"
       }
     ],
-    "pagination": {
-      "page": 2,
-      "limit": 5,
-      "total": 12,
-      "pages": 3
-    }
+    "total": 12,
+    "page": 2,
+    "limit": 5,
+    "pages": 3
   }
 }
 ```
@@ -216,12 +206,10 @@ GET /api/admin/bookings
   "status": 200,
   "data": {
     "data": [],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 0,
-      "pages": 0
-    }
+    "total": 0,
+    "page": 1,
+    "limit": 10,
+    "pages": 0
   }
 }
 ```
@@ -251,12 +239,10 @@ GET /api/admin/bookings?search=hello%20world&page=abc
     "data": [
       /* bookings matching "hello world" */
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 3,
-      "pages": 1
-    }
+    "total": 3,
+    "page": 1,
+    "limit": 10,
+    "pages": 1
   }
 }
 ```
@@ -283,12 +269,10 @@ GET /api/admin/bookings
     "data": [
       /* first 10 bookings */
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 50,
-      "pages": 5
-    }
+    "total": 50,
+    "page": 1,
+    "limit": 10,
+    "pages": 5
   }
 }
 ```
@@ -318,12 +302,10 @@ GET /api/admin/bookings
         "updatedAt": "2026-01-15T10:00:00.000Z"
       }
     ],
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 1,
-      "pages": 1
-    }
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "pages": 1
   }
 }
 ```
@@ -401,8 +383,8 @@ This is rare and only occurs if there's a database connection issue or unexpecte
 
 ## Key Points
 
-- ✅ **Public endpoint** — no authentication required
-- ✅ **Defensive parameter handling** — invalid or out-of-range pagination values are auto-corrected
-- ✅ **Graceful filtering** — invalid filters return empty results, not errors
+- ✅ **Admin-only endpoint** — requires valid admin authentication
+- ✅ **Defensive pagination handling** — invalid or out-of-range pagination values are auto-corrected
+- ✅ **Graceful filtering for search and status** — invalid non-date filters return empty results, not errors
 - ✅ **Combinable filters** — search and date filters work together (AND logic)
-- ✅ **Always 200 OK** — this endpoint returns 200 for all valid queries, even if results are empty
+- ✅ **Clear status codes** — returns 200 OK for valid queries (including empty results) and 400 Bad Request for invalid date ranges

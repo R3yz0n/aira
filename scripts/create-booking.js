@@ -1,13 +1,7 @@
 const http = require("http");
 
 const args = process.argv.slice(2);
-const ADMIN_TOKEN = args[0];
-const BASE_URL = "http://localhost:3005/api/admin/bookings";
-
-if (!ADMIN_TOKEN) {
-  console.error("Usage: node scripts/create-booking.js <admin_token>");
-  process.exit(1);
-}
+const BASE_URL = "http://localhost:3005/api/public/bookings";
 
 const bookings = Array.from({ length: 50 }, (_, i) => {
   const baseDate = new Date(2026, 1, 28); // Start from February 1, 2026
@@ -38,7 +32,6 @@ async function createBooking(booking) {
         path: url.pathname,
         method: "POST",
         headers: {
-          Authorization: `Bearer ${ADMIN_TOKEN}`,
           "Content-Type": "application/json",
           "Content-Length": Buffer.byteLength(data),
         },

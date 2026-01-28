@@ -49,7 +49,7 @@ export const bookingCreateSchema = z.object({
     })
     .trim()
     .min(1, "Event type is required")
-    .max(100, "Full name must be 100 characters or less"),
+    .max(100, "Event type must be 100 characters or less"),
   eventDate: z
     .string({
       required_error: "Event date is required",

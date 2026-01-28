@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -96,13 +97,12 @@ const BookingTable = ({ bookings = [], pagination, list, isLoading }: BookingTab
   const handlePageChange = (newPage: number) => {
     list(newPage, pagination?.limit, search, startDate, endDate);
   };
-  console.log(startDate, endDate);
   return (
     <Card className="p-3 lg:p-6 bg-card shadow-md">
       <div className="flex items-center justify-between mb-4 ">
         <div className="relative w-96  ">
           <Input
-            placeholder="Search bookings with name or phone-no..."
+            placeholder="Search bookings with name email..."
             value={search}
             onChange={handleSearchChange}
             className="pl-10 w-full  text-sm md:text-base"

@@ -1,8 +1,8 @@
-# POST /api/admin/bookings - Create Booking
+# POST /api/public/bookings - Create Booking
 
-**Description:** Create a new booking. Only accessible to authenticated administrators.
+**Description:** Create a new booking. Accessible to public users with abuse protections.
 
-**Authentication:** Required (Bearer token in Authorization header)
+**Authentication:** Not required
 
 ---
 
@@ -13,8 +13,7 @@ Create a new booking with all required fields.
 ### Request
 
 ```bash
-curl -X POST http://localhost:3005/api/admin/bookings \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -X POST http://localhost:3005/api/public/bookings \
   -H "Content-Type: application/json" \
   -d '{
     "fullName": "John Doe",
@@ -29,12 +28,11 @@ curl -X POST http://localhost:3005/api/admin/bookings \
 
 **Method:** POST
 
-**URL:** `http://localhost:3005/api/admin/bookings`
+**URL:** `http://localhost:3005/api/public/bookings`
 
 **Headers:**
 
 ```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 Content-Type: application/json
 ```
 
@@ -86,42 +84,12 @@ Content-Type: application/json
 
 ## Error Cases
 
-### Error 401: Unauthorized - Missing Token
-
-**Request:**
-
-```bash
-curl -X POST http://localhost:3005/api/admin/bookings \
-  -H "Content-Type: application/json" \
-  -d '{
-    "fullName": "John Doe"
-  }'
-```
-
-_(No Authorization header)_
-
-**Response:**
-
-```json
-{
-  "success": false,
-  "status": 401,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Missing authorization token"
-  }
-}
-```
-
----
-
 ### Error 400: Bad Request - Missing Required Fields
 
 **Request:**
 
 ```bash
-curl -X POST http://localhost:3005/api/admin/bookings \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -X POST http://localhost:3005/api/public/bookings \
   -H "Content-Type: application/json" \
   -d '{
     "fullName": ""
@@ -160,8 +128,7 @@ _(Missing required fields)_
 **Request:**
 
 ```bash
-curl -X POST http://localhost:3005/api/admin/bookings \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+curl -X POST http://localhost:3005/api/public/bookings \
   -H "Content-Type: application/json" \
   -d '{
     "fullName": "John Doe",
@@ -211,14 +178,13 @@ curl -X POST http://localhost:3005/api/admin/bookings \
 | ---- | ------------ | ---------------------------------------------------- |
 | 201  | Created      | Booking successfully created                         |
 | 400  | Bad Request  | Validation error (missing field, invalid data, etc.) |
-| 401  | Unauthorized | Missing or invalid authentication token              |
 | 500  | Server Error | Database failure or other server error               |
 
 ---
 
 ## Implementation Notes
 
-- **Authentication:** JWT token in `Authorization: Bearer <token>` header (required)
+- **Authentication:** Not required
 - **Content-Type:** application/json
 - **Validation:** All fields validated with Zod schema before processing
 - **Response Format:** Consistent with API standard (success/status/data structure)

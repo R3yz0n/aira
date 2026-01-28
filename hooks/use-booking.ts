@@ -55,7 +55,7 @@ export function useBooking() {
         if (isMountedRef.current) setError(err);
         toast({
           title: "Load failed",
-          description: err?.message ?? "Failed to load events",
+          description: err?.message ?? "Failed to load bookings",
           variant: "destructive",
         });
         throw err;

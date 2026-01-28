@@ -44,12 +44,8 @@ export class MongoBookingRepository implements BookingRepository {
   async create(
     data: Omit<IBookingEntity, "id" | "createdAt" | "updatedAt">,
   ): Promise<IBookingEntity> {
-    try {
-      const doc = await BookingModel.create(data);
-      return mapDoc(doc);
-    } catch (err: any) {
-      throw err;
-    }
+    const doc = await BookingModel.create(data);
+    return mapDoc(doc);
   }
 
   async list(

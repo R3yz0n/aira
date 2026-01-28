@@ -21,7 +21,7 @@ const budgetRanges = [
 ];
 
 export default function Page() {
-  // map url form google maps
+  // map url from google maps
   const mapEmbedUrl = config.companyDetails.office.mapEmbedUrl;
   const { create } = useBooking();
 
@@ -44,10 +44,8 @@ export default function Page() {
   });
 
   const onSubmit = async (data: TBookingCreateInput) => {
-    try {
-      await create(data);
-      reset();
-    } catch (error) {}
+    await create(data);
+    reset();
   };
 
   return (
