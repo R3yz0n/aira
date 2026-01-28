@@ -113,9 +113,7 @@ export function EventTable({
           <TableRow>
             <TableHead className="text-foreground font-bold w-[40%]">Event Title</TableHead>
             <TableHead className="text-foreground font-bold w-[40%]">Description</TableHead>
-            <TableHead className="text-right text-foreground font-bold w-48 border ">
-              Actions
-            </TableHead>
+            <TableHead className="text-right text-foreground font-bold w-48">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

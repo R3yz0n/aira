@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { bookingApi } from "@/lib/api/booking";
 import type { IErrorResponse } from "@/lib/types/api";
 import type { IBookingEntity, TBookingCreateInput } from "@/domain/booking";
+import { IPaginationParams } from "@/domain/common";
 
 export function useBooking() {
   const { toast } = useToast();
@@ -10,6 +11,12 @@ export function useBooking() {
   const [bookings, setBookings] = useState<IBookingEntity[]>([]);
   const [error, setError] = useState<IErrorResponse | null>(null);
   const isMountedRef = useRef(true);
+  const [pagination, setPagination] = useState<IPaginationParams>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0,
+  });
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -18,6 +25,46 @@ export function useBooking() {
       isMountedRef.current = false;
     };
   }, []);
+
+  const list = useCallback(
+    async (
+      page = 1,
+      limit = 9,
+      search = "",
+      startDate = "",
+      endDate = "",
+    ): Promise<IBookingEntity[]> => {
+      if (isMountedRef.current) setIsLoading(true);
+
+      try {
+        const { data, total, pages } = await bookingApi.list({
+          page,
+          limit,
+          search,
+          startDate,
+          endDate,
+        });
+        if (isMountedRef.current) {
+          setBookings(data);
+          setPagination({ page, limit, total, pages });
+          setError(null);
+        }
+        return data;
+      } catch (error) {
+        const err = error as IErrorResponse;
+        if (isMountedRef.current) setError(err);
+        toast({
+          title: "Load failed",
+          description: err?.message ?? "Failed to load events",
+          variant: "destructive",
+        });
+        throw err;
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
+      }
+    },
+    [toast],
+  );
 
   const create = useCallback(
     async (input: TBookingCreateInput): Promise<IBookingEntity> => {
@@ -58,5 +105,5 @@ export function useBooking() {
     [toast],
   );
 
-  return { create, bookings, isLoading, error };
+  return { create, bookings, isLoading, error, list, pagination };
 }
