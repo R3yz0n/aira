@@ -18,7 +18,7 @@ const JWT_SECRET: jwt.Secret = secret;
 
 export function signToken(
   payload: string | object | Buffer,
-  expiresIn: jwt.SignOptions["expiresIn"] = "10m"
+  expiresIn: jwt.SignOptions["expiresIn"] = "30h",
 ) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn } as jwt.SignOptions);
 }
