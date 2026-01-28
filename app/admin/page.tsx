@@ -83,15 +83,21 @@ export default function AdminPage() {
                   tabIndex={0}
                 >
                   <div className="w-full relative hover-lift shadow-md overflow-hidden">
-                    <Image
-                      src={event?.imageUrl || "/placeholder.svg"}
-                      alt={event?.title || "Event image"}
-                      placeholder="blur"
-                      blurDataURL="/placeholder.svg"
-                      width={600}
-                      height={400}
-                      className="w-full h-auto object-cover transition-all duration-300 group-hover:scale-110"
-                    />
+                    <a
+                      href={event?.imageUrl || "/placeholder.svg"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image
+                        src={event?.imageUrl || "/placeholder.svg"}
+                        alt={event?.title || "Event image"}
+                        placeholder="blur"
+                        blurDataURL="/placeholder.svg"
+                        width={600}
+                        height={400}
+                        className="w-full h-auto object-cover transition-all duration-300 group-hover:scale-110"
+                      />
+                    </a>
                   </div>
                 </motion.div>
               ))}
