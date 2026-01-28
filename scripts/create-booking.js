@@ -10,7 +10,7 @@ if (!ADMIN_TOKEN) {
 }
 
 const bookings = Array.from({ length: 50 }, (_, i) => {
-  const baseDate = new Date(2026, 1, 29); // Start from February 1, 2026
+  const baseDate = new Date(2026, 1, 28); // Start from February 1, 2026
   baseDate.setDate(baseDate.getDate() + i); // Increment days properly
 
   return {

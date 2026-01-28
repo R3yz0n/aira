@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { bookingCreateSchema, TBookingCreateInput } from "@/domain/booking";
 import { useBooking } from "@/hooks/use-booking";
-import { toast } from "@/hooks/use-toast";
 import { config } from "@/lib/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -14,11 +13,11 @@ import { Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 const budgetRanges = [
-  "Under ₹5,00,000",
-  "₹5,00,000 - ₹10,00,000",
-  "₹10,00,000 - ₹25,00,000",
-  "₹25,00,000 - ₹50,00,000",
-  "Above ₹50,00,000",
+  "Under ₹50,000",
+  "Rs50,000 - Rs1,00,000",
+  "Rs1,00,000 - Rs2,50,000",
+  "Rs2,50,000 - Rs5,00,000",
+  "Above Rs5,00,000",
 ];
 
 export default function Page() {

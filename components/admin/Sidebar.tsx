@@ -1,21 +1,20 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { useAdminLogin } from "@/hooks/use-admin-login";
+import { config } from "@/lib/config";
+import {
+  Calendar,
+  ChevronRight,
+  ClipboardList,
+  Folder,
+  LayoutDashboard,
+  LogOut,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import {
-  LayoutDashboard,
-  Calendar,
-  Folder,
-  ChevronRight,
-  LogOut,
-  Menu,
-  X,
-  ClipboardList,
-} from "lucide-react";
-import { config } from "@/lib/config";
-import { Button } from "@/components/ui/button";
-import { useAdminLogin } from "@/hooks/use-admin-login";
 
 const sidebarItems = [
   {
