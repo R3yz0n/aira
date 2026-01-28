@@ -17,10 +17,10 @@ http://localhost:3005
 - `GET /api/public/events` **(Public)** - List all events with pagination and filtering
 - `POST /api/admin/bookings` **(Private)** - Create booking
 
-📖 **[View Create Documentation](./create-category.md)**
-📖 **[View Update Documentation](./update-category.md)**
-📖 **[View List Documentation](./read-categories.md)**
-📖 **[View Create Event Documentation](./create-event.md)**
-📖 **[View Read Events Documentation](./read-events.md)**
-📖 **[View Create Booking Documentation](./create-booking.md)**
+📖 **[View Create Documentation](./create-category.md)**  
+📖 **[View Update Documentation](./update-category.md)**  
+📖 **[View List Documentation](./read-categories.md)**  
+📖 **[View Create Event Documentation](./create-event.md)**  
+📖 **[View Read Events Documentation](./read-events.md)**  
+📖 **[View Create Booking Documentation](./create-booking.md)**  
 📖 **[View Read Bookings Documentation](./read-bookings.md)**

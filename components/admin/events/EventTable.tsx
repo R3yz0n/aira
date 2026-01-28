@@ -84,7 +84,7 @@ export function EventTable({
       <div className="flex items-center justify-between mb-4">
         <div className="relative w-1/3">
           <Input
-            placeholder="Search events..."
+            placeholder="Search events with tile or description..."
             value={search}
             onChange={handleSearchChange}
             className="pl-10"

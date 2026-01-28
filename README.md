@@ -156,6 +156,13 @@ The project follows a **Clean/Layered Architecture** pattern:
 }
 ```
 
+## Documentation
+
+For detailed API documentation and user management guidelines, refer to the following files:
+
+- [API Documentation](docs/API_DOCS.md)
+- [User Management Documentation](docs/UserManagement.md)
+
 ## Scripts
 
 | Command                | Description              |
