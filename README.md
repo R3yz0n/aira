@@ -130,32 +130,6 @@ The project follows a **Clean/Layered Architecture** pattern:
 | **API Client** | Client-side HTTP, error transformation      |
 | **Hook**       | React state, UI integration                 |
 
-### API Response Format
-
-**Success:**
-
-```json
-{
-  "success": true,
-  "data": { ... },
-  "status": 200
-}
-```
-
-**Error:**
-
-```json
-{
-  "success": false,
-  "status": 400,
-  "error": {
-    "code": "INVALID_INPUT",
-    "message": "Invalid input",
-    "details": { "fieldErrors": { "email": ["Invalid email"] } }
-  }
-}
-```
-
 ## Documentation
 
 For detailed API documentation and user management guidelines, refer to the following files:
