@@ -15,9 +15,13 @@ http://localhost:3005
 - `GET /api/public/categories` **(Public)** - List all event categories
 - `POST /api/admin/events` **(Private)** - Create event
 - `GET /api/public/events` **(Public)** - List all events with pagination and filtering
+- `POST /api/public/bookings` **(Public)** - Create booking
+- `GET /api/admin/bookings` **(Private)** - List bookings
 
-📖 **[View Create Documentation](./create-category.md)**
-📖 **[View Update Documentation](./update-category.md)**
-📖 **[View List Documentation](./read-categories.md)**
-📖 **[View Create Event Documentation](./create-event.md)**
-📖 **[View Read Events Documentation](./read-events.md)**
+📖 **[View Create Documentation](./create-category.md)**  
+📖 **[View Update Documentation](./update-category.md)**  
+📖 **[View List Documentation](./read-categories.md)**  
+📖 **[View Create Event Documentation](./create-event.md)**  
+📖 **[View Read Events Documentation](./read-events.md)**  
+📖 **[View Create Booking Documentation](./create-booking.md)**  
+📖 **[View Read Bookings Documentation](./read-bookings.md)**

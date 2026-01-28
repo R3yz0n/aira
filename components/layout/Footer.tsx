@@ -1,20 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Youtube,
-  Mail,
-  Phone,
-  MapPin,
-  Heart,
-  FileText,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCategory } from "@/hooks/use-category";
 import { config } from "@/lib/config";
+import { motion } from "framer-motion";
+import { Facebook, FileText, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import Link from "next/link";
+import { useEffect } from "react";
 
 const socialLinks = [
   { icon: Facebook, href: config.companyDetails.social.facebook, label: "Facebook" },
@@ -31,16 +23,12 @@ const quickLinks = [
   { name: "Contact", path: "/contact" },
 ];
 
-const services = [
-  "Wedding Planning",
-  "Corporate Events",
-  "Birthday Celebrations",
-  "Destination Weddings",
-  "Anniversary Events",
-  "Cultural Celebrations",
-];
-
 export function Footer() {
+  const { list: categoryList, categories } = useCategory();
+
+  useEffect(() => {
+    categoryList();
+  }, [categoryList]);
   const openBrochure = (e: any) => {
     e.preventDefault();
     const url = config.brochureUrl;
@@ -135,16 +123,17 @@ export function Footer() {
           >
             <h4 className="font-display text-xl font-semibold mb-6 text-aira-gold">Our Services</h4>
             <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service}>
-                  <Link
-                    href="/services"
-                    className="text-primary-foreground/80 hover:text-aira-gold transition-colors duration-200"
-                  >
-                    {service}
-                  </Link>
-                </li>
-              ))}
+              {categories.length > 0 &&
+                categories?.slice(0, 6).map((service) => (
+                  <li key={service.id}>
+                    <Link
+                      href="/services"
+                      className="text-primary-foreground/80 hover:text-aira-gold transition-colors duration-200"
+                    >
+                      {service.name}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </motion.div>
 

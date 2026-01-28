@@ -17,6 +17,8 @@ export interface EventRepository {
   deleteById(id: string): Promise<IEventEntity | null>;
   countByCategory(categoryId: string): Promise<number>;
   updateById(id: string, data: Partial<IEventEntity>): Promise<IEventEntity | null>;
+  countAll(): Promise<number>;
+  findLatest(limit: number): Promise<IEventEntity[]>;
 }
 
 function mapDoc(doc: any): IEventEntity {
@@ -157,5 +159,14 @@ export class MongoEventRepository implements EventRepository {
       }
       throw err;
     }
+  }
+
+  async countAll(): Promise<number> {
+    return EventModel.countDocuments();
+  }
+
+  async findLatest(limit: number): Promise<IEventEntity[]> {
+    const docs = await EventModel.findPaginated({}, 0, limit);
+    return docs.map(mapDoc);
   }
 }

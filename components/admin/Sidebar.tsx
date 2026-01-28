@@ -1,12 +1,20 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { useAdminLogin } from "@/hooks/use-admin-login";
+import { config } from "@/lib/config";
+import {
+  Calendar,
+  ChevronRight,
+  ClipboardList,
+  Folder,
+  LayoutDashboard,
+  LogOut,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { LayoutDashboard, Calendar, Folder, ChevronRight, LogOut, Menu, X } from "lucide-react";
-import { config } from "@/lib/config";
-import { Button } from "@/components/ui/button";
-import { useAdminLogin } from "@/hooks/use-admin-login";
 
 const sidebarItems = [
   {
@@ -23,6 +31,11 @@ const sidebarItems = [
     label: "Categories",
     href: "/admin/categories",
     icon: Folder,
+  },
+  {
+    label: "Bookings",
+    href: "/admin/bookings",
+    icon: ClipboardList,
   },
 ];
 
@@ -55,7 +68,7 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-background text-foreground flex flex-col border-r-2 transition-transform duration-200 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 lg:w-52 xl:w-64 border  transform bg-background text-foreground flex flex-col border-r-2 transition-transform duration-200 ${
           open ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:static lg:inset-auto`}
       >

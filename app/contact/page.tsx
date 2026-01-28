@@ -1,77 +1,51 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
-import { MapPin, Phone, Mail, Clock, MessageCircle, Send } from "lucide-react";
-
-const eventTypes = [
-  "Wedding",
-  "Engagement",
-  "Birthday Party",
-  "Anniversary",
-  "Corporate Event",
-  "Conference",
-  "Product Launch",
-  "Destination Wedding",
-  "Other",
-];
+import { Textarea } from "@/components/ui/textarea";
+import { bookingCreateSchema, TBookingCreateInput } from "@/domain/booking";
+import { useBooking } from "@/hooks/use-booking";
+import { config } from "@/lib/config";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
+import { Clock, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 const budgetRanges = [
-  "Under ₹5,00,000",
-  "₹5,00,000 - ₹10,00,000",
-  "₹10,00,000 - ₹25,00,000",
-  "₹25,00,000 - ₹50,00,000",
-  "Above ₹50,00,000",
+  "Under ₹50,000",
+  "Rs50,000 - Rs1,00,000",
+  "Rs1,00,000 - Rs2,50,000",
+  "Rs2,50,000 - Rs5,00,000",
+  "Above Rs5,00,000",
 ];
 
 export default function Page() {
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    eventType: "",
-    eventDate: "",
-    budget: "",
-    notes: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // map url from google maps
   const mapEmbedUrl = config.companyDetails.office.mapEmbedUrl;
+  const { create } = useBooking();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast({
-      title: "Message Sent Successfully!",
-      description: "Thank you for reaching out. Our team will contact you within 24 hours.",
-    });
-
-    setFormData({
-      name: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<TBookingCreateInput>({
+    resolver: zodResolver(bookingCreateSchema),
+    defaultValues: {
+      fullName: "",
       phone: "",
       email: "",
       eventType: "",
-      eventDate: "",
-      budget: "",
-      notes: "",
-    });
-    setIsSubmitting(false);
+      eventDate: undefined,
+      budgetRange: "",
+      message: "",
+    },
+  });
+
+  const onSubmit = async (data: TBookingCreateInput) => {
+    await create(data);
+    reset();
   };
 
   return (
@@ -149,7 +123,7 @@ export default function Page() {
                         <a
                           href={`tel:${config.companyDetails.contact.phoneSecondary.replace(
                             /\s/g,
-                            ""
+                            "",
                           )}`}
                           className="text-muted-foreground text-sm hover:text-primary transition-colors"
                         >
@@ -194,7 +168,7 @@ export default function Page() {
               <a
                 href={`https://wa.me/${config.companyDetails.contact.phonePrimary.replace(
                   /[^0-9]/g,
-                  ""
+                  "",
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -212,20 +186,22 @@ export default function Page() {
               viewport={{ once: true }}
               className="lg:col-span-2"
             >
-              <div className="bg-card rounded-3xl p-8 lg:p-12 shadow-card">
+              <div className="bg-card  rounded-3xl md:p-8 lg:p-12 shadow-card">
                 <h2 className="font-display text-2xl font-bold mb-8">Book Your Consultation</h2>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
+                      <Label htmlFor="fullName">Full Name *</Label>
                       <Input
-                        id="name"
+                        id="fullName"
                         placeholder="Your name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
+                        aria-invalid={errors.fullName ? "true" : "false"}
+                        {...register("fullName")}
                       />
+                      {errors.fullName && (
+                        <p className="text-sm text-red-600">{errors.fullName.message}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number *</Label>
@@ -233,10 +209,12 @@ export default function Page() {
                         id="phone"
                         type="tel"
                         placeholder="+91 99999 99999"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        required
+                        aria-invalid={errors.phone ? "true" : "false"}
+                        {...register("phone")}
                       />
+                      {errors.phone && (
+                        <p className="text-sm text-red-600">{errors.phone.message}</p>
+                      )}
                     </div>
                   </div>
 
@@ -246,70 +224,72 @@ export default function Page() {
                       id="email"
                       type="email"
                       placeholder="your@email.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
+                      aria-invalid={errors.email ? "true" : "false"}
+                      {...register("email")}
                     />
+                    {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label>Event Type *</Label>
-                      <Select
-                        value={formData.eventType}
-                        onValueChange={(value) => setFormData({ ...formData, eventType: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select event type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {eventTypes.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="eventType">Event Type *</Label>
+                      <Input
+                        id="eventType"
+                        placeholder="Enter event type"
+                        aria-invalid={errors.eventType ? "true" : "false"}
+                        {...register("eventType")}
+                      />
+                      {errors.eventType && (
+                        <p className="text-sm text-red-600">{errors.eventType.message}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="eventDate">Event Date</Label>
                       <Input
                         id="eventDate"
                         type="date"
-                        value={formData.eventDate}
-                        onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                        min={new Date(Date.now() + 86400000).toISOString().split("T")[0]} // Set min to tomorrow's date
+                        aria-invalid={errors.eventDate ? "true" : "false"}
+                        {...register("eventDate")}
                       />
+                      {errors.eventDate && (
+                        <p className="text-sm text-red-600">{errors.eventDate.message}</p>
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Budget Range</Label>
-                    <Select
-                      value={formData.budget}
-                      onValueChange={(value) => setFormData({ ...formData, budget: value })}
+                    <Label htmlFor="budgetRange">Budget Range</Label>
+                    <select
+                      id="budgetRange"
+                      className="input ml-3 border-aira-gold/80 border rounded"
+                      aria-invalid={errors.budgetRange ? "true" : "false"}
+                      {...register("budgetRange")}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select budget range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {budgetRanges.map((range) => (
-                          <SelectItem key={range} value={range}>
-                            {range}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      <option value="">Select a budget range</option>
+                      {budgetRanges.map((range) => (
+                        <option key={range} value={range}>
+                          {range}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.budgetRange && (
+                      <p className="text-sm text-red-600">{errors.budgetRange.message}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="notes">Tell Us About Your Event</Label>
+                    <Label htmlFor="message">Tell Us About Your Event</Label>
                     <Textarea
-                      id="notes"
+                      id="message"
                       placeholder="Share your vision, preferences, or any specific requirements..."
                       rows={4}
-                      value={formData.notes}
-                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      aria-invalid={errors.message ? "true" : "false"}
+                      {...register("message")}
                     />
+                    {errors.message && (
+                      <p className="text-sm text-red-600">{errors.message.message}</p>
+                    )}
                   </div>
 
                   <Button

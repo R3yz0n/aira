@@ -101,9 +101,4 @@ export interface IPaginationResult<T> {
   pages: number;
 }
 
-export interface IPaginationParams {
-  page: number;
-  limit: number;
-  total: number;
-  pages: number;
-}
+
