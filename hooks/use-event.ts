@@ -2,7 +2,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { eventApi } from "@/lib/api/event";
 import type { IErrorResponse } from "@/lib/types/api";
-import type { IEventEntity, IPaginationParams } from "@/domain/event";
+import type { IEventEntity } from "@/domain/event";
+import { IPaginationParams } from "@/domain/common";
 
 export function useEvent() {
   const { toast } = useToast();

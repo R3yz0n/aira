@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { bookingCreateSchema, IBookingEntity } from "@/domain/booking";
-import { MongoBookingRepository, InvalidCategoryIdError } from "@/repositories/booking-repository";
+import { MongoBookingRepository } from "@/repositories/booking-repository";
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { BookingService } from "@/services/booking/booking-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
@@ -41,10 +41,6 @@ export const POST = withAdminAuth(async (req: NextRequest) => {
 
     return successResponse<IBookingEntity>(payload, 201);
   } catch (err: any) {
-    if (err instanceof InvalidCategoryIdError) {
-      return errorResponse("INVALID_INPUT", err.message, 400);
-    }
-
     console.error(err);
     return errorResponse("INTERNAL_ERROR", "Internal server error", 500);
   }

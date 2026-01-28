@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { IEventEntity, IPaginationParams } from "@/domain/event";
+import { IEventEntity } from "@/domain/event";
 import { ICategoryEntity } from "@/domain/category";
 import { Pencil, Trash2, Search, Eye } from "lucide-react";
 import { debounce } from "lodash";
 import EventDetailsDialog from "./EventDetailsDialog";
 import EventDeleteDialog from "./EventDeleteDialog";
 import { motion } from "framer-motion";
+import { IPaginationParams } from "@/domain/common";
 
 interface EventTableProps {
   events: IEventEntity[];
@@ -81,13 +82,13 @@ export function EventTable({
 
   return (
     <Card className="p-3 lg:p-6 bg-card shadow-md">
-      <div className="flex items-center justify-between mb-4">
-        <div className="relative w-1/3">
+      <div className="flex items-center justify-between mb-4 ">
+        <div className="relative w-96  ">
           <Input
             placeholder="Search events with tile or description..."
             value={search}
             onChange={handleSearchChange}
-            className="pl-10"
+            className="pl-10 w-80 md:w-96 text-sm md:text-base"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
         </div>
@@ -112,7 +113,9 @@ export function EventTable({
           <TableRow>
             <TableHead className="text-foreground font-bold w-[40%]">Event Title</TableHead>
             <TableHead className="text-foreground font-bold w-[40%]">Description</TableHead>
-            <TableHead className="text-right text-foreground font-bold ">Actions</TableHead>
+            <TableHead className="text-right text-foreground font-bold w-48 border ">
+              Actions
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -141,7 +144,7 @@ export function EventTable({
                     {event.description}
                   </div>
                 </TableCell>
-                <TableCell className="py-1 text-right w-44 md:w-auto  flex justify-end gap-2 items-center ">
+                <TableCell className="py-1 text-right w-48 flex justify-end gap-2 items-center ">
                   <Button
                     variant="ghost"
                     size="icon"

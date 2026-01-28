@@ -3,7 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { LayoutDashboard, Calendar, Folder, ChevronRight, LogOut, Menu, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  Calendar,
+  Folder,
+  ChevronRight,
+  LogOut,
+  Menu,
+  X,
+  ClipboardList,
+} from "lucide-react";
 import { config } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { useAdminLogin } from "@/hooks/use-admin-login";
@@ -23,6 +32,11 @@ const sidebarItems = [
     label: "Categories",
     href: "/admin/categories",
     icon: Folder,
+  },
+  {
+    label: "Bookings",
+    href: "/admin/bookings",
+    icon: ClipboardList,
   },
 ];
 
