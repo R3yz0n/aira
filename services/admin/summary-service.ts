@@ -1,6 +1,7 @@
 import { EventRepository } from "@/repositories/event-repository";
 import { CategoryRepository } from "@/repositories/category-repository";
 import { BookingRepository } from "@/repositories/booking-repository";
+import { IStatsSummary } from "@/domain/common";
 
 export class SummaryService {
   constructor(
@@ -9,14 +10,14 @@ export class SummaryService {
     private bookingRepository: BookingRepository,
   ) {}
 
-  async getSummary() {
+  async getSummary(): Promise<IStatsSummary> {
     const [totalEvents, totalCategories, totalBookings, latestEvents, latestBookings] =
       await Promise.all([
         this.eventRepository.countAll(),
         this.categoryRepository.countAll(),
         this.bookingRepository.countAll(),
-        this.eventRepository.findLatest(5),
-        this.bookingRepository.findLatest(5),
+        this.eventRepository.findLatest(9),
+        this.bookingRepository.findLatest(8),
       ]);
 
     return {

@@ -1,10 +1,8 @@
 "use client";
 
-import { RequireAdmin } from "@/components/auth/RequireAdmin";
-import { Button } from "@/components/ui/button";
-import { useAdminLogin } from "@/hooks/use-admin-login";
 import { Sidebar } from "@/components/admin/Sidebar";
-import { LogOut } from "lucide-react";
+import { RequireAdmin } from "@/components/auth/RequireAdmin";
+import { useAdminLogin } from "@/hooks/use-admin-login";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAdminLogin();
@@ -18,7 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main Content */}
         <div className="flex-1">
           {/* Page Content */}
-          <div className=" py-4 w-[700px] md:w-[800px] lg:w-auto px-2 lg:p-4 h-full overflow-auto">
+          <div className="py-4 w-full max-w-[700px] md:max-w-full  lg:w-auto px-2 lg:p-4 h-full overflow-auto">
             {children}
           </div>
         </div>

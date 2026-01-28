@@ -134,7 +134,7 @@ const BookingTable = ({ bookings = [], pagination, list, isLoading }: BookingTab
       <Table className="w-full table-fixed">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-foreground font-bold w-[30%]">Booker Name</TableHead>
+            <TableHead className="text-foreground font-bold w-[30%]">Customer Name</TableHead>
             <TableHead className="text-foreground font-bold w-[30%]">Email</TableHead>
             <TableHead className="text-foreground font-bold w-[20%]">Phone no</TableHead>
             <TableHead className="text-foreground font-bold w-36">Booked Date</TableHead>

@@ -22,7 +22,7 @@ export function BookingDetailsDialog({ open, onClose, booking }: BookingDetailsD
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold">Booker Name</h3>
+            <h3 className="text-lg font-semibold">Customer Name</h3>
             <p>{booking.fullName}</p>
           </div>
 
