@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Calendar, ClipboardList, Folder } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
+import type React from "react";
 
 export default function AdminPage() {
   const { stats, getSummary } = useDashboard();

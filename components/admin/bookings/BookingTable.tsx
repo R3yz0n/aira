@@ -30,7 +30,7 @@ interface BookingTableProps {
     search?: string,
     startDate?: string,
     endDate?: string,
-  ) => void;
+  ) => Promise<IBookingEntity[]>;
 
   isLoading: boolean;
 }
