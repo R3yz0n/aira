@@ -44,10 +44,9 @@ export default function CategoriesPage() {
           <Button
             className="flex items-center gap-2 bg-aira-blue text-white hover:bg-aira-blue/90"
             onClick={handleCreate}
-            disabled={isLoading}
           >
             <Plus className="w-4 h-4" />
-            {isLoading ? "Loading..." : "New Category"}
+            New Category
           </Button>
         </AdminHeader>
       </div>
