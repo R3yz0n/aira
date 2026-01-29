@@ -1,10 +1,11 @@
+import { motion } from "framer-motion";
+
 interface CategoryListProps {
   activeCategory: string;
   setActiveCategory: (category: string) => void;
   categories: { id: string; name: string }[];
   isCategoryLoading: boolean;
 }
-
 export default function CategoryList({
   activeCategory,
   setActiveCategory,
@@ -12,8 +13,24 @@ export default function CategoryList({
   isCategoryLoading,
 }: CategoryListProps) {
   return (
-    <div className="container mx-auto px-2 md:px-4 lg:px-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="container py-4 min-h-28 lg:min-h-24 justify-center flex items-center  mx-auto px-2 md:px-4 lg:px-8"
+    >
       <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+        {/* Skeleton Loading State */}
+        {isCategoryLoading &&
+          Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={index}
+              className="md:px-6 px-2 py-2 border text-xs md:text-base text-opacity-0 text-black rounded-full font-medium bg-muted animate-pulse "
+            >
+              Category
+            </div>
+          ))}
+
         {/* All Categories Button */}
         {!isCategoryLoading && (categories?.length ?? 0) > 0 && (
           <button
@@ -42,6 +59,6 @@ export default function CategoryList({
           </button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

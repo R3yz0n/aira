@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import CategoryList from "@/components/admin/categories/CategoryList";
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -31,43 +32,18 @@ export default function Page() {
   return (
     <>
       {/* Filter Tabs */}
-      <section className="py-3  md:py-8 border-b border-border sticky top-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5 backdrop-blur-md z-40">
-        <div className="container mx-auto px-2 md:px-4 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-            {/* All Categories Button */}
-            {!isCategoryLoading && (categories?.length ?? 0) > 0 && (
-              <button
-                key="all"
-                onClick={() => setActiveCategory("all")}
-                className={`md:px-6 px-2 py-2 border text-xs md:text-base rounded-full font-medium transition-all duration-300 ${
-                  activeCategory === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                All
-              </button>
-            )}
-            {categories?.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`md:px-6 px-2 py-2 border text-xs md:text-base rounded-full font-medium transition-all duration-300 ${
-                  activeCategory === category.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
+      <section className="border-b border-border sticky top-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5 backdrop-blur-md z-40">
+        <CategoryList
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          categories={categories}
+          isCategoryLoading={isCategoryLoading}
+        />
       </section>
 
-      {/* Gallery Grid */}
       <section className="py-4">
-        <div className=" mx-auto px-2 md:px-4 lg:px-8 min-h-[20vh] md:min-h-[600px]">
+        {/* Gallery Grid */}
+        <div className=" mx-auto min-h-[90vh] px-2 md:px-4 lg:px-8">
           <div className="columns-2 md:columns-3 relative lg:columns-4 gap-2 space-y-2">
             {(events?.length ?? 0) === 0 && !isLoading && !isCategoryLoading ? (
               <motion.div
