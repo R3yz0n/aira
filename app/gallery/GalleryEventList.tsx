@@ -25,13 +25,13 @@ const GalleryEventList: React.FC<GalleryEventListProps> = ({
 }) => {
   return (
     <div className="mx-auto min-h-[90vh] px-2 md:px-4 lg:px-8">
-      <div className="columns-2 md:columns-3 relative lg:columns-4 gap-2 space-y-2">
+      <div className="columns-2 md:columns-3 relative lg:columns-4 gap-2">
         {(isLoading || isCategoryLoading) &&
           events?.length === 0 &&
           Array.from({ length: 12 }).map((_, index) => (
             <div
               key={index}
-              className="w-full h-[200px] bg-muted shadow animate-pulse rounded-md"
+              className="w-full h-[200px] bg-muted shadow animate-pulse rounded-md mb-2 break-inside-avoid"
             ></div>
           ))}
         {!isLoading && !isCategoryLoading && (events?.length ?? 0) === 0 ? (
@@ -50,7 +50,7 @@ const GalleryEventList: React.FC<GalleryEventListProps> = ({
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="group bg-card cursor-pointer overflow-hidden shadow-md hover-lift"
+              className="group bg-card cursor-pointer mb-2 overflow-hidden shadow-md hover-lift"
               onClick={() => setSelectedEvent(event)}
               role="button"
               tabIndex={0}
