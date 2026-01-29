@@ -47,7 +47,7 @@ export default function AdminPage() {
       {/* Recent Events Section */}
       <section className="flex flex-col-reverse lg:flex-row w-full gap-5 ">
         {/* Recent Bookings Section */}
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 min-h-96">
           <h2 className="text-xl font-semibold text-primary mb-5">Recent Bookings</h2>
           <ul className="space-y-1 grid sm:grid-cols-2 gap-3 ">
             {stats?.latestBookings?.length > 0 &&
@@ -68,7 +68,7 @@ export default function AdminPage() {
               ))}
           </ul>
         </div>
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 min-h-96">
           <h2 className="text-xl font-semibold text-primary mb-5">Newly Added Images</h2>
           <ul className="columns-2 md:columns-2 relative lg:columns-2 xl:columns-3 gap-1.5 space-y-1.5">
             {stats?.latestEvents?.length > 0 &&

@@ -57,7 +57,13 @@ export function ServicesPreview() {
             }
             return { category, event };
           });
-          setCategoryEventPairs(pairs);
+
+          // Check if any event is null, if so set empty array
+          if (pairs.some((pair) => pair.event === null)) {
+            setCategoryEventPairs([]);
+          } else {
+            setCategoryEventPairs(pairs);
+          }
         });
       }
     }
@@ -86,7 +92,18 @@ export function ServicesPreview() {
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid min-h-80 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {(isEventLoading || isCategoryLoading) &&
+            categoryEventPairs?.length === 0 &&
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="relative h-80 rounded-2xl overflow-hidden shadow-card">
+                <div className="w-full h-full bg-muted animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/20 to-transparent">
+                  <div className="h-6 bg-muted animate-pulse rounded mb-2"></div>
+                  <div className="h-4 bg-muted animate-pulse rounded w-20"></div>
+                </div>
+              </div>
+            ))}
           {categoryEventPairs?.length === 0 && !isCategoryLoading && !isEventLoading ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

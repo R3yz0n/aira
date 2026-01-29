@@ -8,8 +8,8 @@ import { CTASection } from "@/components/home/CTASection";
 export default function Home() {
   return (
     <>
-      <HeroSection />
-      <StatsSection />
+      {/* <HeroSection />
+      <StatsSection /> */}
       <ServicesPreview />
       <WhyChooseUs />
       <TestimonialsSection />

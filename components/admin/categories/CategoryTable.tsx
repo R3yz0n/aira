@@ -29,11 +29,26 @@ export function CategoryTable({ categories, onEdit, onDelete, isLoading }: Categ
             <TableHead className="text-foreground font-bold">Category Name</TableHead>
             <TableHead className="text-foreground font-bold">Total Events</TableHead>
             <TableHead className="text-foreground font-bold">Description</TableHead>
-          <TableHead className="text-right text-foreground font-bold">Actions</TableHead>
+            <TableHead className="text-right text-foreground font-bold w-fit">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categories?.length === 0 && !isLoading ? (
+          {isLoading ? (
+            <TableRow>
+              <TableCell
+                colSpan={4}
+                className="py-8 text-base md:text-lg text-center text-muted-foreground"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-muted-foreground"
+                >
+                  Loading categories...
+                </motion.div>
+              </TableCell>
+            </TableRow>
+          ) : categories?.length === 0 ? (
             <TableRow>
               <TableCell colSpan={4} className="py-8 text-lg text-center text-muted-foreground">
                 <motion.div
@@ -57,7 +72,7 @@ export function CategoryTable({ categories, onEdit, onDelete, isLoading }: Categ
                 <TableCell className="p-1 text-muted-foreground">
                   <div>{category.description}</div>
                 </TableCell>
-                <TableCell className="p-1 text-right">
+                <TableCell className=" text-right w-fit ">
                   <div className="flex items-center justify-end gap-2">
                     <Button
                       variant="ghost"

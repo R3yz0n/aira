@@ -117,7 +117,22 @@ export function EventTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {events && events?.length === 0 && !isLoading ? (
+          {isLoading ? (
+            <TableRow>
+              <TableCell
+                colSpan={3}
+                className="py-8 text-base md:text-lg text-center text-muted-foreground"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-muted-foreground"
+                >
+                  Loading events...
+                </motion.div>
+              </TableCell>
+            </TableRow>
+          ) : events && events?.length === 0 ? (
             <TableRow>
               <TableCell colSpan={3} className="py-8 text-lg text-center text-muted-foreground">
                 <motion.div

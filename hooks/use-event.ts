@@ -224,5 +224,22 @@ export function useEvent() {
     [toast],
   );
 
-  return { list, loadMore, create, update, deleteEvent, events, pagination, isLoading, error };
+  const clearEvents = useCallback(() => {
+    if (isMountedRef.current) {
+      setEvents([]);
+    }
+  }, []);
+
+  return {
+    list,
+    loadMore,
+    create,
+    update,
+    deleteEvent,
+    clearEvents,
+    events,
+    pagination,
+    isLoading,
+    error,
+  };
 }
