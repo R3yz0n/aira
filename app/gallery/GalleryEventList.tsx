@@ -24,7 +24,7 @@ const GalleryEventList: React.FC<GalleryEventListProps> = ({
   activeCategory,
 }) => {
   return (
-    <div className=" mx-auto min-h-[90vh] px-2 md:px-4 lg:px-8">
+    <div className="mx-auto min-h-[90vh] px-2 md:px-4 lg:px-8">
       <div className="columns-2 md:columns-3 relative lg:columns-4 gap-2 space-y-2">
         {(isLoading || isCategoryLoading) &&
           events?.length === 0 &&
