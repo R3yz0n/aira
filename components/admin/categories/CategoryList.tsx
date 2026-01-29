@@ -22,7 +22,7 @@ export default function CategoryList({
       <div className="flex flex-wrap justify-center gap-2 md:gap-3">
         {/* Skeleton Loading State */}
         {isCategoryLoading &&
-          Array.from({ length: 8 }).map((_, index) => (
+          Array.from({ length: 12 }).map((_, index) => (
             <div
               key={index}
               className="md:px-6 px-2 py-2 border text-xs md:text-base text-opacity-0 text-black rounded-full font-medium bg-muted animate-pulse "
