@@ -262,7 +262,7 @@ export default function Page() {
                     <Label htmlFor="budgetRange">Budget Range</Label>
                     <select
                       id="budgetRange"
-                      className="input ml-3 border-aira-gold/80 border rounded"
+                      className="input ml-3 bg-transparent  rounded"
                       aria-invalid={errors.budgetRange ? "true" : "false"}
                       {...register("budgetRange")}
                     >
