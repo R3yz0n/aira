@@ -11,38 +11,6 @@ Event management platform built with Next.js 14, TypeScript, and MongoDB.
 - **Authentication:** JWT
 - **Validation:** Zod
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- MongoDB instance (local or Atlas)
-
-### Environment Variables
-
-Create a `.env.local` file:
-
-```env
-MONGODB_URI=mongodb://localhost:27017/aira
-JWT_SECRET=your-secret-key
-NEXT_PUBLIC_API_URL=http://localhost:3000
-```
-
-### Installation
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
-### Admin Setup
-
-```bash
-npm run create-admin
-```
-
 ## Project Structure
 
 ```
