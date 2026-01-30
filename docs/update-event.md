@@ -17,7 +17,7 @@ curl -X PATCH http://localhost:3005/api/admin/events/<EVENT_ID> \
   -F "title=Updated Event Title" \
   -F "description=Updated description for the event." \
   -F "categoryId=696154267fdba0e6636c2376" \
-  -F "file=@.github/new-image.png" \
+  -F "file=@/new-image.png" \
   | jq .
 ```
 
@@ -162,7 +162,7 @@ or
 | `title`       | string | Yes         | 1-200 characters                                              | "Updated Event Title"         |
 | `description` | string | Yes         | 1-1000 characters                                             | "Updated description"         |
 | `categoryId`  | string | Yes         | Valid ObjectId                                                | "696154267fdba0e6636c2376"    |
-| `file`        | file   | Conditional | Image file; required if no `imageUrl` is provided             | ".github/new-image.png"       |
+| `file`        | file   | Conditional | Image file; required if no `imageUrl` is provided             | "new-image.png"               |
 | `imageUrl`    | string | Conditional | URL or existing image path; required if no `file` is provided | "https://example.com/img.png" |
 
 **Note:** This endpoint currently expects a full update. The `title`, `description`, and `categoryId` fields must always be provided. In addition, at least one of `file` or `imageUrl` is required (the request must include a new file upload or an image URL). When including a file, the request must use `multipart/form-data`.

@@ -19,7 +19,7 @@ curl -X POST http://localhost:3005/api/admin/events \
   -F "title=Annual Gala Night" \
   -F "description=A night of celebration and awards." \
   -F "categoryId=696154267fdba0e6636c2376" \
-  -F "file=@.github/image.png" \
+  -F "file=@/image.png" \
   | jq .
 ```
 
@@ -332,7 +332,7 @@ _(MongoDB connection lost)_
 | `title`       | string | Yes      | 1-200 characters  | "Annual Gala Night"        |
 | `description` | string | Yes      | 1-1000 characters | "A night of celebration"   |
 | `categoryId`  | string | Yes      | Valid ObjectId    | "696154267fdba0e6636c2376" |
-| `file`        | file   | Yes      | Image file        | ".github/image.png"        |
+| `file`        | file   | Yes      | Image file        | "/image.png"               |
 
 **Note:** The request must use `multipart/form-data` and include the image file as `file`.
 

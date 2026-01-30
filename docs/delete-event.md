@@ -143,7 +143,7 @@ ID=$(curl -s -X POST http://localhost:3005/api/admin/events \
   -F "title=Temp Event" \
   -F "description=Auto-delete test" \
   -F "categoryId=696154267fdba0e6636c2376" \
-  -F "file=@./.github/image.webp" | jq -r '.data.id')
+  -F "file=@./image.webp" | jq -r '.data.id')
 
 # Delete the created event
 if [ -n "$ID" ] && [ "$ID" != "null" ]; then
