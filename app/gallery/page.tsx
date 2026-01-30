@@ -1,14 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import CategoryList from "@/components/admin/categories/CategoryList";
 import { IEventEntity } from "@/domain/event";
 import { useCategory } from "@/hooks/use-category";
 import { useEvent } from "@/hooks/use-event";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import CategoryList from "@/components/admin/categories/CategoryList";
 import GalleryEventList from "./GalleryEventList";
 
 export default function Page() {
