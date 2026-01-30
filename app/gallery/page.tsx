@@ -80,15 +80,17 @@ export default function Page() {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.img
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                src={selectedEvent?.imageUrl || "/placeholder.svg"}
-                alt={selectedEvent?.title || "Event image"}
-                loading="eager"
-                className=" object-contain mt-[5%] rounded-lg max-h-[70vh] w-full"
-              />
+              <div className="min-h-[50vh] w-[95vh]">
+                <motion.img
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  src={selectedEvent?.imageUrl || "/placeholder.svg"}
+                  alt={selectedEvent?.title || "Event image"}
+                  loading="eager"
+                  className=" object-contain mt-[5%] rounded-lg max-h-[70vh] w-full"
+                />
+              </div>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
