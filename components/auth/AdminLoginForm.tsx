@@ -16,7 +16,7 @@ export default function AdminLoginForm() {
 
   const { register, handleSubmit, formState, reset } = useForm<IAdmin>({
     resolver: zodResolver(adminLoginSchema),
-    defaultValues: { email: "airaevents001@gmail.com", password: "password" },
+    defaultValues: { email: "", password: "" },
     mode: "onChange",
   });
 
