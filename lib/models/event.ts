@@ -98,4 +98,22 @@ export class EventModel {
       .lean()
       .exec();
   }
+  static async findLatestPerCategory() {
+    await this.ensureConnected();
+    return this._aggregateLatestPerCategory();
+  }
+
+  private static _aggregateLatestPerCategory() {
+    return EventModelInternal.aggregate([
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$categoryId",
+          doc: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$doc" } },
+      { $sort: { createdAt: -1 } },
+    ]);
+  }
 }

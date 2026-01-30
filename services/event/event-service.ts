@@ -23,6 +23,10 @@ export class EventService {
     private categoryRepository: CategoryRepository,
   ) {}
 
+  async findLatestByCategories(): Promise<IEventEntity[]> {
+    return this.eventRepository.findLatestByCategories();
+  }
+
   async list(options: {
     page: number;
     limit: number;

@@ -10,7 +10,7 @@ interface EventDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   event: IEventEntity | null;
-  categories: ICategoryEntity[];
+  categories: ICategoryEntity[] | null;
   showOverlay?: boolean;
 }
 
@@ -54,9 +54,11 @@ export function EventDetailsDialog({
 
             <div>
               <h3 className="text-lg font-semibold">{event.title} </h3>
-              <Badge className="text-sm mt-3">
-                {categories?.find((c) => c.id === event.categoryId)?.name || "Uncategorized"}
-              </Badge>
+              {categories && (
+                <Badge className="text-sm mt-3">
+                  {categories?.find((c) => c.id === event.categoryId)?.name || "Uncategorized"}
+                </Badge>
+              )}
             </div>
 
             <div className="text-sm text-muted-foreground">{event.description} </div>

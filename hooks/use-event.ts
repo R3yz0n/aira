@@ -223,7 +223,28 @@ export function useEvent() {
     },
     [toast],
   );
-
+  const homePageList = useCallback(async (): Promise<IEventEntity[]> => {
+    if (isMountedRef.current) setIsLoading(true);
+    try {
+      const data = await eventApi.homePageList();
+      if (isMountedRef.current) {
+        setEvents(data);
+        setError(null);
+      }
+      return data;
+    } catch (error) {
+      const err = error as IErrorResponse;
+      if (isMountedRef.current) setError(err);
+      toast({
+        title: "Load failed",
+        description: err?.message ?? "Failed to load events",
+        variant: "destructive",
+      });
+      throw err;
+    } finally {
+      if (isMountedRef.current) setIsLoading(false);
+    }
+  }, [toast]);
   const clearEvents = useCallback(() => {
     if (isMountedRef.current) {
       setEvents([]);
@@ -241,5 +262,6 @@ export function useEvent() {
     pagination,
     isLoading,
     error,
+    homePageList,
   };
 }

@@ -25,7 +25,20 @@ export const eventApi = {
       } satisfies IErrorResponse;
     }
   },
-
+  async homePageList(): Promise<IEventEntity[]> {
+    try {
+      let { data }: IAxiosResponse<IEventEntity[]> =
+        await axiosInstance.get("/api/public/home-page");
+      return (data?.data satisfies IEventEntity[]) ?? [];
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      throw {
+        message: err.error?.message || "Failed to fetch events",
+        status: err.status,
+        details: err.error?.details,
+      } satisfies IErrorResponse;
+    }
+  },
   async create(formData: FormData): Promise<IEventEntity> {
     try {
       let { data }: IAxiosResponse<IEventEntity> = await axiosInstance.post(
