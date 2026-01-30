@@ -116,5 +116,3 @@ For detailed API documentation and user management guidelines, refer to the foll
 | `npm run create-admin` | Create admin user        |
 
 ## License
-
-Private
