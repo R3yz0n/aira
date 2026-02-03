@@ -47,7 +47,7 @@ export const imageFileSchema = z.object({
         ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"].includes(file.type),
       "Invalid file type. Allowed: JPG, PNG, WebP, GIF",
     )
-    .refine((file) => file.size <= 10 * 1024 * 1024, "File size too large. Maximum 10MB allowed"),
+    .refine((file) => file.size <= 4 * 1024 * 1024, "File size too large. Maximum 4MB allowed"),
 });
 
 // Schema for image URL validation
@@ -100,5 +100,3 @@ export interface IPaginationResult<T> {
   limit: number;
   pages: number;
 }
-
-

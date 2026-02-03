@@ -88,10 +88,10 @@ export function EventCreateDialog({
         });
       }
 
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > 4 * 1024 * 1024) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "File size too large. Maximum 10MB allowed",
+          message: "File size too large. Maximum 4MB allowed",
         });
       }
     }),

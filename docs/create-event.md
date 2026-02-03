@@ -182,7 +182,7 @@ curl -X POST http://localhost:3005/api/admin/events \
   | jq .
 ```
 
-_(File exceeds 10MB limit)_
+_(File exceeds 4MB limit)_
 
 **Response:**
 
@@ -192,7 +192,7 @@ _(File exceeds 10MB limit)_
   "status": 413,
   "error": {
     "code": "UPLOAD_FAILED",
-    "message": "File size too large. Maximum 10MB allowed"
+    "message": "File size too large. Maximum 4MB allowed"
   }
 }
 ```

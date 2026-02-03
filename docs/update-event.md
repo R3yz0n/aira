@@ -122,7 +122,7 @@ or
   "status": 413,
   "error": {
     "code": "UPLOAD_FAILED",
-    "message": "File size too large. Maximum 10MB allowed"
+    "message": "File size too large. Maximum 4MB allowed"
   }
 }
 ```
