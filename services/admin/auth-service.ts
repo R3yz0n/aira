@@ -1,4 +1,4 @@
-import { IAdmin } from "@/domain/admin";
+import { IAdmin, UserRole } from "@/domain/admin";
 import { verifyPassword } from "@/lib/auth/hash";
 import { signToken } from "@/lib/auth/jwt";
 import { AdminRepository } from "@/repositories/admin-repository";
@@ -12,6 +12,7 @@ export class InvalidCredentialsError extends Error {
 
 export interface IAuthServiceResult {
   token: string;
+  role: UserRole;
 }
 
 export class AdminAuthService {
@@ -24,7 +25,7 @@ export class AdminAuthService {
     const match = await verifyPassword(input.password, admin.password);
     if (!match) throw new InvalidCredentialsError();
 
-    const token = signToken({ sub: admin.id, email: admin.email });
-    return { token };
+    const token = signToken({ sub: admin.id, email: admin.email, role: admin.role });
+    return { token, role: admin.role };
   }
 }

@@ -9,7 +9,7 @@ import {
   CloudinaryQuotaError,
 } from "@/services/cloudinary/cloudinary-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
+import { withAdminAuthAndRoleCheck } from "@/lib/middleware/with-admin-auth";
 import { CategoryNotFoundError } from "@/services/category/category-service";
 
 const eventService = new EventService(new MongoEventRepository(), new MongoCategoryRepository());
@@ -28,7 +28,7 @@ const cloudinaryService = new CloudinaryService();
  * - 404: CATEGORY_NOT_FOUND
  * - 500: INTERNAL_ERROR
  */
-export const POST = withAdminAuth(async (req: NextRequest) => {
+export const POST = withAdminAuthAndRoleCheck(async (req: NextRequest) => {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;

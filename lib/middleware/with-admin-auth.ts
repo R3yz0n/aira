@@ -3,6 +3,7 @@ import type { JwtPayload } from "jsonwebtoken";
 
 import { errorResponse } from "@/lib/api/response-handler";
 import { verifyToken } from "@/lib/auth/jwt";
+import { checkRolePermission } from "@/lib/utils/role-check";
 
 interface DefaultRouteContext {
   // Next.js may pass `params` as a plain object or as a Promise of an object
@@ -12,17 +13,18 @@ interface DefaultRouteContext {
 export interface AdminAuthClaims extends JwtPayload {
   sub: string;
   email: string;
+  role: "admin" | "guest";
 }
 
 export type AdminRouteHandler<TContext = DefaultRouteContext> = (
   req: NextRequest,
   context: TContext,
-  admin: AdminAuthClaims
+  admin: AdminAuthClaims,
 ) => Promise<Response> | Response;
 
 export type NextRouteHandler<TContext = DefaultRouteContext> = (
   req: NextRequest,
-  context: TContext
+  context: TContext,
 ) => Promise<Response> | Response;
 
 /**
@@ -30,7 +32,7 @@ export type NextRouteHandler<TContext = DefaultRouteContext> = (
  * valid JWT that was signed by the server is immediately rejected.
  */
 export function withAdminAuth<TContext = DefaultRouteContext>(
-  handler: AdminRouteHandler<TContext>
+  handler: AdminRouteHandler<TContext>,
 ): NextRouteHandler<TContext> {
   return async (req: NextRequest, context: TContext) => {
     const token = extractToken(req);
@@ -44,12 +46,38 @@ export function withAdminAuth<TContext = DefaultRouteContext>(
         return errorResponse("UNAUTHORIZED", "Invalid authorization token", 401);
       }
 
-      return handler(req, context, decoded as AdminAuthClaims);
+      const claims = decoded as AdminAuthClaims;
+
+      // Validate role field exists and has allowed value
+      if (!claims.role || (claims.role !== "admin" && claims.role !== "guest")) {
+        return errorResponse("UNAUTHORIZED", "Invalid token: missing or invalid role", 401);
+      }
+
+      return handler(req, context, claims);
     } catch (error) {
       console.error("Admin auth middleware error", error);
       return errorResponse("UNAUTHORIZED", "Invalid or expired authorization token", 401);
     }
   };
+}
+
+/**
+ * Wraps a route handler with admin-auth enforcement AND role-based permission checking.
+ * - Admin role: All methods allowed (GET, POST, PUT, DELETE)
+ * - Guest role: Safe read-only methods only (GET, HEAD, OPTIONS), POST/PUT/PATCH/DELETE return 403 Forbidden
+ */
+export function withAdminAuthAndRoleCheck<TContext = DefaultRouteContext>(
+  handler: AdminRouteHandler<TContext>,
+): NextRouteHandler<TContext> {
+  return withAdminAuth<TContext>((req, context, admin) => {
+    // Check role-based permissions
+    const permissionError = checkRolePermission(req, admin);
+    if (permissionError) {
+      return permissionError;
+    }
+
+    return handler(req, context, admin);
+  });
 }
 
 function extractToken(req: NextRequest): string | null {

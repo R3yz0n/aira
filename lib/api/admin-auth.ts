@@ -1,4 +1,4 @@
-import { IAdmin, IAuthToken } from "@/domain/admin";
+import { IAdmin, IAuthToken, UserRole } from "@/domain/admin";
 import axiosInstance from "./axios";
 import { isTokenExpired } from "@/lib/auth/jwt-client";
 import type { IAxiosResponse, IApiErrorResponse, IErrorResponse } from "@/lib/types/api";
@@ -8,10 +8,11 @@ export const adminAuthApi = {
     try {
       let { data }: IAxiosResponse<IAuthToken> = await axiosInstance.post(
         "/api/admin/login",
-        credentials
+        credentials,
       );
 
       const token = data?.data.token;
+      const role = data?.data.role;
 
       if (!token) {
         throw {
@@ -21,7 +22,7 @@ export const adminAuthApi = {
         } satisfies IErrorResponse;
       }
 
-      return { token } satisfies IAuthToken;
+      return { token, role } satisfies IAuthToken;
     } catch (error) {
       const err = error as IApiErrorResponse;
 
@@ -46,16 +47,25 @@ export const adminAuthApi = {
     }
   },
 
-  storeToken(token: string): void {
+  storeToken(token: string, role: UserRole): void {
     window.localStorage.setItem("admin_token", token);
+    window.localStorage.setItem("admin_role", role);
   },
 
   getToken(): string | null {
     return window.localStorage.getItem("admin_token");
   },
+  getRole(): UserRole | null {
+    const role = window.localStorage.getItem("admin_role");
+    if (role === "admin" || role === "guest") {
+      return role;
+    }
+    return null;
+  },
 
   removeToken(): void {
     window.localStorage.removeItem("admin_token");
+    window.localStorage.removeItem("admin_role");
   },
 
   isTokenExpired(token: string): boolean {
@@ -66,6 +76,7 @@ export const adminAuthApi = {
     const token = window.localStorage.getItem("admin_token");
     if (token && isTokenExpired(token)) {
       window.localStorage.removeItem("admin_token");
+      window.localStorage.removeItem("admin_role");
     }
   },
 };

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { categoryApi } from "@/lib/api/category";
+import { adminAuthApi } from "@/lib/api/admin-auth";
 import type { IErrorResponse } from "@/lib/types/api";
 import type {
   TCategoryCreateInput,
@@ -51,6 +52,22 @@ export function useCategory() {
 
   const create = useCallback(
     async (input: TCategoryCreateInput): Promise<ICategoryEntity> => {
+      // Early check: deny guest users before API call
+      const role = adminAuthApi.getRole();
+      if (role === "guest") {
+        const errorMessage = "You don't have permission to create categories (read-only access)";
+        toast({
+          title: "Create failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw {
+          message: errorMessage,
+          status: 403,
+          details: null,
+        } satisfies IErrorResponse;
+      }
+
       if (isMountedRef.current) setIsLoading(true);
       try {
         const created = await categoryApi.create(input);
@@ -63,8 +80,9 @@ export function useCategory() {
       } catch (error) {
         const err = error as IErrorResponse;
         let errorMessage = "Failed to create category";
-
-        if (err?.status === 409) {
+        if (err?.status === 403) {
+          errorMessage = "You don't have permission to create categories (read-only access)";
+        } else if (err?.status === 409) {
           errorMessage = "A category with this name already exists";
         } else if (err?.status === 400) {
           errorMessage = err?.message ?? "Invalid category data";
@@ -87,6 +105,22 @@ export function useCategory() {
 
   const update = useCallback(
     async (id: string, input: TCategoryUpdateInput): Promise<ICategoryEntity> => {
+      // Early check: deny guest users before API call
+      const role = adminAuthApi.getRole();
+      if (role === "guest") {
+        const errorMessage = "You don't have permission to update categories (read-only access)";
+        toast({
+          title: "Update failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw {
+          message: errorMessage,
+          status: 403,
+          details: null,
+        } satisfies IErrorResponse;
+      }
+
       if (isMountedRef.current) setIsLoading(true);
       try {
         const updated = await categoryApi.update(id, input);
@@ -108,7 +142,9 @@ export function useCategory() {
         const err = error as IErrorResponse;
         let errorMessage = "Failed to update category";
 
-        if (err?.status === 404) {
+        if (err?.status === 403) {
+          errorMessage = "You don't have permission to update categories (read-only access)";
+        } else if (err?.status === 404) {
           errorMessage = "Category not found";
         } else if (err?.status === 409) {
           errorMessage = "A category with this name already exists";

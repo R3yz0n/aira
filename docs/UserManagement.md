@@ -1,14 +1,18 @@
 # User Management (Admin) — API Documentation
 
-This document describes the single-admin user management system and utilities implemented in this project. The system is intentionally simple: it supports a single admin user whose email is provided via environment variables.
+This document describes the dual-user system implemented in this project:
 
-**Admin setup and password update are now performed via scripts, not API.**
-Use the scripts to create the admin (one-time) and update the password. The API is used for login and password change (with JWT) only.
+- **Admin user**: Full access (create, read, update, delete)
+- **Guest user**: Read-only access to all GET endpoints
+
+Both users are created during initial setup via script. The API is used for login and password changes only.
+
+**Note:** Admin setup is performed via script (one-time). The API is used for login and password changes (with JWT) only.
 
 ## Environment variables
 
 - `MONGODB_URI` (required): MongoDB connection string.
-- `ADMIN_EMAIL` (required): The single admin email address allowed by the API.
+- `ADMIN_EMAIL` (required): Email of the initial admin user to create during setup (one-time only).
 - `JWT_SECRET` (required): Secret used to sign JWT tokens.
 - `ADMIN_SETUP_SECRET` (optional): If set, the initial setup call requires this secret.
 - `ADMIN_SCRIPT_SECRET` (optional): If set, the CLI password script must be called with this secret.
@@ -21,42 +25,50 @@ Use the scripts to create the admin (one-time) and update the password. The API 
 
 ## Admin Setup (Script)
 
-**Do not use the API for admin creation. Use the provided script:**
+**Initial setup creates both users via script (one-time only):**
 
-- `scripts/create-admin.mjs` — Node script to create the initial admin directly in MongoDB.
-- `scripts/admin-setup.sh` — Bash helper for the above (makes it easy to call with env vars).
+- `scripts/create-admin.ts` — Creates both admin and guest users in MongoDB.
+- `scripts/admin-setup.sh` — Bash helper for the above (recommended).
 
 Usage:
 
 ```bash
-# Make sure ADMIN_EMAIL, MONGODB_URI, and (optionally) ADMIN_SETUP_SECRET are set in your .env.local or environment
+# Make sure ADMIN_EMAIL, MONGODB_URI, and (optionally) ADMIN_SETUP_SECRET are set in .env.local
 
-# Using the Node script directly:
-node scripts/create-admin.mjs StrongPass123 optional-setup-secret
-
-# Or using the Bash helper (recommended):
+# Using Bash helper (recommended):
 chmod +x scripts/admin-setup.sh
-./scripts/admin-setup.sh StrongPass123 optional-setup-secret
+./scripts/admin-setup.sh YourAdminPassword [optional-setup-secret]
 ```
 
-- The script will refuse to run if an admin already exists.
-- If `ADMIN_SETUP_SECRET` is set in env, you must provide it as the second argument.
+This creates:
+
+- **Admin user** — email from `ADMIN_EMAIL` env var (setup-time only), specified password, role: `admin`
+- **Guest user** — email: `test@test.com`, password: `test@1234`, role: `guest` (read-only)
+
+After setup, login authenticates any user in the database by email/password lookup. There is no email allowlist in the API.
 
 ### POST /api/admin/login
 
-Purpose: Authenticate admin and get a JWT access token.
+Purpose: Authenticate a user (admin or guest) and get a JWT access token.
 
 Request body:
 
-```
-{ "email": "admin@example.com", "password": "StrongPass123" }
+```json
+{ "email": "admin@example.com", "password": "YourPassword" }
 ```
 
 Response on success (200):
 
+```json
+{ "success": true, "data": { "token": "<JWT>", "role": "admin" } }
 ```
-{ "success": true, "data": { "token": "<JWT>" } }
-```
+
+The JWT token payload includes:
+
+- `email` — user email
+- `role` — either `"admin"` or `"guest"`
+
+**Note:** Guest user has read-only access. Mutations (POST/PUT/DELETE) will return 403 Forbidden.
 
 Error responses:
 
@@ -68,7 +80,7 @@ Implementation: `app/api/admin/login/route.ts`.
 
 ### POST /api/admin/change-password
 
-Purpose: Change the admin password. Requires a valid Bearer token.
+Purpose: Change password for authenticated user (admin or guest). Requires a valid Bearer token.
 
 Headers:
 
@@ -76,8 +88,8 @@ Headers:
 
 Request body:
 
-```
-{ "oldPassword": "OldPass123", "newPassword": "NewPass456" }
+```json
+{ "oldPassword": "CurrentPassword", "newPassword": "NewPassword" }
 ```
 
 Responses:
@@ -85,9 +97,48 @@ Responses:
 - 200 OK — password changed
 - 400 Bad Request — missing fields or new password too short
 - 401 Unauthorized — invalid token or old password incorrect
-- 404 Not Found — admin not found
+- 404 Not Found — user not found
 
 Implementation: `app/api/admin/change-password/route.ts`.
+
+## Role-Based Access Control
+
+### Public Routes (No Authentication Required)
+
+Public API endpoints (`/api/public/*`) do not require authentication. All users (authenticated or not) have the same access.
+
+### Protected Routes (Authentication Required)
+
+Admin dashboard and admin API endpoints (`/api/admin/*`, `/admin`) require authentication via Bearer token.
+
+Access is controlled by role:
+
+| Method | No Token | Admin Role | Guest Role   |
+| ------ | -------- | ---------- | ------------ |
+| GET    | 401      | ✓ Allow    | ✓ Allow      |
+| POST   | 401      | ✓ Allow    | ✗ Deny (403) |
+| PUT    | 401      | ✓ Allow    | ✗ Deny (403) |
+| DELETE | 401      | ✓ Allow    | ✗ Deny (403) |
+
+**Admin users** on protected routes can:
+
+- View all resources (GET)
+- Create events, categories, bookings (POST)
+- Update events, categories (PUT)
+- Delete events, categories, bookings (DELETE)
+- Change their own password
+
+**Guest users** on protected routes can:
+
+- View all resources (GET only)
+- Access admin dashboard (read-only view)
+- Change their own password
+- **Cannot** create, update, or delete any resources
+
+**Unauthenticated users** on protected routes:
+
+- Return 401 Unauthorized for all requests
+- Must login first to access admin panel
 
 ## CLI: set-admin-password.mjs
 
@@ -121,39 +172,89 @@ chmod +x scripts/update-admin-password.sh
 
 ## Examples
 
-Create admin (one-time, script):
+### Initial Setup (Creates both users)
 
 ```bash
-# Node script
-node scripts/create-admin.mjs StrongPass123 optional-setup-secret
-# or Bash helper
-./scripts/admin-setup.sh StrongPass123 optional-setup-secret
+./scripts/admin-setup.sh MySecureAdminPassword
 ```
 
-Login:
+Output:
+
+```
+✓ Admin created for admin@example.com
+✓ Guest user created for test@test.com
+  Email: test@test.com
+  Password: test@1234
+  Role: guest (read-only access)
+```
+
+### Admin Login
 
 ```bash
 curl -X POST http://localhost:3000/api/admin/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"StrongPass123"}'
+  -d '{"email":"admin@example.com","password":"MySecureAdminPassword"}' | jq .
 ```
 
-Change password (API):
+Response:
+
+```json
+{ "success": true, "data": { "token": "eyJhbG...", "role": "admin" } }
+```
+
+### Guest Login
+
+```bash
+curl -X POST http://localhost:3000/api/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"test@1234"}' | jq .
+```
+
+Response:
+
+```json
+{ "success": true, "data": { "token": "eyJhbG...", "role": "guest" } }
+```
+
+### Guest Attempts Write Operation (Forbidden)
+
+Guest can read:
+
+```bash
+curl -X GET http://localhost:3000/api/admin/events \
+  -H "Authorization: Bearer <guest-token>" | jq .
+# ✓ Returns 200 with events list
+```
+
+Guest cannot write:
+
+```bash
+curl -X POST http://localhost:3000/api/admin/events \
+  -H "Authorization: Bearer <guest-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"New Event"}' | jq .
+# ✗ Returns 403 Forbidden
+```
+
+### Change Password (Admin or Guest)
 
 ```bash
 curl -X POST http://localhost:3000/api/admin/change-password \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <JWT>" \
-  -d '{"oldPassword":"StrongPass123","newPassword":"NewPass456"}'
+  -H "Authorization: Bearer <token>" \
+  -d '{"oldPassword":"test@1234","newPassword":"NewPassword456"}' | jq .
+```
 
-# Or change password directly in DB (script):
-node scripts/set-admin-password.mjs NewPass456 optional-script-secret
-# or
-./scripts/update-admin-password.sh NewPass456 optional-script-secret
+### Update Admin Password (Script)
+
+```bash
+./scripts/update-admin-password.sh NewAdminPassword
 ```
 
 ## Where to go next
 
-- Add rate limiting and audit logging for the admin endpoints.
+- Add more roles (e.g., `editor`, `viewer`) as needed.
+- Add rate limiting and audit logging for admin endpoints.
 - Consider 2FA or IP allowlisting for extra protection.
-- Add integration tests for the auth flows.
+- Add integration tests for role-based access control.
+- Disable or hide mutation UI controls for guest users in admin dashboard.
