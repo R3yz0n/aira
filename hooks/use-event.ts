@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { eventApi } from "@/lib/api/event";
+import { adminAuthApi } from "@/lib/api/admin-auth";
 import type { IErrorResponse } from "@/lib/types/api";
 import type { IEventEntity } from "@/domain/event";
 import { IPaginationParams } from "@/domain/common";
@@ -97,6 +98,22 @@ export function useEvent() {
 
   const create = useCallback(
     async (formData: FormData): Promise<IEventEntity> => {
+      // Early check: deny guest users before API call
+      const role = adminAuthApi.getRole();
+      if (role === "guest") {
+        const errorMessage = "You don't have permission to create events (read-only access)";
+        toast({
+          title: "Create failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw {
+          message: errorMessage,
+          status: 403,
+          details: null,
+        } satisfies IErrorResponse;
+      }
+
       if (isMountedRef.current) setIsLoading(true);
       try {
         const created = await eventApi.create(formData);
@@ -112,7 +129,9 @@ export function useEvent() {
         const err = error as IErrorResponse;
         let errorMessage = "Failed to create event";
 
-        if (err?.status === 409) {
+        if (err?.status === 403) {
+          errorMessage = "You don't have permission to create events (read-only access)";
+        } else if (err?.status === 409) {
           errorMessage = "An event with this title already exists";
         } else if (err?.status === 400) {
           errorMessage = err?.message ?? "Invalid event data";
@@ -137,6 +156,22 @@ export function useEvent() {
 
   const update = useCallback(
     async (id: string, formData: FormData): Promise<IEventEntity> => {
+      // Early check: deny guest users before API call
+      const role = adminAuthApi.getRole();
+      if (role === "guest") {
+        const errorMessage = "You don't have permission to update events (read-only access)";
+        toast({
+          title: "Update failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw {
+          message: errorMessage,
+          status: 403,
+          details: null,
+        } satisfies IErrorResponse;
+      }
+
       if (isMountedRef.current) setIsLoading(true);
       try {
         const updated = await eventApi.update(id, formData);
@@ -160,7 +195,9 @@ export function useEvent() {
         const err = error as IErrorResponse;
         let errorMessage = "Failed to update event";
 
-        if (err?.status === 404) {
+        if (err?.status === 403) {
+          errorMessage = "You don't have permission to update events (read-only access)";
+        } else if (err?.status === 404) {
           errorMessage = "Event not found";
         } else if (err?.status === 400) {
           errorMessage = err?.message ?? "Invalid event data";
@@ -185,6 +222,22 @@ export function useEvent() {
 
   const deleteEvent = useCallback(
     async (id: string): Promise<IEventEntity> => {
+      // Early check: deny guest users before API call
+      const role = adminAuthApi.getRole();
+      if (role === "guest") {
+        const errorMessage = "You don't have permission to delete events (read-only access)";
+        toast({
+          title: "Delete failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        throw {
+          message: errorMessage,
+          status: 403,
+          details: null,
+        } satisfies IErrorResponse;
+      }
+
       if (isMountedRef.current) setIsLoading(true);
       try {
         const deleted = await eventApi.delete(id);
@@ -200,7 +253,9 @@ export function useEvent() {
         const err = error as IErrorResponse;
         let errorMessage = "Failed to delete event";
 
-        if (err?.status === 401) {
+        if (err?.status === 403) {
+          errorMessage = "You don't have permission to delete events (read-only access)";
+        } else if (err?.status === 401) {
           errorMessage = err?.message || "Unauthorized: Missing or invalid token";
         } else if (err?.status === 400) {
           errorMessage = err?.message || "Invalid event ID format";

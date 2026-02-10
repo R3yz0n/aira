@@ -18,4 +18,5 @@ export interface IAdminEntity extends IAdmin {
 
 export interface IAuthToken {
   token: string;
+  role: UserRole;
 }

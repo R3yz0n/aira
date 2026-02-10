@@ -14,7 +14,7 @@ export default function AdminLoginForm() {
   const { login, isLoading } = useAdminLogin();
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const { register, handleSubmit, formState, reset } = useForm<IAdmin>({
+  const { register, handleSubmit, formState, reset, setValue } = useForm<IAdmin>({
     resolver: zodResolver(adminLoginSchema),
     defaultValues: { email: "", password: "" },
     mode: "onChange",
@@ -26,6 +26,13 @@ export default function AdminLoginForm() {
       reset();
     }
   }
+
+  function fillGuestCredentials() {
+    setValue("email", "test@test.com", { shouldValidate: true });
+    setValue("password", "test@1234", { shouldValidate: true });
+  }
+
+  const showGuestButton = process.env.NEXT_PUBLIC_SHOW_GUEST_USER_LOGIN_BUTTON === "true";
 
   return (
     <Card className="border-0 shadow-none bg-transparent">
@@ -90,6 +97,17 @@ export default function AdminLoginForm() {
           >
             {isLoading ? "Signing in…" : "Sign In"}
           </Button>
+
+          {showGuestButton && (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full border-aira-gold/30 text-aira-gold/80 hover:bg-aira-gold/10 hover:text-aira-gold"
+              onClick={fillGuestCredentials}
+            >
+              Fill Guest Credentials (Demo)
+            </Button>
+          )}
         </form>
       </CardContent>
     </Card>

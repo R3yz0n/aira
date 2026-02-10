@@ -4,8 +4,8 @@ import { errorResponse } from "@/lib/api/response-handler";
 
 /**
  * Check if user role is allowed to perform the HTTP method.
- * - Admin: all methods (GET, POST, PUT, DELETE)
- * - Guest: GET only (read-only)
+ * - Admin: all methods (GET, POST, PUT, DELETE, etc.)
+ * - Guest: Safe read-only methods (GET, HEAD, OPTIONS)
  */
 export function checkRolePermission(req: NextRequest, claims: AdminAuthClaims): Response | null {
   const method = req.method.toUpperCase();
@@ -15,8 +15,9 @@ export function checkRolePermission(req: NextRequest, claims: AdminAuthClaims): 
     return null;
   }
 
-  // Guest can only do GET
-  if (claims.role === "guest" && method === "GET") {
+  // Guest can only do safe read-only methods
+  const allowedGuestMethods = ["GET", "HEAD", "OPTIONS"];
+  if (claims.role === "guest" && allowedGuestMethods.includes(method)) {
     return null;
   }
 

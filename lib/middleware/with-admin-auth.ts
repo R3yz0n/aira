@@ -46,7 +46,14 @@ export function withAdminAuth<TContext = DefaultRouteContext>(
         return errorResponse("UNAUTHORIZED", "Invalid authorization token", 401);
       }
 
-      return handler(req, context, decoded as AdminAuthClaims);
+      const claims = decoded as AdminAuthClaims;
+
+      // Validate role field exists and has allowed value
+      if (!claims.role || (claims.role !== "admin" && claims.role !== "guest")) {
+        return errorResponse("UNAUTHORIZED", "Invalid token: missing or invalid role", 401);
+      }
+
+      return handler(req, context, claims);
     } catch (error) {
       console.error("Admin auth middleware error", error);
       return errorResponse("UNAUTHORIZED", "Invalid or expired authorization token", 401);

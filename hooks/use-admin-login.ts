@@ -18,8 +18,8 @@ export function useAdminLogin(options: IUseAdminLoginOptions = {}) {
   const login = async (credentials: IAdmin): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      const { token }: IAuthToken = await adminAuthApi.login(credentials);
-      adminAuthApi.storeToken(token);
+      const { token, role }: IAuthToken = await adminAuthApi.login(credentials);
+      adminAuthApi.storeToken(token, role);
 
       onSuccess?.();
       router.replace(redirectTo);

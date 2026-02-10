@@ -19,7 +19,7 @@ const authService = new AdminAuthService(new MongoAdminRepository());
  * { "email": "admin@example.com", "password": "SuperSecret123" }
  *
  * Success 200:
- * { "success": true, "data": { "token": "<jwt>" } }
+ * { "success": true, "data": { "token": "<jwt>", "role": "<role>" } }
  *
  * Errors:
  * 400 { "success": false, "error": { "code": "INVALID_INpUT", "message": "Invalid input", "details": <zod issues> } }
@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
       return errorResponse("INVALID_INPUT", "Invalid input", 400, parsed.error.flatten());
     }
 
-    const { token }: IAuthServiceResult = await authService.login(parsed.data);
-    return successResponse<IAuthToken>({ token }, 200);
+    const { token, role }: IAuthServiceResult = await authService.login(parsed.data);
+    return successResponse<IAuthToken>({ token, role }, 200);
   } catch (err) {
     if (err instanceof InvalidCredentialsError) {
       return errorResponse("INVALID_CREDENTIALS", "Invalid credentials", 401, {
