@@ -7,7 +7,7 @@ import {
 import { MongoCategoryRepository } from "@/repositories/category-repository";
 import { EventNotFoundError, EventService } from "@/services/event/event-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
+import { withAdminAuthAndRoleCheck } from "@/lib/middleware/with-admin-auth";
 import {
   IEventEntity,
   eventIdSchema,
@@ -32,7 +32,7 @@ const cloudinaryService = new CloudinaryService();
  * - 404: EVENT_NOT_FOUND
  * - 500: INTERNAL_ERROR
  */
-export const DELETE = withAdminAuth(
+export const DELETE = withAdminAuthAndRoleCheck(
   async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     try {
       const { id } = await params;
@@ -96,7 +96,7 @@ export const DELETE = withAdminAuth(
  * - 404: EVENT_NOT_FOUND
  * - 500: INTERNAL_ERROR
  */
-export const PATCH = withAdminAuth(
+export const PATCH = withAdminAuthAndRoleCheck(
   async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
     try {
       const { id } = await params;

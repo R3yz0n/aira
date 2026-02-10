@@ -12,7 +12,7 @@ Both users are created during initial setup via script. The API is used for logi
 ## Environment variables
 
 - `MONGODB_URI` (required): MongoDB connection string.
-- `ADMIN_EMAIL` (required): The single admin email address allowed by the API.
+- `ADMIN_EMAIL` (required): Email of the initial admin user to create during setup (one-time only).
 - `JWT_SECRET` (required): Secret used to sign JWT tokens.
 - `ADMIN_SETUP_SECRET` (optional): If set, the initial setup call requires this secret.
 - `ADMIN_SCRIPT_SECRET` (optional): If set, the CLI password script must be called with this secret.
@@ -42,10 +42,10 @@ chmod +x scripts/admin-setup.sh
 
 This creates:
 
-- **Admin user** — email from `ADMIN_EMAIL` env var, specified password, role: `admin`
+- **Admin user** — email from `ADMIN_EMAIL` env var (setup-time only), specified password, role: `admin`
 - **Guest user** — email: `test@test.com`, password: `test@1234`, role: `guest` (read-only)
 
-The script refuses to run if either user already exists.
+After setup, login authenticates any user in the database by email/password lookup. There is no email allowlist in the API.
 
 ### POST /api/admin/login
 
@@ -252,4 +252,3 @@ curl -X POST http://localhost:3000/api/admin/change-password \
 - Add rate limiting and audit logging for admin endpoints.
 - Consider 2FA or IP allowlisting for extra protection.
 - Add integration tests for role-based access control.
-w

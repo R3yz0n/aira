@@ -24,7 +24,7 @@ export class AdminAuthService {
     const match = await verifyPassword(input.password, admin.password);
     if (!match) throw new InvalidCredentialsError();
 
-    const token = signToken({ sub: admin.id, email: admin.email });
+    const token = signToken({ sub: admin.id, email: admin.email, role: admin.role });
     return { token };
   }
 }

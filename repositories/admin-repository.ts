@@ -15,6 +15,7 @@ export class MongoAdminRepository implements AdminRepository {
       id: doc._id ? String(doc._id) : "",
       email: doc.email,
       password: doc.passwordHash,
+      role: doc.role,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

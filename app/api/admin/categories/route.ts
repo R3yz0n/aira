@@ -6,7 +6,7 @@ import {
 } from "@/repositories/category-repository";
 import { CategoryService } from "@/services/category/category-service";
 import { successResponse, errorResponse } from "@/lib/api/response-handler";
-import { withAdminAuth } from "@/lib/middleware/with-admin-auth";
+import { withAdminAuthAndRoleCheck } from "@/lib/middleware/with-admin-auth";
 
 const categoryService = new CategoryService(new MongoCategoryRepository());
 
@@ -18,7 +18,7 @@ const categoryService = new CategoryService(new MongoCategoryRepository());
  * - 400: INVALID_INPUT (zod issues)
  * - 500: INTERNAL_ERROR
  */
-export const POST = withAdminAuth(async (req: NextRequest) => {
+export const POST = withAdminAuthAndRoleCheck(async (req: NextRequest) => {
   try {
     const body = await req.json();
     const parsed = categoryCreateSchema.safeParse(body);
