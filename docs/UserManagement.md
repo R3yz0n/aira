@@ -78,29 +78,6 @@ Error responses:
 
 Implementation: `app/api/admin/login/route.ts`.
 
-### POST /api/admin/change-password
-
-Purpose: Change password for authenticated user (admin or guest). Requires a valid Bearer token.
-
-Headers:
-
-- `Authorization: Bearer <token>` — token from login endpoint.
-
-Request body:
-
-```json
-{ "oldPassword": "CurrentPassword", "newPassword": "NewPassword" }
-```
-
-Responses:
-
-- 200 OK — password changed
-- 400 Bad Request — missing fields or new password too short
-- 401 Unauthorized — invalid token or old password incorrect
-- 404 Not Found — user not found
-
-Implementation: `app/api/admin/change-password/route.ts`.
-
 ## Role-Based Access Control
 
 ### Public Routes (No Authentication Required)
@@ -234,15 +211,6 @@ curl -X POST http://localhost:3000/api/admin/events \
   -H "Content-Type: application/json" \
   -d '{"name":"New Event"}' | jq .
 # ✗ Returns 403 Forbidden
-```
-
-### Change Password (Admin or Guest)
-
-```bash
-curl -X POST http://localhost:3000/api/admin/change-password \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{"oldPassword":"test@1234","newPassword":"NewPassword456"}' | jq .
 ```
 
 ### Update Admin Password (Script)

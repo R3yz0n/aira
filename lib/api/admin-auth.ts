@@ -12,7 +12,7 @@ export const adminAuthApi = {
       );
 
       const token = data?.data.token;
-      const role = data?.data.role;
+      const role = data?.data?.role;
 
       if (!token) {
         throw {

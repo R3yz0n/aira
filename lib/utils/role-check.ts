@@ -22,5 +22,5 @@ export function checkRolePermission(req: NextRequest, claims: AdminAuthClaims): 
   }
 
   // Guest trying to write
-  return errorResponse("FORBIDDEN", "Guest users cannot perform this operations", 403);
+  return errorResponse("FORBIDDEN", "Guest users cannot perform this operation", 403);
 }
