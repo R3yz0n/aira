@@ -26,15 +26,32 @@ async function main() {
   }
 
   // Use AdminModel for all DB logic
-  const existing = await AdminModel.findByEmail(adminEmail);
-  if (existing) {
+  const existingAdmin = await AdminModel.findByEmail(adminEmail);
+  if (existingAdmin) {
     console.error("Admin already exists for", adminEmail);
     process.exit(5);
   }
 
-  const hash = await bcrypt.hash(password, 10);
-  await AdminModel.create(adminEmail, hash);
-  console.log("Admin created for", adminEmail);
+  const guestEmail = "test@test.com";
+  const existingGuest = await AdminModel.findByEmail(guestEmail);
+  if (existingGuest) {
+    console.error("Guest user already exists");
+    process.exit(6);
+  }
+
+  // Create admin user
+  const adminHash = await bcrypt.hash(password, 10);
+  await AdminModel.create(adminEmail, adminHash, "admin");
+  console.log("✓ Admin created for", adminEmail);
+
+  // Create guest user (read-only)
+  const guestHash = await bcrypt.hash("test@1234", 10);
+  await AdminModel.create(guestEmail, guestHash, "guest");
+  console.log("✓ Guest user created for", guestEmail);
+  console.log("  Email: test@test.com");
+  console.log("  Password: test@1234");
+  console.log("  Role: guest (read-only access)");
+
   await mongoose.disconnect();
 }
 

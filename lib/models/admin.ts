@@ -4,6 +4,7 @@ export interface IAdminDoc {
   _id?: mongoose.Types.ObjectId;
   email: string;
   passwordHash: string;
+  role: "admin" | "guest";
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -12,10 +13,11 @@ const AdminSchema = new mongoose.Schema<IAdminDoc>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
+    role: { type: String, enum: ["admin", "guest"], default: "admin", required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date },
   },
-  { collection: "admins", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { collection: "admins", timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
 // Prevent recompilation in dev
@@ -36,9 +38,9 @@ export class AdminModel {
     return AdminModelInternal.findById(id).lean();
   }
 
-  static async create(email: string, passwordHash: string) {
+  static async create(email: string, passwordHash: string, role: "admin" | "guest" = "admin") {
     await this.ensureConnected();
-    const doc = await AdminModelInternal.create({ email, passwordHash });
+    const doc = await AdminModelInternal.create({ email, passwordHash, role });
     return doc.toObject();
   }
 

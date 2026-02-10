@@ -7,8 +7,11 @@ export const adminLoginSchema = z.object({
 
 export type IAdmin = z.infer<typeof adminLoginSchema>;
 
+export type UserRole = "admin" | "guest";
+
 export interface IAdminEntity extends IAdmin {
   id: string;
+  role: UserRole;
   createdAt: Date | string;
   updatedAt?: Date | string;
 }
