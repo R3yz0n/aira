@@ -13,16 +13,16 @@ const authService = new AdminAuthService(new MongoAdminRepository());
 /**
  * POST /api/admin/login
  *
- * Authenticate the single admin user. Returns a JSON Web Token on success.
+ * Authenticate a user (admin or guest). Returns a JSON Web Token and role on success.
  *
  * Request body:
  * { "email": "admin@example.com", "password": "SuperSecret123" }
  *
  * Success 200:
- * { "success": true, "data": { "token": "<jwt>", "role": "<role>" } }
+ * { "success": true, "data": { "token": "<jwt>", "role": "admin" | "guest" } }
  *
  * Errors:
- * 400 { "success": false, "error": { "code": "INVALID_INpUT", "message": "Invalid input", "details": <zod issues> } }
+ * 400 { "success": false, "error": { "code": "INVALID_INPUT", "message": "Invalid input", "details": <zod issues> } }
  * 500 { "success": false, "error": { "code": "INTERNAL_ERROR", "message": "Internal server error" } }
  */
 export async function POST(req: NextRequest) {

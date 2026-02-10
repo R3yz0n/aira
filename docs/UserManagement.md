@@ -253,8 +253,8 @@ curl -X POST http://localhost:3000/api/admin/change-password \
 
 ## Where to go next
 
-- Implement role-based middleware to enforce permissions on all routes.
 - Add more roles (e.g., `editor`, `viewer`) as needed.
 - Add rate limiting and audit logging for admin endpoints.
 - Consider 2FA or IP allowlisting for extra protection.
 - Add integration tests for role-based access control.
+- Disable or hide mutation UI controls for guest users in admin dashboard.
