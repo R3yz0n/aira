@@ -2,6 +2,14 @@
 
 Event management platform built with Next.js 14, TypeScript, and MongoDB.
 
+## 🎯 Try the Demo User Dashboard
+
+**Quick start:** Use the guest credentials to explore the read-only admin dashboard:
+
+👉 [Open Admin Dashboard](https://airaevents.vercel.app/admin)
+
+See role-based access control in action! (Guest users have read-only access)
+
 ## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
