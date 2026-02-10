@@ -60,7 +60,7 @@ Request body:
 Response on success (200):
 
 ```json
-{ "success": true, "data": { "token": "<JWT>" } }
+{ "success": true, "data": { "token": "<JWT>", "role": "admin" } }
 ```
 
 The JWT token payload includes:
@@ -199,7 +199,7 @@ curl -X POST http://localhost:3000/api/admin/login \
 Response:
 
 ```json
-{ "success": true, "data": { "token": "eyJhbG..." } }
+{ "success": true, "data": { "token": "eyJhbG...", "role": "admin" } }
 ```
 
 ### Guest Login
@@ -208,6 +208,12 @@ Response:
 curl -X POST http://localhost:3000/api/admin/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"test@1234"}' | jq .
+```
+
+Response:
+
+```json
+{ "success": true, "data": { "token": "eyJhbG...", "role": "guest" } }
 ```
 
 ### Guest Attempts Write Operation (Forbidden)

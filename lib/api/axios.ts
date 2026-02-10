@@ -36,6 +36,7 @@ axiosInstance.interceptors.request.use(
       if (isTokenExpired(token)) {
         if (typeof window !== "undefined") {
           localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_role");
           window.location.href = "/login";
         }
       } else {
@@ -63,6 +64,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_role");
         // Only redirect to login if we're on an admin route
         if (window.location.pathname.startsWith("/admin")) {
           window.location.href = "/login";

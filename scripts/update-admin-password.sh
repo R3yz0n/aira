@@ -4,6 +4,13 @@
 
 set -euo pipefail
 
+# Load environment variables from .env if it exists
+if [ -f "$(dirname "$0")/../.env" ]; then
+  set -a
+  source "$(dirname "$0")/../.env"
+  set +a
+fi
+
 if [ -z "${1:-}" ]; then
   echo "Usage: $0 NEW_PASSWORD [SCRIPT_SECRET]"
   exit 1

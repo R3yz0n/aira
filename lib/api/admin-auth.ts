@@ -2,7 +2,6 @@ import { IAdmin, IAuthToken, UserRole } from "@/domain/admin";
 import axiosInstance from "./axios";
 import { isTokenExpired } from "@/lib/auth/jwt-client";
 import type { IAxiosResponse, IApiErrorResponse, IErrorResponse } from "@/lib/types/api";
-import { get } from "lodash";
 
 export const adminAuthApi = {
   async login(credentials: IAdmin): Promise<IAuthToken> {
@@ -66,6 +65,7 @@ export const adminAuthApi = {
 
   removeToken(): void {
     window.localStorage.removeItem("admin_token");
+    window.localStorage.removeItem("admin_role");
   },
 
   isTokenExpired(token: string): boolean {
@@ -76,6 +76,7 @@ export const adminAuthApi = {
     const token = window.localStorage.getItem("admin_token");
     if (token && isTokenExpired(token)) {
       window.localStorage.removeItem("admin_token");
+      window.localStorage.removeItem("admin_role");
     }
   },
 };

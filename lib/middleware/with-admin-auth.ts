@@ -64,7 +64,7 @@ export function withAdminAuth<TContext = DefaultRouteContext>(
 /**
  * Wraps a route handler with admin-auth enforcement AND role-based permission checking.
  * - Admin role: All methods allowed (GET, POST, PUT, DELETE)
- * - Guest role: GET only (read-only), POST/PUT/DELETE return 403 Forbidden
+ * - Guest role: Safe read-only methods only (GET, HEAD, OPTIONS), POST/PUT/PATCH/DELETE return 403 Forbidden
  */
 export function withAdminAuthAndRoleCheck<TContext = DefaultRouteContext>(
   handler: AdminRouteHandler<TContext>,
