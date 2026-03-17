@@ -2,52 +2,39 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Heart,
-  Palette,
-  Sparkles,
-  Clock,
-  Users,
-  Award,
-} from "lucide-react";
+import { Heart, Palette, Sparkles, Clock, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const features = [
   {
     icon: Heart,
     title: "Passionate Team",
-    description:
-      "We pour our hearts into every event, treating your celebration as our own.",
+    description: "We pour our hearts into every event, treating your celebration as our own.",
   },
   {
     icon: Palette,
     title: "Creative Designs",
-    description:
-      "Unique themes and personalized decor that reflect your style and vision.",
+    description: "Unique themes and personalized decor that reflect your style and vision.",
   },
   {
     icon: Sparkles,
     title: "Attention to Detail",
-    description:
-      "No detail is too small. We ensure every element is perfect.",
+    description: "No detail is too small. We ensure every element is perfect.",
   },
   {
     icon: Clock,
     title: "On-Time Delivery",
-    description:
-      "Punctuality is our promise. Your event runs smoothly, always.",
+    description: "Punctuality is our promise. Your event runs smoothly, always.",
   },
   {
     icon: Users,
     title: "Expert Vendors",
-    description:
-      "Trusted network of premium vendors for catering, photography, and more.",
+    description: "Trusted network of premium vendors for catering, photography, and more.",
   },
   {
     icon: Award,
     title: "Award Winning",
-    description:
-      "Recognized for excellence in event planning and management.",
+    description: "Recognized for excellence in event planning and management.",
   },
 ];
 
@@ -66,15 +53,12 @@ export function WhyChooseUs() {
               Why Choose Us
             </span>
             <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mt-4 mb-6">
-              Making Your{" "}
-              <span className="text-primary">Dreams</span>{" "}
-              Come True
+              Making Your <span className="text-primary">Dreams</span> Come True
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              With over 15 years of experience, Aira Events has become synonymous
-              with excellence in event planning. We combine creativity,
-              precision, and passion to deliver celebrations that exceed
-              expectations.
+              With over 10 years of experience, Aira Events has become synonymous with excellence in
+              event planning. We combine creativity, precision, and passion to deliver celebrations
+              that exceed expectations.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6 mb-8">
@@ -91,12 +75,8 @@ export function WhyChooseUs() {
                     <feature.icon className="w-6 h-6 text-aira-gold" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground mb-1">
-                      {feature.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {feature.description}
-                    </p>
+                    <h4 className="font-semibold text-foreground mb-1">{feature.title}</h4>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -118,15 +98,9 @@ export function WhyChooseUs() {
               <div className="absolute inset-0 bg-gradient-to-br from-aira-blue/20 via-secondary/20 to-aira-gold/20" />
               <div className="absolute inset-4 bg-card rounded-2xl shadow-card flex items-center justify-center">
                 <div className="text-center p-8">
-                  <div className="font-display text-7xl font-bold text-gradient mb-4">
-                    15+
-                  </div>
-                  <p className="text-2xl font-display text-foreground mb-2">
-                    Years of Excellence
-                  </p>
-                  <p className="text-muted-foreground">
-                    Creating Magical Moments
-                  </p>
+                  <div className="font-display text-7xl font-bold text-gradient mb-4">10+</div>
+                  <p className="text-2xl font-display text-foreground mb-2">Years of Excellence</p>
+                  <p className="text-muted-foreground">Creating Magical Moments</p>
                 </div>
               </div>
             </div>

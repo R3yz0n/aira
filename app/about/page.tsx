@@ -66,7 +66,7 @@ export default function Page() {
               About Us
             </span>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mt-4 mb-6">
-              Crafting <span className="text-secondary">Memories</span> Since 2009
+              Crafting <span className="text-secondary">Memories</span> Since 2072
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
               Aira Events is more than an event planning company — we're your partners in creating
@@ -99,23 +99,25 @@ export default function Page() {
               <h2 className="font-display text-3xl md:text-4xl font-bold mt-4 mb-6">
                 A Journey of <span className="text-primary">Passion</span>
               </h2>
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <div className="space-y-4 text-muted-foreground leading-relaxed text-justify">
+                <p> Aira Events – Crafting Unforgettable Experiences Since 2072 </p>
                 <p>
-                  Founded in 2009 by Sneha Agarwal, Aira Events began with a simple dream: to
-                  transform ordinary celebrations into extraordinary experiences. What started as a
-                  small wedding planning service has grown into one of India's most trusted event
-                  management companies.
-                </p>
+                  At Aira Events, we don’t just plan events — we create timeless experiences that
+                  leave lasting impressions. Established on 3rd Baisakh, 2072 (B.S.), our company is
+                  built on a strong foundation of creativity, dedication, and excellence, backed by
+                  a team with over 10+ years of experience in event management.
+                </p>{" "}
                 <p>
-                  Over the years, we've had the privilege of planning over 500 events, from intimate
-                  family gatherings to grand destination weddings. Each event has been a labor of
-                  love, crafted with attention to detail and a deep understanding of our clients'
-                  visions.
-                </p>
+                  {" "}
+                  Led by visionary leaders, <b> Richa Karki</b> (Co-Founder & Managing Director) and
+                  <b> Adnan Siddique</b> (Founder & CEO), Aira Events reflects a perfect blend of
+                  passion and professionalism. Their leadership drives innovation and ensures that
+                  every event is executed with precision and style.
+                </p>{" "}
                 <p>
-                  Today, Aira Events is synonymous with elegance, creativity, and flawless
-                  execution. Our team of passionate professionals continues to push boundaries,
-                  creating celebrations that exceed expectations.
+                  From luxurious weddings to corporate events and personalized celebrations, we
+                  specialize in turning your ideas into extraordinary realities. Our commitment is
+                  simple to deliver elegance, creativity, and flawless execution in every event.
                 </p>
               </div>
             </motion.div>
@@ -156,7 +158,7 @@ export default function Page() {
               </div>
               <h3 className="font-display text-2xl font-bold mb-4">Our Vision</h3>
               <p className="text-muted-foreground leading-relaxed">
-                To be India's most loved event planning company, known for turning dreams into
+                To be Nepal's most loved event planning company, known for turning dreams into
                 reality and creating moments that families cherish for generations.
               </p>
             </motion.div>
@@ -203,7 +205,7 @@ export default function Page() {
       </section>
 
       {/* Team */}
-      <section className="py-24 bg-primary">
+      {/* <section className="py-24 bg-primary">
         <div className="container mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -242,7 +244,7 @@ export default function Page() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <section className="py-24">

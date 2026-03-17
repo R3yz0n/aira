@@ -1,12 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { config } from "@/lib/config";
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Star, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const openBrochure = (e: React.MouseEvent) => {
     e.preventDefault();
     const url = config.brochureUrl;
@@ -21,7 +37,7 @@ export function HeroSection() {
       <div className="absolute inset-0 z-0">
         <img
           height={600}
-          src="/hero-wedding.jpg"
+          src={isMobile ? "/featured-event-mobile.jpeg" : "/featured-event.jpeg"}
           alt="Luxury wedding venue"
           className="w-full h-full object-cover"
         />
@@ -40,7 +56,7 @@ export function HeroSection() {
           >
             <Star className="w-4 h-4 text-aira-gold fill-aira-gold" />
             <span className="text-sm font-medium text-primary-foreground">
-              500+ Events Successfully Planned
+              200+ Events Successfully Planned
             </span>
           </motion.div>
 
@@ -51,19 +67,24 @@ export function HeroSection() {
             transition={{ delay: 0.3 }}
             className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6"
           >
-            Crafting <span className="text-aira-gold">Timeless</span> Celebrations
+            From Nepal to <span className="text-aira-gold"> Dream </span> Destinations
           </motion.h1>
 
           {/* Subheadline */}
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-primary-foreground/80 mb-8 leading-relaxed"
+            className="text-lg md:text-xl text-justify text-primary-foreground/80 mb-8 leading-relaxed"
           >
-            From intimate gatherings to grand celebrations, we transform your dreams into
-            unforgettable memories. Let us plan your perfect event.
-          </motion.p>
+            <p className="text-aira-gold mb-1 font-semibold">
+              {" "}
+              We Craft Timeless Celebrations since 2072.
+            </p>{" "}
+            Aira Events has been designing unforgettable weddings and events across Nepal and
+            beyond. From intimate ceremonies to luxury destination weddings, we turn your vision
+            into a flawless experience.
+          </motion.div>
 
           {/* CTAs */}
           <motion.div
@@ -117,7 +138,7 @@ export function HeroSection() {
               ))}
             </div>
             <div className="text-primary-foreground/80 text-sm">
-              <span className="font-semibold text-primary-foreground">200+ Happy Couples</span>
+              <span className="font-semibold text-primary-foreground">100+ Happy Customers</span>
               <br />
               Trusted their special day with us
             </div>

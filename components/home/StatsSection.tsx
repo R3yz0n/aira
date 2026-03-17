@@ -8,14 +8,14 @@ import { Calendar, Heart, Users, Award } from "lucide-react";
 const stats = [
   {
     icon: Calendar,
-    value: 500,
+    value: 200,
     suffix: "+",
     label: "Events Planned",
     color: "text-aira-gold",
   },
   {
     icon: Heart,
-    value: 200,
+    value: 50,
     suffix: "+",
     label: "Weddings Celebrated",
     color: "text-secondary",
@@ -29,7 +29,7 @@ const stats = [
   },
   {
     icon: Award,
-    value: 15,
+    value: 10,
     suffix: "+",
     label: "Years Experience",
     color: "text-aira-gold",
