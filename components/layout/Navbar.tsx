@@ -119,9 +119,9 @@ function BrochureDialog({ triggerLabel, triggerClassName }: BrochureDialogProps)
           {triggerLabel}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-screen max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-screen max-w-3xl  overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Brochures</DialogTitle>
+          <DialogTitle className="mt-5">Brochures</DialogTitle>
           <DialogDescription>
             Pick a brochure and preview it here, or open it in a new tab.
           </DialogDescription>
