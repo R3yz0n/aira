@@ -119,7 +119,7 @@ function BrochureDialog({ triggerLabel, triggerClassName }: BrochureDialogProps)
           {triggerLabel}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-h-screen max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Brochures</DialogTitle>
           <DialogDescription>
