@@ -115,11 +115,11 @@ function BrochureDialog({ triggerLabel, triggerClassName }: BrochureDialogProps)
     >
       <DialogTrigger asChild>
         <Button variant="outline" size="lg" className={triggerClassName}>
-          <FileText className="w-4 h-4 mr-2" />
+          <FileText className="w-4 h-4 mr-2 " />
           {triggerLabel}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-screen max-w-3xl  overflow-y-auto">
+      <DialogContent className="max-h-screen max-w-3xl overflow-y-auto [&>button]:top-11">
         <DialogHeader>
           <DialogTitle className="mt-5">Brochures</DialogTitle>
           <DialogDescription>
