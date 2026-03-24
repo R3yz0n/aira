@@ -1,12 +1,31 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useCategory } from "@/hooks/use-category";
 import { config } from "@/lib/config";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Facebook, FileText, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import {
+  Facebook,
+  FileText,
+  Instagram,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter,
+  Youtube,
+  ExternalLink,
+} from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const socialLinks = [
   { icon: Facebook, href: config.companyDetails.social.facebook, label: "Facebook" },
@@ -23,19 +42,170 @@ const quickLinks = [
   { name: "Contact", path: "/contact" },
 ];
 
+type BrochureItem = {
+  title: string;
+  href: string;
+  previewUrl: string | null;
+};
+
+const getGoogleDriveFileId = (url: string) => {
+  const patterns = [
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,
+    /[?&]id=([a-zA-Z0-9_-]+)/,
+    /\/d\/([a-zA-Z0-9_-]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+
+  return null;
+};
+
+const getPreviewUrl = (url: string) => {
+  const fileId = getGoogleDriveFileId(url);
+  if (fileId) {
+    return `https://drive.google.com/file/d/${fileId}/preview`;
+  }
+
+  if (url.toLowerCase().includes(".pdf")) {
+    return url;
+  }
+
+  return null;
+};
+
+const brochureLinks: BrochureItem[] = [
+  {
+    title: "Aira Events Brochure",
+    href: config.brochureUrl,
+  },
+  {
+    title: "Bride Side Decor",
+    href: "https://drive.google.com/file/d/1j0rwOuw4AbTPREM3pmcjd6DV5FOJbIjy/view?usp=sharing",
+  },
+  {
+    title: "Janti",
+    href: "https://drive.google.com/file/d/1W-5dCfxyL91DQuHBmC7Sd_1QES_-2MNn/view?usp=sharing",
+  },
+  {
+    title: "Mendhi",
+    href: "https://drive.google.com/file/d/1stTl5zQjyPR9JR1LAPOCepJIEZuTkAh1/view?usp=sharing",
+  },
+  {
+    title: "Reception",
+    href: "https://drive.google.com/file/d/10mg65hnWoXkRXqBr8yXPv_rcBv3zY6hg/view?usp=sharing",
+  },
+  {
+    title: "Wedding",
+    href: "https://drive.google.com/file/d/1iN5HwtJAx2aHoaBRAUAIt9fT6y5LVjHt/view?usp=sharing",
+  },
+]
+  .filter((item): item is { title: string; href: string } => Boolean(item.href))
+  .map((item) => ({
+    ...item,
+    previewUrl: getPreviewUrl(item.href),
+  }));
+
+type BrochureDialogProps = {
+  triggerLabel: string;
+  triggerClassName?: string;
+};
+
+function BrochureDialog({ triggerLabel, triggerClassName }: BrochureDialogProps) {
+  const [activeBrochure, setActiveBrochure] = useState<BrochureItem | null>(null);
+
+  return (
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          setActiveBrochure(null);
+          return;
+        }
+
+        const firstPreviewable = brochureLinks.find((item) => Boolean(item.previewUrl));
+        setActiveBrochure(firstPreviewable ?? brochureLinks[0] ?? null);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="outline" size="lg" className={triggerClassName}>
+          <FileText className="w-4 h-4 mr-2" />
+          {triggerLabel}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Brochures</DialogTitle>
+          <DialogDescription>
+            Pick a brochure and preview it here, or open it in a new tab.
+          </DialogDescription>
+        </DialogHeader>
+
+        {brochureLinks.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-[280px_1fr]">
+            <div className="space-y-2">
+              {brochureLinks.map((brochure) => {
+                const isActive = activeBrochure?.href === brochure.href;
+
+                return (
+                  <button
+                    key={brochure.title}
+                    type="button"
+                    onClick={() => setActiveBrochure(brochure)}
+                    className={cn(
+                      "w-full rounded-md border px-4 py-3 text-left text-sm transition-colors",
+                      isActive ? "border-primary bg-primary/5" : "border-border hover:bg-muted",
+                    )}
+                  >
+                    <p className="font-medium">{brochure.title}</p>
+                    <a
+                      href={brochure.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Open link
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="rounded-md border border-border bg-muted/30 p-2">
+              {activeBrochure?.previewUrl ? (
+                <iframe
+                  title={`${activeBrochure.title} preview`}
+                  src={activeBrochure.previewUrl}
+                  className="h-[55vh] w-full rounded-md bg-background"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="flex h-[55vh] items-center justify-center rounded-md bg-background p-6 text-center text-sm text-muted-foreground">
+                  Preview is not available for this link. Use "Open link" to view it in a new tab.
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No brochures are available right now.</p>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export function Footer() {
   const { list: categoryList, categories } = useCategory();
 
   useEffect(() => {
     categoryList();
   }, [categoryList]);
-  const openBrochure = (e: any) => {
-    e.preventDefault();
-    const url = config.brochureUrl;
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
+
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Main Footer */}
@@ -61,22 +231,10 @@ export function Footer() {
               We craft unforgettable celebrations that tell your unique story. From intimate
               gatherings to grand weddings, every detail matters.
             </p>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-aira-gold text-aira-gold hover:bg-aira-gold hover:text-foreground w-fit"
-              asChild
-            >
-              <a
-                href={config.brochureUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={openBrochure}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Download Brochure
-              </a>
-            </Button>
+            <BrochureDialog
+              triggerLabel="Download Brochure"
+              triggerClassName="border-aira-gold text-aira-gold hover:bg-aira-gold hover:text-foreground w-fit"
+            />
             <div className="flex gap-4">
               {socialLinks.map((social) => (
                 <a

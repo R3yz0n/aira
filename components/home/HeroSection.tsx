@@ -23,14 +23,6 @@ export function HeroSection() {
     };
   }, []);
 
-  const openBrochure = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const url = config.brochureUrl;
-    // open in a new tab/window
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background Image */}
@@ -99,18 +91,6 @@ export function HeroSection() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
-
-            {/* <Button variant="heroOutline" size="xl" asChild>
-              <a
-                href={config.brochureUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={openBrochure}
-              >
-                <FileText className="w-5 h-5" />
-                View Brochure
-              </a>
-            </Button> */}
 
             <Button variant="heroOutline" size="xl" asChild>
               <Link href="/gallery">
